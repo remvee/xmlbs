@@ -1,4 +1,6 @@
 - problems:
+    - Use of static RE objects, should use RECompiler to create
+      REProgram objects instead.
     - XMLBS.cleanEmptyTags()
 	kills script and style tags for XHTML because these
 	contain whitespace only..
