@@ -35,7 +35,7 @@ import java.util.*;
  * </UL>
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.29 $
+ * @version $Revision: 1.30 $
  */
 public class XMLBS {
     /** input */
@@ -178,13 +178,7 @@ public class XMLBS {
 	    } else if (tok instanceof TagToken) {
 		TagToken tag = (TagToken) tok;
 		if (tag.isOpenTag()) {
-		    if (ds.isEndpoint(tag)) {
-			// close it
-			if (annotate) {
-			    tokens.add(i++, comment("empty tag", tag));
-			}
-			tokens.set(i, tag.emptyTag());
-		    } else if (!ds.canContain(top, tag)) {
+		    if (!ds.canContain(top, tag)) {
 			if (!trail.hasContainerFor(tag)) {
 			    // misplaced tag
 			    if (annotate) {
@@ -202,6 +196,7 @@ public class XMLBS {
 				trail.pop();
 				top = trail.getTop();
 			    } while (!ds.canContain(top, tag) && trail.getDepth() > 0);
+
 			    // new top
 			    trail.push(tag);
 			}
@@ -245,6 +240,11 @@ public class XMLBS {
 		    }
 		}
 	    }
+	}
+
+	// close tags left on trail
+	for (TagToken tag = trail.pop(); tag != null; tag = trail.pop()) {
+	    tokens.add(tag.closeTag());
 	}
     }
 
@@ -356,11 +356,14 @@ public class XMLBS {
      */
     public static void main (String[] args)
     throws Exception {
+	Properties prop = new Properties();
+	prop.load(new java.io.FileInputStream("src/xmlbs/HTML.properties"));
+
 	InputStream in = new java.io.FileInputStream(args[0]);
-	DocumentStructure ds = new TestDocumentStructure();
+	DocumentStructure ds = new PropertiesDocumentStructure(prop);
 
         XMLBS bs = new XMLBS(in, ds);
-	bs.setAnnotate(true);
+	bs.setAnnotate(false);
 	bs.process();
 	bs.write(System.out);
     }

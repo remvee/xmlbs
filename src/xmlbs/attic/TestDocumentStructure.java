@@ -28,7 +28,7 @@ import java.util.*;
  * Document structure object for testing.
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 class TestDocumentStructure implements DocumentStructure {
     static List tagNames = new Vector();
@@ -145,9 +145,5 @@ class TestDocumentStructure implements DocumentStructure {
 	    return hier.contains(childtag.getName());
 	}
 	return false;
-    }
-
-    public boolean isEndpoint (TagToken tag) {
-	return ((List)tagHierarchy.get(tag.getName())).size() == 0;
     }
 }

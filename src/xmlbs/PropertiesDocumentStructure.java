@@ -28,7 +28,7 @@ import java.util.*;
  * Document structure configurable using property files.
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class PropertiesDocumentStructure implements DocumentStructure {
     private Set tagNames = new HashSet();
@@ -124,10 +124,6 @@ public class PropertiesDocumentStructure implements DocumentStructure {
 	    return hier.contains(childtag.getName());
 	}
 	return false;
-    }
-
-    public boolean isEndpoint (TagToken tag) {
-	return ((List)tagHierarchy.get(tag.getName())).size() == 0;
     }
 
     public String toString () {
