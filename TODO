@@ -1,9 +1,7 @@
 - problems:
-    - Use of static RE objects, should use RECompiler to create
-      REProgram objects instead.
     - XMLBS.cleanEmptyTags()
-	kills script and style tags for XHTML because these
-	contain whitespace only..
+      kills script and style tags for XHTML because these
+      contain whitespace only..
     - undefined behaviour mixed case entities, tag and attribute
       names; impossible to know which will match with ignore case
       option
@@ -24,7 +22,7 @@
 	- handle #implied, #required and cdata, nmtoken and id
 	  attributes
     - include xhtml-1.0 document structure object
-	http://www.w3.org/TR/xhtml1/
+      http://www.w3.org/TR/xhtml1/
     - passes:
 	- tokenize
 	    - read and fix tag attributes
@@ -46,4 +44,4 @@
 	--discard-decl
 	--transform-cdata
     - web xhtmlizer:
-	validate, report and deliver bodyshopped version
+      validate, report and deliver bodyshopped version
