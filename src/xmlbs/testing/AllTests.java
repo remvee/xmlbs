@@ -38,7 +38,6 @@ public class AllTests extends TestCase {
 
     public static Test suite() {
         TestSuite suite = new TestSuite("All XMLBS tests");
-        suite.addTestSuite(XMLBSTests.class);
         suite.addTestSuite(TokenizerTest.class);
         suite.addTestSuite(TreeNodeTest.class);
         suite.addTestSuite(TreeBuilderTest.class);
