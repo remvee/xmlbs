@@ -30,7 +30,7 @@ import gnu.getopt.Getopt;
  * Commandline tool to help translate html4 to xhtml.
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class XHTMLizer {
 
@@ -75,7 +75,9 @@ public class XHTMLizer {
 		    case 'a':
 			annotate = true;
 			break;
+		    default:
 		    case '?':
+			usage(progname);
 			System.exit(-1);
 			break; // getopt already printed an error
 		}
