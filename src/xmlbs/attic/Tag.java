@@ -54,11 +54,10 @@ class Tag
 	}
     }
 
-
     /**
      * The &lt; character was already read.
      */
-    Tag (InputStream in)
+    public Tag (InputStream in)
     throws IOException, Exception
     {
 	// try to read full tag
@@ -118,6 +117,18 @@ class Tag
 	}
     }
 
+    public Tag (String tagName, Map attrs, int type)
+    {
+	this.tagName = tagName;
+	this.attrs = attrs;
+	this.type = type;
+    }
+
+    public String getName () { return tagName; }
+    public boolean isOpenTag () { return type == OPEN; }
+    public boolean isCloseTag () { return type == CLOSE; }
+    public boolean isEmptyTag () { return type == EMPTY; }
+
     public String toString ()
     {
 	StringBuffer sb = new StringBuffer();
@@ -160,5 +171,24 @@ class Tag
 	sb.append('>');
 
 	return sb.toString();
+    }
+
+    public boolean equals (Object that)
+    {
+	if (that instanceof Tag)
+	{
+	    Tag t = (Tag) that;
+	    if (t.type == type && t.getName().equals(tagName))
+	    {
+		return true;
+	    }
+	}
+	return false;
+    }
+
+    public int hashCode ()
+    {
+	if (tagName != null) return tagName.hashCode();
+	return 0;
     }
 }
