@@ -152,7 +152,7 @@ class Tag
 	    sb.append(attr);
 	    sb.append('=');
 	    sb.append('"');
-	    sb.append(XMLBS.fixText(val));
+	    sb.append(Text.fixText(val));
 	    sb.append('"');
 	}
 
