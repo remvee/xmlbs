@@ -25,6 +25,11 @@ class DTD
 	}
     }
 
+    public DTD (Properties prop)
+    {
+	fromProperties(prop);
+    }
+
     Map setMap = new HashMap();
     private void fromProperties (Properties propMap)
     {
