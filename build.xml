@@ -1,122 +1,122 @@
 <project name="xmlbs" default="compile" basedir=".">
-  <property name="project.name" value="xmlbs"/>
+	<property name="project.name" value="xmlbs"/>
 
 <!-- build tool configuration -->
-  <property name="ctags.exec" value="exctags"/>
-  <property name="cvs2cl.exec" value="cvs2cl"/>
+	<property name="ctags.exec" value="exctags"/>
+	<property name="cvs2cl.exec" value="cvs2cl"/>
 
 <!-- building sites -->
-  <property name="src.dir" value="src"/>
-  <property name="lib.dir" value="lib"/>
-  <property name="depend.dir" value="depend"/>
-  <property name="build.dir" value="build"/>
-  <property name="jar.file" value="${project.name}.jar"/>
-  <property name="apidoc.dir" value="doc"/>
-  <property name="apidoc.title" value="XMLBS apidoc"/>
-  <property name="apidoc.pkgnames" value="xmlbs.*"/>
-  <property name="apidoc.jdkurl" value="http://java.sun.com/products/jdk/1.3/docs/api/"/>
-  <path id="build.classpath">
-    <pathelement location="${build.dir}"/>
-    <pathelement path="${classpath}"/>
-    <fileset dir="${lib.dir}">
-      <include name="**/*.jar"/>
-    </fileset>
-  </path>
+	<property name="src.dir" value="src"/>
+	<property name="lib.dir" value="lib"/>
+	<property name="depend.dir" value="depend"/>
+	<property name="build.dir" value="build"/>
+	<property name="jar.file" value="${project.name}.jar"/>
+	<property name="apidoc.dir" value="doc"/>
+	<property name="apidoc.title" value="XMLBS apidoc"/>
+	<property name="apidoc.pkgnames" value="xmlbs.*"/>
+	<property name="apidoc.jdkurl" value="http://java.sun.com/products/jdk/1.3/docs/api/"/>
+	<path id="build.classpath">
+		<pathelement location="${build.dir}"/>
+		<pathelement path="${classpath}"/>
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
 
 <!-- targets -->
-  <target name="prepare">
-    <mkdir dir="${build.dir}"/>
-    <mkdir dir="${lib.dir}"/>
-    <mkdir dir="${depend.dir}"/>
-    <mkdir dir="${apidoc.dir}"/>
-  </target>
+	<target name="prepare">
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${lib.dir}"/>
+		<mkdir dir="${depend.dir}"/>
+		<mkdir dir="${apidoc.dir}"/>
+	</target>
 
-  <target name="compile" depends="prepare,depend"
-      description="compile source files">
-    <javac srcdir="${src.dir}" destdir="${build.dir}">
-      <classpath refid="build.classpath"/>
-    </javac>
-    <copy todir="${build.dir}">
-      <fileset dir="${src.dir}">
+	<target name="compile" depends="prepare,depend"
+			description="compile source files">
+		<javac srcdir="${src.dir}" destdir="${build.dir}">
+			<classpath refid="build.classpath"/>
+		</javac>
+		<copy todir="${build.dir}">
+			<fileset dir="${src.dir}">
 	<include name="**/*.properties"/>
 	<include name="**/*.xml"/>
-      </fileset>
-    </copy>
-  </target>
+			</fileset>
+		</copy>
+	</target>
 
-  <target name="depend">
-    <style style="misc/depend-build.xsl" in="depend.xml" out="depend-build.xml"/>
-    <ant antfile="depend-build.xml">
-      <property name="lib.dir" value="${lib.dir}"/>
-      <property name="work.dir" value="${depend.dir}"/>
-    </ant>
-  </target>
+	<target name="depend">
+		<style style="misc/depend-build.xsl" in="depend.xml" out="depend-build.xml"/>
+		<ant antfile="depend-build.xml">
+			<property name="lib.dir" value="${lib.dir}"/>
+			<property name="work.dir" value="${depend.dir}"/>
+		</ant>
+	</target>
 
-  <target name="jar" depends="compile"
-      description="roll a jar file">
-    <jar jarfile="${jar.file}" basedir="${build.dir}"/>
-  </target>
+	<target name="jar" depends="compile"
+			description="roll a jar file">
+		<jar jarfile="${jar.file}" basedir="${build.dir}"/>
+	</target>
 
-  <target name="test" depends="compile"
-      description="run unit tests">
-    <junit>
-      <formatter type="brief" usefile="no"/>
-      <test name="xmlbs.testing.AllTests"/>
-      <classpath refid="build.classpath"/>
-    </junit>
-  </target>
+	<target name="test" depends="compile"
+			description="run unit tests">
+		<junit>
+			<formatter type="brief" usefile="no"/>
+			<test name="xmlbs.testing.AllTests"/>
+			<classpath refid="build.classpath"/>
+		</junit>
+	</target>
 
-  <target name="apidoc" depends="prepare"
-      description="create java apidoc for this project">
-    <javadoc sourcepath="${src.dir}" destdir="${apidoc.dir}"
+	<target name="apidoc" depends="prepare"
+			description="create java apidoc for this project">
+		<javadoc sourcepath="${src.dir}" destdir="${apidoc.dir}"
 	windowtitle="${apidoc.title}" packagenames="${apidoc.pkgnames}">
-      <link href="${apidoc.jdkurl}"/>
-    </javadoc>
-  </target>
+			<link href="${apidoc.jdkurl}"/>
+		</javadoc>
+	</target>
 
-  <target name="ctags"
-      description="make a tags file for vi(1)">
-    <exec executable="${ctags.exec}">
-      <arg value="-R"/>
-      <arg value="${src.dir}"/>
-    </exec>
-  </target>
+	<target name="ctags"
+			description="make a tags file for vi(1)">
+		<exec executable="${ctags.exec}">
+			<arg value="-R"/>
+			<arg value="${src.dir}"/>
+		</exec>
+	</target>
 
-  <target name="style"
-      description="use checkstyle to check java code style">
-    <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask"/>
-    <checkstyle properties="checkstyle.properties">
-      <fileset dir="src" includes="**/*.java"/>
-    </checkstyle>
-  </target>
+	<target name="style"
+			description="use checkstyle to check java code style">
+		<taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask"/>
+		<checkstyle properties="checkstyle.properties">
+			<fileset dir="src" includes="**/*.java"/>
+		</checkstyle>
+	</target>
 
-  <target name="changelog">
-    <exec executable="${cvs2cl.exec}">
-      <arg value="-P"/>
-    </exec>
-    <exec executable="${cvs2cl.exec}">
-      <arg value="-P"/>
-      <arg value="--xml"/>
-      <arg value="-f"/>
-      <arg value="ChangeLog.xml"/>
-    </exec>
-    <!-- hack to prevent interpretation of xmlns in source xml -->
-    <replace file="ChangeLog.xml" token="xmlns" value="dummy"/>
-    <style style="misc/changelog-html.xsl" in="ChangeLog.xml" out="ChangeLog.html"/>
-  </target>
+	<target name="changelog">
+		<exec executable="${cvs2cl.exec}">
+			<arg value="-P"/>
+		</exec>
+		<exec executable="${cvs2cl.exec}">
+			<arg value="-P"/>
+			<arg value="--xml"/>
+			<arg value="-f"/>
+			<arg value="ChangeLog.xml"/>
+		</exec>
+		<!-- hack to prevent interpretation of xmlns in source xml -->
+		<replace file="ChangeLog.xml" token="xmlns" value="dummy"/>
+		<style style="misc/changelog-html.xsl" in="ChangeLog.xml" out="ChangeLog.html"/>
+	</target>
 
-  <target name="clean"
-      description="remove generated files">
-    <delete dir="${build.dir}"/>
-    <delete dir="${apidoc.dir}"/>
-    <delete file="${jar.file}"/>
-    <delete file="tags"/>
-  </target>
+	<target name="clean"
+			description="remove generated files">
+		<delete dir="${build.dir}"/>
+		<delete dir="${apidoc.dir}"/>
+		<delete file="${jar.file}"/>
+		<delete file="tags"/>
+	</target>
 
-  <target name="distclean" depends="clean"
-      description="remove generated and downloaded files">
-    <delete dir="${depend.dir}"/>
-    <delete file="depend-build.xml"/>
-  </target>
+	<target name="distclean" depends="clean"
+			description="remove generated and downloaded files">
+		<delete dir="${depend.dir}"/>
+		<delete file="depend-build.xml"/>
+	</target>
 
 </project>
