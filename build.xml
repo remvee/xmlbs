@@ -3,6 +3,7 @@
 
 <!-- build tool configuration -->
   <property name="ctags.exec" value="exctags"/>
+  <property name="cvs2cl.exec" value="cvs2cl"/>
   <property name="build.compiler" value="jikes"/>
 
 <!-- building sites -->
@@ -53,6 +54,21 @@
     <checkstyle properties="checkstyle.properties">
       <fileset dir="src" includes="**/*.java"/>
     </checkstyle>
+  </target>
+
+  <target name="changelog">
+    <exec executable="${cvs2cl.exec}">
+      <arg value="-P"/>
+    </exec>
+    <exec executable="${cvs2cl.exec}">
+      <arg value="-P"/>
+      <arg value="--xml"/>
+      <arg value="-f"/>
+      <arg value="ChangeLog.xml"/>
+    </exec>
+    <!-- hack to prevent interpretation of xmlns in source xml -->
+    <replace file="ChangeLog.xml" token="xmlns" value="dummy"/>
+    <style style="misc/changelog-html.xsl" in="ChangeLog.xml" out="ChangeLog.html"/>
   </target>
 
   <target name="clean">
