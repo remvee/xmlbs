@@ -1,2 +1,5 @@
 doc
 build
+depend
+.project
+depend-build.xml
