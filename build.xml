@@ -29,7 +29,8 @@
     <mkdir dir="${apidoc.dir}"/>
   </target>
 
-  <target name="compile" depends="prepare,depend">
+  <target name="compile" depends="prepare,depend"
+      description="compile source files">
     <javac srcdir="${src.dir}" destdir="${build.dir}">
       <classpath refid="build.classpath"/>
     </javac>
@@ -49,25 +50,29 @@
     </ant>
   </target>
 
-  <target name="jar" depends="compile">
+  <target name="jar" depends="compile"
+      description="roll a jar file">
     <jar jarfile="${jar.file}" basedir="${build.dir}"/>
   </target>
 
-  <target name="apidoc" depends="prepare">
+  <target name="apidoc" depends="prepare"
+      description="create java apidoc for this project">
     <javadoc sourcepath="${src.dir}" destdir="${apidoc.dir}"
 	windowtitle="${apidoc.title}" packagenames="${apidoc.pkgnames}">
       <link href="${apidoc.jdkurl}"/>
     </javadoc>
   </target>
 
-  <target name="ctags">
+  <target name="ctags"
+      description="make a tags file for vi(1)">
     <exec executable="${ctags.exec}">
       <arg value="-R"/>
       <arg value="${src.dir}"/>
     </exec>
   </target>
 
-  <target name="style">
+  <target name="style"
+      description="use checkstyle to check java code style">
     <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask"/>
     <checkstyle properties="checkstyle.properties">
       <fileset dir="src" includes="**/*.java"/>
@@ -89,14 +94,16 @@
     <style style="misc/changelog-html.xsl" in="ChangeLog.xml" out="ChangeLog.html"/>
   </target>
 
-  <target name="clean">
+  <target name="clean"
+      description="remove generated files">
     <delete dir="${build.dir}"/>
     <delete dir="${apidoc.dir}"/>
     <delete file="${jar.file}"/>
     <delete file="tags"/>
   </target>
 
-  <target name="distclean" depends="clean">
+  <target name="distclean" depends="clean"
+      description="remove generated and downloaded files">
     <delete dir="${depend.dir}"/>
     <delete file="depend-build.xml"/>
   </target>
