@@ -27,7 +27,7 @@ import org.apache.regexp.*;
  * Useful when, for example, converting HTML to XHTML.
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class XMLBS
 {
@@ -135,62 +135,39 @@ public class XMLBS
 	    }
 	}
 
-	// open/close statistics
-	System.out.println("open/close statistics");
-	Set unclosedSet = new HashSet();
-	{
-	    Set tags = new HashSet();
-	    tags.addAll(openMap.keySet());
-	    tags.addAll(closeMap.keySet());
-	    Vector v = new Vector(tags);
-	    Collections.sort(v);
-	    Iterator it = v.iterator();
-	    while (it.hasNext())
-	    {
-		String tn = (String) it.next();
-		int open, close;
-		Integer o;
-
-		o = (Integer) openMap.get(tn);
-		if (o == null) open = 0;
-		else open = o.intValue();
-
-		o = (Integer) closeMap.get(tn);
-		if (o == null) close = 0;
-		else close = o.intValue();
-
-		if (open > close)
-		{
-		    System.out.println("  "+tn+": not closed: "+(open-close));
-		    unclosedSet.add(tn);
-		}
-		else if (open < close)
-		{
-		    System.out.println("  "+tn+": over closed: "+(close-open));
-		}
-	    }
-	}
-
-	// close unclosed tags
+	// fix unclosed tags
 	{
 	    for (int i = 0; i < tokens.size(); i++)
 	    {
 		Object o = tokens.get(i);
 		if (o instanceof Tag)
 		{
-		    Tag t = (Tag) o;
-		    if (t.isOpenTag() && unclosedSet.contains(t.getName()))
+		    Tag tag = (Tag) o;
+		    if (tag.isOpenTag())
 		    {
-			System.out.println("should close: "+t);
+			Tag openTag = tag;
+			Tag closeTag = new Tag(tag.getName(), null, Tag.CLOSE);
 			List l = tokens.subList(i+1, tokens.size());
-			int j = l.indexOf(t);
-			if (j != -1)
+			// locate close tag
+			int close = l.indexOf(closeTag);
+			// locate next open
+			int open = l.indexOf(openTag);
+
+			if (close == -1) // tag not closed
 			{
-			    tokens.add(j+i+1, new Tag(t.getName(), null, Tag.CLOSE));
+			    if (open != -1)
+			    {
+				tokens.add(open+i+1, closeTag);
+			    }
+			    else
+			    {
+				tokens.add(closeTag);
+			    }
 			}
-			else
+			else if (open != -1 && open < close) // nesting detected
 			{
-			    tokens.add(new Tag(t.getName(), null, Tag.CLOSE));
+			    // TODO allow nesting for certain tags
+			    tokens.add(open+i+1, closeTag);
 			}
 		    }
 		}
@@ -204,7 +181,18 @@ public class XMLBS
 	// dump result
 	{
 	    Iterator it = tokens.iterator();
-	    while (it.hasNext()) System.out.print(""+it.next());
+	    int indent = 0;
+	    while (it.hasNext())
+	    {
+		Object o = it.next();
+
+		if (o instanceof Tag && ((Tag)o).isCloseTag()) indent -= 4;
+
+		for (int i = 0; i < indent; i++) System.out.print(" ");
+		System.out.println((""+o).trim());
+
+		if (o instanceof Tag && ((Tag)o).isOpenTag()) indent += 4;
+	    }
 	}
     }
 }
