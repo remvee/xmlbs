@@ -3,7 +3,7 @@ package xmlbs;
 import java.util.*;
 import java.io.*;
 
-class DTD
+public class DTD
 {
     Map elementMap = new HashMap();
     Set emptySet = new HashSet();
