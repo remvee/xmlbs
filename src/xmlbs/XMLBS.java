@@ -27,7 +27,7 @@ import org.apache.regexp.*;
  * Useful when, for example, converting HTML to XHTML.
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class XMLBS
 {
@@ -133,12 +133,37 @@ public class XMLBS
     {
 	XMLBS bs = new XMLBS(new File(args[0]));
 	List tokens = bs.tokenize();
+
+	// fix tags not closed
 	bs.fixUnclosedTags(tokens);
+	System.out.println("after fixUnclosedTags: "+tokens);
 
-	// TODO: remove redundant close tags
-	bs.openCloseStats(tokens);
-
-	// TODO: fix overlap
+	// fix overlap
+	{
+	    Vector result = new Vector();
+	    ListIterator it = tokens.listIterator();
+	    while (it.hasNext())
+	    {
+		Object o = it.next();
+		if (o instanceof Tag)
+		{
+		    Tag t = (Tag) o;
+		    if (t.isOpenTag() || t.isEmptyTag())
+		    {
+			result.add(new Block(t, it));
+		    }
+		    else
+		    {
+			// discard close/other tag
+		    }
+		}
+		else
+		{
+		    result.add(o);
+		}
+	    }
+System.err.println("after fixOverlap: "+result);
+	}
 
 	// dump result
 	{
@@ -191,7 +216,7 @@ public class XMLBS
 	}
 
 	// open/close statistics
-	System.out.println("open/close statistics");
+	System.err.println("open/close statistics");
 	Set unclosedSet = new HashSet();
 	{
 	    Set tags = new HashSet();
@@ -216,14 +241,90 @@ public class XMLBS
 
 		if (open > close)
 		{
-		    System.out.println("  "+tn+": not closed: "+(open-close));
+		    System.err.println("  "+tn+": not closed: "+(open-close));
 		    unclosedSet.add(tn);
 		}
 		else if (open < close)
 		{
-		    System.out.println("  "+tn+": over closed: "+(close-open));
+		    System.err.println("  "+tn+": over closed: "+(close-open));
 		}
 	    }
 	}
+    }
+}
+
+class Block
+{
+    List result = new Vector();
+    Set overlap = new HashSet();
+
+    Block (Tag openTag, ListIterator it)
+    {
+	result.add(openTag);
+	if (openTag.isEmptyTag()) return;
+
+	Tag closeTag = new Tag(openTag.getName(), null, Tag.CLOSE);
+	while (it.hasNext())
+	{
+	    Object o = it.next();
+	    if (o instanceof Tag)
+	    {
+		Tag t = (Tag) o;
+		if (t.isOpenTag()) // TODO handle empty tags
+		{
+		    int pos = it.nextIndex() - 1;
+		    Block child = new Block(t, it);
+		    if (child.getOverlap().contains(closeTag))
+		    {
+			result.add(closeTag);
+			// rewind iterator to beginning of child block
+			while (pos < it.nextIndex()) it.previous();
+			return;
+		    }
+		    result.add(child);
+		}
+		else if (t.equals(closeTag))
+		{
+		    result.add(t);
+		    return;
+		}
+		else if (t.isCloseTag())
+		{
+		    overlap.add(t);
+		}
+		else
+		{
+		    result.add(t);
+		}
+	    }
+	    else
+	    {
+		result.add(o);
+	    }
+	}
+
+	// missing close tag??
+	result.add(closeTag);
+    }
+
+    public Set getOverlap ()
+    {
+	Set overlap = new HashSet();
+	overlap.addAll(this.overlap);
+	Iterator it = result.iterator();
+	while (it.hasNext())
+	{
+	    Object o = it.next();
+	    if (o instanceof Block)
+	    {
+		overlap.addAll(((Block)o).getOverlap());
+	    }
+	}
+	return overlap;
+    }
+
+    public String toString ()
+    {
+	return result.toString();
     }
 }
