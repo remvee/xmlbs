@@ -28,7 +28,132 @@ public class TokenizerTests extends TestCase
     public void testTag ()
     throws IOException
     {
-	assertTrue("assert doesn't work", true);
+	// test open tags
+	{
+	    final String d[] =
+	    {
+		"<foo>", "<foo >", "<foo foo=bar>", "<foo foo=bar >",
+		"<foo foo=bar bar=foo>", "<foo foo=bar bar=foo >"
+	    };
+	    for (int i = 0; i < d.length; i++)
+	    {
+		Tokenizer tokenizer = new Tokenizer(d[i]);
+		List tokens = tokenizer.readAllTokens();
+
+		assertTrue("didn't read 1 token from '"+d+"' but "+tokens.size(),
+			tokens.size() == 1);
+
+		TagToken tok = (TagToken) tokens.get(0);
+		String data = tok.getName();
+
+		assertTrue("didn't read a 'foo' tag from '"+d+"' but '"+data+"'",
+			data.equals("foo"));
+		assertTrue("didn't read a 'foo' open tag from '"+d[i]+"'",
+			tok.isOpenTag());
+	    }
+	}
+	// test empty tags
+	{
+	    final String d[] =
+	    {
+		"<foo/>", "<foo />", "<foo foo=bar/>", "<foo foo=bar />",
+		"<foo foo=bar bar=foo/>", "<foo foo=bar bar=foo />"
+	    };
+	    for (int i = 0; i < d.length; i++)
+	    {
+		Tokenizer tokenizer = new Tokenizer(d[i]);
+		List tokens = tokenizer.readAllTokens();
+
+		assertTrue("didn't read 1 token from '"+d+"' but "+tokens.size(),
+			tokens.size() == 1);
+
+		TagToken tok = (TagToken) tokens.get(0);
+		String data = tok.getName();
+
+		assertTrue("didn't read a 'foo' tag from '"+d[i]+"' but '"+data+"'",
+			data.equals("foo"));
+		assertTrue("didn't read a 'foo' empty tag from '"+d[i]+"'",
+			tok.isEmptyTag());
+	    }
+	}
+	// test close tags
+	{
+	    final String d[] =
+	    {
+		"</foo>", "</ foo>", "</ foo >"
+	    };
+	    for (int i = 0; i < d.length; i++)
+	    {
+		Tokenizer tokenizer = new Tokenizer(d[i]);
+		List tokens = tokenizer.readAllTokens();
+
+		assertTrue("didn't read 1 token from '"+d+"' but "+tokens.size(),
+			tokens.size() == 1);
+
+		TagToken tok = (TagToken) tokens.get(0);
+		String data = tok.getName();
+
+		assertTrue("didn't read a 'foo' tag from '"+d[i]+"' but '"+data+"'",
+			data.equals("foo"));
+		assertTrue("didn't read a 'foo' close tag from '"+d[i]+"'",
+			tok.isCloseTag());
+	    }
+	}
+	// test attribute handling
+	{
+	    final String d[] =
+	    {
+		"<foo foo=bar bar=foo>", "<foo foo='bar' bar='foo'>",
+		"<foo foo=\"bar\" bar=\"foo\">", "<foo foo='bar' bar=\"foo\">",
+		"<foo\nfoo=bar\r\nbar=foo\r\b>", "<foo\tfoo='bar'\tbar='foo'\t>",
+	    };
+	    for (int i = 0; i < d.length; i++)
+	    {
+		Tokenizer tokenizer = new Tokenizer(d[i]);
+		List tokens = tokenizer.readAllTokens();
+
+		assertTrue("didn't read 1 token from '"+d+"' but "+tokens.size(),
+			tokens.size() == 1);
+
+		TagToken tok = (TagToken) tokens.get(0);
+		String data = tok.getName();
+		Map attrs = tok.getAttributes();
+
+		assertTrue("didn't read a 'foo' tag from '"+d[i]+"' but '"+data+"'",
+			data.equals("foo"));
+		assertTrue("didn't read a 'foo' open tag from '"+d[i]+"'",
+			tok.isOpenTag());
+		assertTrue("didn't read a 2 attributes from '"+d[i]+"'",
+			attrs.keySet().size() == 2);
+		assertTrue("didn't read a 'foo' attribute from '"+d[i]+"'",
+			attrs.get("foo").equals("bar"));
+		assertTrue("didn't read a 'bar' attribute from '"+d[i]+"'",
+			attrs.get("bar").equals("foo"));
+	    }
+	}
+	// more attribute tests
+	{
+	    final String d[][] =
+	    {
+		{ "<foo foo=bar=foo>", "<foo foo=\"bar=foo\">" },
+		{ "<foo foo='\"bar=foo\"'>", "<foo foo=\"&quot;bar=foo&quot;\">" },
+		{ "<foo foo=\"'bar=foo'\">", "<foo foo=\"&apos;bar=foo&apos;\">" },
+	    };
+	    for (int i = 0; i < d.length; i++)
+	    {
+		Tokenizer tokenizer = new Tokenizer(d[i][0]);
+		List tokens = tokenizer.readAllTokens();
+
+		assertTrue("didn't read 1 token from '"+d+"' but "+tokens.size(),
+			tokens.size() == 1);
+
+		TagToken tok = (TagToken) tokens.get(0);
+		String data = tok.toString();
+
+		assertTrue("input '"+d[i][0]+"' didn't give '"+d[i][1]+"' but '"+data+"'",
+			data.equals(d[i][1]));
+	    }
+	}
     }
 
     public void testText ()
@@ -68,7 +193,7 @@ public class TokenizerTests extends TestCase
 		    tok.toString().equals("&lt;"));
 	}
 	{
-	    String d = "<blabla<>";
+	    String d = "<foobar<>";
 	    Tokenizer tokenizer = new Tokenizer(d);
 	    List tokens = tokenizer.readAllTokens();
 
@@ -78,14 +203,14 @@ public class TokenizerTests extends TestCase
 	    TextToken tok = (TextToken) tokens.get(0);
 	    String data = tok.getData();
 
-	    assertTrue("didn't read '<blabla<>' from '"+d+"' but '"+data+"'",
-		    data.equals("<blabla<>"));
+	    assertTrue("didn't read '<foobar<>' from '"+d+"' but '"+data+"'",
+		    data.equals("<foobar<>"));
 
-	    assertTrue("didn't get '&lt;blabla&lt;&gt;' from '"+d+"' but '"+tok+"'",
-		    tok.toString().equals("&lt;blabla&lt;&gt;"));
+	    assertTrue("didn't get '&lt;foobar&lt;&gt;' from '"+d+"' but '"+tok+"'",
+		    tok.toString().equals("&lt;foobar&lt;&gt;"));
 	}
 	{
-	    String d = "<<blabla>>";
+	    String d = "<<foobar>>";
 	    Tokenizer tokenizer = new Tokenizer(d);
 	    List tokens = tokenizer.readAllTokens();
 
@@ -103,7 +228,7 @@ public class TokenizerTests extends TestCase
 		    data1.equals(">"));
 	}
 	{
-	    String d = ">'blabla\"<";
+	    String d = ">'foobar\"<";
 	    Tokenizer tokenizer = new Tokenizer(d);
 	    List tokens = tokenizer.readAllTokens();
 
@@ -113,10 +238,10 @@ public class TokenizerTests extends TestCase
 	    TextToken tok = (TextToken) tokens.get(0);
 	    String data = tok.getData();
 
-	    assertTrue("didn't read '>'blabla\"<' from '"+d+"' but '"+data+"'",
+	    assertTrue("didn't read '>'foobar\"<' from '"+d+"' but '"+data+"'",
 		    data.equals(d));
-	    assertTrue("didn't get '&gt;&apos;blabla&quot;&lt;' from '"+d+"' but '"+tok.toString()+"'",
-		    tok.toString().equals("&gt;&apos;blabla&quot;&lt;"));
+	    assertTrue("didn't get '&gt;&apos;foobar&quot;&lt;' from '"+d+"' but '"+tok.toString()+"'",
+		    tok.toString().equals("&gt;&apos;foobar&quot;&lt;"));
 	}
     }
 
