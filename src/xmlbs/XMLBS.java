@@ -35,7 +35,7 @@ import java.util.*;
  * </UL>
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.33 $
+ * @version $Revision: 1.34 $
  */
 public class XMLBS {
     /** input */
@@ -286,32 +286,36 @@ public class XMLBS {
      */
     private void cleanEmptyTags () {
 	TagToken last = null;
+	int lastPos = -1;
 	for (int i = 2; i < tokens.size(); i++) {
 	    Token tok = (Token) tokens.get(i);
 	    if (tok instanceof TagToken) {
 		TagToken tag = (TagToken) tok;
-		if (tag.isCloseTag()
-			&& tokens.get(i-1) instanceof TagToken
-			&& ((TagToken)tokens.get(i-1)).isOpenTag()
-			&& ((TagToken)tokens.get(i-1)).isSameTag(tag)) {
-		    tokens.set(i-1, ((TagToken)tokens.get(i-1)).emptyTag());
-		    tokens.remove(i);
+		if (tag.isOpenTag()) {
+		    last = tag;
+		    lastPos = i;
 		} else if (tag.isCloseTag()
-			&& tokens.get(i-1) instanceof TextToken
-			&& ((TextToken)tokens.get(i-1)).isWhiteSpace()
-			&& tokens.get(i-2) instanceof TagToken
-			&& ((TagToken)tokens.get(i-2)).isOpenTag()
-			&& ((TagToken)tokens.get(i-2)).isSameTag(tag)) {
-		    tokens.set(i-2, ((TagToken)tokens.get(i-2)).emptyTag());
-		    tokens.remove(i);
-		    tokens.remove(i-1);
-		} else if (tag.isCloseTag()
-			&& tokens.get(i-1) instanceof CommentToken
-			&& tokens.get(i-2) instanceof TagToken
-			&& ((TagToken)tokens.get(i-2)).isOpenTag()
-			&& ((TagToken)tokens.get(i-2)).isSameTag(tag)) {
-		    tokens.set(i-2, ((TagToken)tokens.get(i-2)).emptyTag());
-		    tokens.remove(i);
+			&& last != null && tag.isSameTag(last)) {
+		    // see if what's between last and this is whitespace
+		    boolean allWhite = true;
+		    List l = tokens.subList(lastPos+1, i);
+		    for (Iterator it = l.iterator(); it.hasNext();) {
+			Token t = (Token) it.next();
+			if (!(t instanceof CommentToken || t instanceof TextToken
+				    && ((TextToken)t).isWhiteSpace())) {
+			    allWhite = false;
+			    break;
+			}
+		    }
+		    if (allWhite) {
+			// remove close tag
+			tokens.remove(i);
+			// replace open by empty
+			tokens.set(lastPos, last.emptyTag());
+			// forget open tag
+			lastPos = -1;
+			last = null;
+		    }
 		}
 	    }
 	}
