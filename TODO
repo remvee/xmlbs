@@ -1,4 +1,5 @@
 - core:
+    - introduce CrumbTrail to do stack actions
     - don't let loose tag destroy structure when now parent
       allows it, actions in this case could be:
       - remove/comment loose tag with content
