@@ -21,15 +21,30 @@
 
 package xmlbs;
 
-import java.io.*;
-import java.util.*;
-
 /**
+ * Interface for writign document structure descriptions.
+ *
  * @author R.W. van 't Veer
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public interface DocumentStructure {
+    /**
+     * Determine if tag is known.
+     * @param tag tag token to lookup
+     * @return true if tag is known
+     */
     boolean isKnownTag (TagToken tag);
+    /**
+     * Retain only known attributes.
+     * <P><EM>TODO return number of modifications?</EM></P>
+     * @param tag tag token to handle
+     */
     void retainKnownAttributes (TagToken tag);
+    /**
+     * Determine if tag can be placed into other tag.
+     * @param parent top tag
+     * @param child sub tag
+     * @return true when allowed
+     */
     boolean canContain (TagToken parent, Token child);
 }

@@ -25,25 +25,54 @@ import java.io.*;
 import java.util.*;
 
 /**
+ * XML body shop tries to correct broken XML files.  XMLBS is
+ * able to fix to following problems:
+ * <UL>
+ *   <LI>unquoted tag attributes</LI>
+ *   <LI>stray illegal characters like &lt; and &gt;</LI>
+ *   <LI>close unclosed tags trying to obey structure rules</LI>
+ *   <LI>fix tag overlap like <TT>&lt;i&gt; foo &lt;b&gt; bar &lt;/i&gt; boo &lt;/b&gt;</TT></LI>
+ * </UL>
+ *
  * @author R.W. van 't Veer
- * @version $Revision: 1.27 $
+ * @version $Revision: 1.28 $
  */
 public class XMLBS {
+    /** input */
     private InputStream in = null;
+    /** document structure */
     private DocumentStructure ds = null;
+    /** token list */
     private List tokens = null;
 
+    /** annotate flag */
     private boolean annotate = false;
+    /** marker used for annotation */
     private static final String WARNING_MARKER = "XMLBS!";
 
+    /** processed flag, set to true when processing finished */
+    private boolean processed = false;
+
+    /**
+     * Construct a body shop instances for stream with struction
+     * descriptor.
+     * @param in input stream
+     * @param ds document structure descriptor
+     * @throws IOException when reading from stream failed
+     */
     public XMLBS (InputStream in, DocumentStructure ds)
     throws IOException {
 	this.in = in;
 	this.ds = ds;
     }
 
+    /**
+     * Read and restructure data.
+     * @throws IOException when reading from stream failed
+     */
     public void process ()
     throws IOException {
+	// read tokens from stream
 	tokenize();
 
 	// remove unknown tags and unknown tag attributes
@@ -57,21 +86,64 @@ public class XMLBS {
 
 	// remove unknown entities
 	// TODO
+
+	processed = true;
+    }
+
+    /**
+     * Write result data to stream.
+     * @param out output stream
+     * @throws IOException when writing to stream fails
+     * @throws IllegalStateException when data not processed
+     */
+    public void write (OutputStream out)
+    throws IOException, IllegalStateException {
+	if (!processed) {
+	    throw new IllegalStateException();
+	}
+
+	for (Iterator it = tokens.iterator(); it.hasNext();) {
+	    Token tok = (Token) it.next();
+	    out.write(tok.toString().getBytes());
+	}
+	out.flush();
+    }
+
+    /**
+     * @return true when annotation is configurated for this
+     * processor
+     */
+    public boolean getAnnotate () {
+	return annotate;
+    }
+
+    /**
+     * @param flag turn annotation on (<TT>true</TT>) or off
+     */
+    public void setAnnotate (boolean flag) {
+	annotate = flag;
     }
 
 // private stuff
+    /**
+     * Tokenize input stream.
+     * @throws IOException when reading from stream failed
+     */
     private void tokenize ()
     throws IOException {
 	Tokenizer tok = new Tokenizer(in);
 	tokens = tok.readAllTokens();
     }
 
+    /**
+     * Remove unknown tags and unknown tag attributes.
+     */
     private void cleanupTags () {
 	for (ListIterator it = tokens.listIterator(); it.hasNext();) {
 	    Token tok = (Token) it.next();
 	    if (tok instanceof TagToken) {
 		TagToken tag = (TagToken) tok;
-		if (! ds.isKnownTag(tag)) {
+		if (!ds.isKnownTag(tag)) {
 		    if (annotate) {
 			it.set(comment("unknow tag", tag));
 		    } else {
@@ -84,6 +156,9 @@ public class XMLBS {
 	}
     }
 
+    /**
+     * Verify and restructure tag hierarchy.
+     */
     private void hierarchy () {
 	CrumbTrail trail = new CrumbTrail(ds);
 	for (int i = 0; i < tokens.size(); i++) {
@@ -167,6 +242,9 @@ public class XMLBS {
 	}
     }
 
+    /**
+     * Merge adjoined text blocks.
+     */
     private void mergeAdjoinedText () {
 	Token last = null;
 	for (Iterator it = tokens.iterator(); it.hasNext();) {
@@ -181,34 +259,65 @@ public class XMLBS {
 	}
     }
 
-    private CommentToken comment (String msg, Token loc) {
-	return new CommentToken(WARNING_MARKER + "(" + msg + ")" + loc);
+    /**
+     * Create comment token for annotation.
+     * @param msg message
+     * @param tok token to include
+     * @return comment token for annotation
+     */
+    private static CommentToken comment (String msg, Token tok) {
+	return new CommentToken(WARNING_MARKER + "(" + msg + ")" + tok);
     }
 
+    /**
+     * Crumb trail into document holds parents, grantparent etc.
+     */
     class CrumbTrail {
+	/** actual trail */
 	private List trail = new Vector();
+	/** document structure */
 	private DocumentStructure ds = null;
 
+	/**
+	 * @param ds document structure
+	 */
 	public CrumbTrail (DocumentStructure ds) {
 	    this.ds = ds;
 	}
 
+	/**
+	 * @return current parent tag
+	 */
 	public TagToken getTop () {
 	    return (TagToken) (trail.size() == 0 ? null : trail.get(0));
 	}
 
-	public void push (TagToken tok) {
-	    trail.add(0, tok);
+	/**
+	 * @param tag parent of next generation
+	 */
+	public void push (TagToken tag) {
+	    trail.add(0, tag);
 	}
 
+	/**
+	 * Drop generation.
+	 * @return last generation
+	 */
 	public TagToken pop () {
 	    return (TagToken) (trail.size() == 0 ? null : trail.remove(0));
 	}
-
+    
+	/**
+	 * @return number of generations
+	 */
 	public int getDepth () {
 	    return trail.size();
 	}
 
+	/**
+	 * @param tag close tag
+	 * @return true if any parent open tag of given close tag
+	 */
 	public boolean hasOpenFor (TagToken tag) {
 	    for (Iterator it = trail.iterator(); it.hasNext();) {
 		TagToken t = (TagToken) it.next();
@@ -219,6 +328,10 @@ public class XMLBS {
 	    return false;
 	}
 
+	/**
+	 * @param tag tag
+	 * @return true if any parent can contain given tag
+	 */
 	public boolean hasContainerFor (TagToken tag) {
 	    for (Iterator it = trail.iterator(); it.hasNext();) {
 		TagToken t = (TagToken) it.next();
@@ -231,18 +344,18 @@ public class XMLBS {
     }
 
     /**
-     * Debug..
+     * Commandline interface.
+     * @param args commandline arguments, 1st used as input filename
+     * @throws Exception when anything goes wrong..
      */
     public static void main (String[] args)
     throws Exception {
 	InputStream in = new java.io.FileInputStream(args[0]);
 	DocumentStructure ds = new TestDocumentStructure();
-        XMLBS bs = new XMLBS(in, ds);
-	bs.annotate = true;
-	bs.process();
 
-	for (Iterator it = bs.tokens.iterator(); it.hasNext();) {
-	    System.out.print(it.next().toString());
-	}
+        XMLBS bs = new XMLBS(in, ds);
+	bs.setAnnotate(true);
+	bs.process();
+	bs.write(System.out);
     }
 }
