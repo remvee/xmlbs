@@ -29,11 +29,17 @@ import org.apache.regexp.*;
  */
 public class TextToken implements Token
 {
-    String txt;
+    String txt, data;
 
-    public TextToken (String txt)
+    public TextToken (String data)
     {
-	this.txt = fixText(txt);
+	this.data = data;
+	this.txt = fixText(data);
+    }
+
+    public String getData ()
+    {
+	return data;
     }
 
     public String toString ()

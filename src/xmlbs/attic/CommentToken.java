@@ -30,8 +30,13 @@ public class CommentToken implements Token
 	this.data = data;
     }
 
+    public String getData ()
+    {
+	return data;
+    }
+
     public String toString ()
     {
-	return "<!--"+data+"-->";
+	return "<!--"+getData()+"-->";
     }
 }
