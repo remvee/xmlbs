@@ -158,7 +158,9 @@ class Tag
 
 	if (attrs != null)
 	{
-	    Iterator it = attrs.keySet().iterator();
+	    List l = new Vector(attrs.keySet());
+	    Collections.sort(l);
+	    Iterator it = l.iterator();
 	    while (it.hasNext())
 	    {
 		String attr = (String) it.next();
