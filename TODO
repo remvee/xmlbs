@@ -1,14 +1,25 @@
 - core:
-    - introduce CrumbTrail to do stack actions
+    - ensure only one root node exists
     - don't let loose tag destroy structure when now parent
       allows it, actions in this case could be:
-      - remove/comment loose tag with content
       - find container for a parent
     - merge tags of which only one is allowed (like head for html)
+    - move parsing stuff to a parser class
+	- create unit tests for parser
+	- treat cdata as text (cdata should extend text?)
+    - document structure:
+	- add isKnownEntity to doc structure interface and use it
+	  for text tokens
+	- smarter container rules for |, + and ?
+	- handle #implied, #required and cdata, nmtoken and id
+	  attributes
+    - include xhtml-1.0 document structure object
 - frontends:
     - commandline:
 	--comment-illegal-code
 	--discard-comments
+	--discard-special
+	--discard-decl
 	--transform-cdata
     - web xhtmlizer:
 	validate, report and deliver bodyshopped version
