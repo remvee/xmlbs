@@ -4,31 +4,49 @@
 <!-- build tool configuration -->
   <property name="ctags.exec" value="exctags"/>
   <property name="cvs2cl.exec" value="cvs2cl"/>
-  <property name="build.compiler" value="jikes"/>
 
 <!-- building sites -->
   <property name="src.dir" value="src"/>
+  <property name="lib.dir" value="lib"/>
+  <property name="depend.dir" value="depend"/>
   <property name="build.dir" value="build"/>
   <property name="jar.file" value="${project.name}.jar"/>
   <property name="apidoc.dir" value="doc"/>
   <property name="apidoc.title" value="XMLBS apidoc"/>
   <property name="apidoc.pkgnames" value="xmlbs.*"/>
   <property name="apidoc.jdkurl" value="http://java.sun.com/products/jdk/1.3/docs/api/"/>
+  <path id="build.classpath">
+    <pathelement path="${classpath}"/>
+    <fileset dir="${lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
 
 <!-- targets -->
   <target name="prepare">
     <mkdir dir="${build.dir}"/>
+    <mkdir dir="${depend.dir}"/>
     <mkdir dir="${apidoc.dir}"/>
   </target>
 
-  <target name="compile" depends="prepare">
-    <javac srcdir="${src.dir}" destdir="${build.dir}"/>
+  <target name="compile" depends="prepare,depend">
+    <javac srcdir="${src.dir}" destdir="${build.dir}">
+      <classpath refid="build.classpath"/>
+    </javac>
     <copy todir="${build.dir}">
       <fileset dir="${src.dir}">
 	<include name="**/*.properties"/>
 	<include name="**/*.xml"/>
       </fileset>
     </copy>
+  </target>
+
+  <target name="depend">
+    <style style="misc/depend-build.xsl" in="depend.xml" out="depend-build.xml"/>
+    <ant antfile="depend-build.xml">
+      <property name="lib.dir" value="${lib.dir}"/>
+      <property name="work.dir" value="${depend.dir}"/>
+    </ant>
   </target>
 
   <target name="jar" depends="compile">
@@ -76,6 +94,11 @@
     <delete dir="${apidoc.dir}"/>
     <delete file="${jar.file}"/>
     <delete file="tags"/>
+  </target>
+
+  <target name="distclean" depends="clean">
+    <delete dir="${depend.dir}"/>
+    <delete file="depend-build.xml"/>
   </target>
 
 </project>

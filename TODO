@@ -1,7 +1,5 @@
 - distribution
     - write build instructions
-    - document/ automate jakarta-regexp dependency
-    - remove jikes from build.xml
 
 - core:
     - move parsing stuff to a parser class
