@@ -35,7 +35,7 @@ import java.util.*;
  * </UL>
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.39 $
+ * @version $Revision: 1.40 $
  */
 public class XMLBS {
     /** input */
@@ -140,7 +140,11 @@ public class XMLBS {
 
 	for (Iterator it = tokens.iterator(); it.hasNext();) {
 	    Token tok = (Token) it.next();
-	    out.write(tok.toString().getBytes());
+	    if (encoding != null) {
+		out.write(tok.toString().getBytes(encoding));
+	    } else {
+		out.write(tok.toString().getBytes());
+	    }
 	}
 	out.flush();
     }
