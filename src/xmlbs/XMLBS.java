@@ -35,7 +35,7 @@ import java.util.*;
  * </UL>
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.32 $
+ * @version $Revision: 1.33 $
  */
 public class XMLBS {
     /** input */
@@ -291,6 +291,12 @@ public class XMLBS {
 	    if (tok instanceof TagToken) {
 		TagToken tag = (TagToken) tok;
 		if (tag.isCloseTag()
+			&& tokens.get(i-1) instanceof TagToken
+			&& ((TagToken)tokens.get(i-1)).isOpenTag()
+			&& ((TagToken)tokens.get(i-1)).isSameTag(tag)) {
+		    tokens.set(i-1, ((TagToken)tokens.get(i-1)).emptyTag());
+		    tokens.remove(i);
+		} else if (tag.isCloseTag()
 			&& tokens.get(i-1) instanceof TextToken
 			&& ((TextToken)tokens.get(i-1)).isWhiteSpace()
 			&& tokens.get(i-2) instanceof TagToken
@@ -299,12 +305,12 @@ public class XMLBS {
 		    tokens.set(i-2, ((TagToken)tokens.get(i-2)).emptyTag());
 		    tokens.remove(i);
 		    tokens.remove(i-1);
-		}
-		if (tag.isCloseTag()
-			&& tokens.get(i-1) instanceof TagToken
-			&& ((TagToken)tokens.get(i-1)).isOpenTag()
-			&& ((TagToken)tokens.get(i-1)).isSameTag(tag)) {
-		    tokens.set(i-1, ((TagToken)tokens.get(i-1)).emptyTag());
+		} else if (tag.isCloseTag()
+			&& tokens.get(i-1) instanceof CommentToken
+			&& tokens.get(i-2) instanceof TagToken
+			&& ((TagToken)tokens.get(i-2)).isOpenTag()
+			&& ((TagToken)tokens.get(i-2)).isSameTag(tag)) {
+		    tokens.set(i-2, ((TagToken)tokens.get(i-2)).emptyTag());
 		    tokens.remove(i);
 		}
 	    }
