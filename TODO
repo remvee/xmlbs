@@ -8,7 +8,6 @@
 	- smarter container rules for |, + and ?
 	- handle #implied, #required and cdata, nmtoken and id
 	  attributes
-	- add isEmptyTag
     - include xhtml-1.0 document structure object
 	http://www.w3.org/TR/xhtml1/
     - passes:
@@ -17,7 +16,7 @@
 		- optional case insensitive tag matching
 	    - record line number in tokens for reporting !!TODO!!
 	    - keep known entities if text tokens !!TODO!!
-	    - handle empty tags !!TODO!!
+	    - handle empty tags
 	- hierarchy
 	    - add missing close tags
 	    - mark lost tags !!TODO!!
