@@ -4,3 +4,4 @@ depend
 depend-build.xml
 doc
 lib
+xmlbs.jar
