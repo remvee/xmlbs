@@ -59,6 +59,7 @@ class Text
 			String s = in.substring(i);
 			if (entityRefRe.match(s) || charRefRe.match(s))
 			{
+			    // TODO test if known entity
 			    out.append(in.substring(i, j+1));
 			    i = j;
 			}

@@ -3,8 +3,6 @@ package xmlbs;
 import java.io.*;
 import java.util.*;
 
-import org.apache.regexp.*;
-
 /**
  * Patchup malformed XML, XML bodyshop.  This class tries to fix
  * the given malformed XML file by:
@@ -28,7 +26,7 @@ import org.apache.regexp.*;
  *
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class XMLBS
 {
@@ -102,19 +100,17 @@ public class XMLBS
 		Tag t = (Tag) o;
 		if (t.isOpenTag())
 		{
-		    if (! dtd.isKnownTag(t.getName().toLowerCase())) continue;
+		    if (! dtd.isKnownTag(t)) continue;
 
-		    if (dtd.isEmptyTag(t.getName().toLowerCase()))
+		    if (dtd.isEmptyTag(t))
 		    {
 			children.add(t.emptyTag());
 		    }
 		    else
 		    {
 			Node n = new Node(dtd, t, tokens, i);
+			i = n.getEndPosition();
 			children.add(n);
-
-			int j = n.getEndPosition();
-			if (j != -1) i = j;
 		    }
 		}
 	    }
@@ -138,6 +134,7 @@ public class XMLBS
     throws Exception
     {
 	XMLBS bs = new XMLBS(new DTD(DTD.HTML), new File(args[0]));
+	ByteArrayOutputStream out = new ByteArrayOutputStream();
 	bs.write(new PrintWriter(System.out));
     }
 }

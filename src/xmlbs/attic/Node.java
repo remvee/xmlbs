@@ -30,24 +30,33 @@ class Node
 		Tag t = (Tag) o;
 		if (t.isCloseTag())
 		{
-		    if (! dtd.isKnownTag(t.getName().toLowerCase())) continue;
+		    if (! dtd.isKnownTag(t))
+		    {
+			continue;
+		    }
 
-		    if (! t.equals(closeTag)) closedBy = t;
+		    if (! t.equals(closeTag))
+		    {
+			closedBy = t;
+		    }
+
 		    endPos = i;
 		    break;
 		}
 		else if (t.isOpenTag())
 		{
-		    if (! dtd.isKnownTag(t.getName().toLowerCase())) continue;
-
-		    Set types = (Set) dtd.decendantSet(openTag.getName().toLowerCase());
-		    if (types != null && ! types.contains(t.getName().toLowerCase()))
+		    if (! dtd.isKnownTag(t))
 		    {
-			endPos = (i > startPos + 1) ? i-1 : i;
+			continue;
+		    }
+
+		    if (! dtd.canInclude(openTag, t))
+		    {
+			endPos = i-1;
 			break;
 		    }
 
-		    if (dtd.isEmptyTag(t.getName().toLowerCase()))
+		    if (dtd.isEmptyTag(t))
 		    {
 			children.add(t.emptyTag());
 		    }

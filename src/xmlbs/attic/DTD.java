@@ -98,18 +98,19 @@ class DTD
 	return out;
     }
 
-    public Set decendantSet (String name)
+    public boolean canInclude (Tag parent, Tag child)
     {
-	return (Set) elementMap.get(name.toLowerCase());
+	Set set = (Set) elementMap.get(parent.getName().toLowerCase());
+	return set.contains(child.getName().toLowerCase());
     }
 
-    public boolean isKnownTag (String name)
+    public boolean isKnownTag (Tag tag)
     {
-	return elementMap.containsKey(name);
+	return elementMap.containsKey(tag.getName().toLowerCase());
     }
 
-    public boolean isEmptyTag (String name)
+    public boolean isEmptyTag (Tag tag)
     {
-	return emptySet.contains(name);
+	return emptySet.contains(tag.getName().toLowerCase());
     }
 }
