@@ -47,7 +47,7 @@ import java.util.*;
  * </pre>
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class PropertiesDocumentStructure implements DocumentStructure {
     /** set to keep tag names */
@@ -243,14 +243,18 @@ public class PropertiesDocumentStructure implements DocumentStructure {
      * Add icase-attribute-name-set for speed.
      * @param name tag name to lookup
      * @param attr attribute name to lookup
-     * @return attribute name in proper case
+     * @return attribute name in proper case or the value of
+     * <tt>attr</tt> when attribute is not known
      */
     public String getTagAttribute (String name, String attr) {
 	if (!icase) {
 	    return attr;
 	}
-	String in = attr.toLowerCase();
 	List names = (List) tagAttributes.get(name);
+	if (names == null) {
+	    return attr;
+	}
+	String in = attr.toLowerCase();
 	for (Iterator it = names.iterator(); it.hasNext();) {
 	    String n = (String) it.next();
 	    if (n.toLowerCase().equals(in)) {
