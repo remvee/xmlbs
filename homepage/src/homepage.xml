@@ -36,6 +36,14 @@
 	<html>
 	    The following releases are considered to be stable.
 	</html>
+	<release tag="PRERELEASE-6" filebase="xmlbs-0.0.6">
+	    <html><![CDATA[
+		9.II.2004
+		<ul>
+		    <li>handle character encodings</li>
+		</ul>
+	    ]]></html>
+	</release>
 	<release tag="PRERELEASE-5" filebase="xmlbs-0.0.5">
 	    <html><![CDATA[
 		16.IV.2003
