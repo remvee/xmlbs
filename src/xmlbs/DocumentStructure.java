@@ -22,10 +22,10 @@
 package xmlbs;
 
 /**
- * Interface for writign document structure descriptions.
+ * Interface for writing document structure descriptions.
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public interface DocumentStructure {
     /**
