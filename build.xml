@@ -42,7 +42,8 @@
 		</javac>
 	</target>
 
-	<target name="depend">
+	<target name="depend" depends="prepare"
+			description="download all dependencies">
 		<style style="misc/depend-build.xsl" in="depend.xml" out="depend-build.xml"/>
 		<ant antfile="depend-build.xml">
 			<property name="lib.dir" value="${lib.dir}"/>
