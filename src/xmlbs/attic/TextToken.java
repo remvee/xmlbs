@@ -27,11 +27,10 @@ import java.util.regex.*;
  * Token to represent and hold text blocks.  Entity refs are
  * preserved when possible and new are introduced for &lt;, &gt;
  * and &amp;.
- * <P><EM>TODO handle known entities only</EM></P>
  *
  * @see <A href="http://www.w3.org/TR/REC-xml#syntax">XML: Character Data and Markup</A>
  * @author R.W. van 't Veer
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class TextToken implements Token {
     /** processed text */

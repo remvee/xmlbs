@@ -36,7 +36,7 @@ import java.util.regex.PatternSyntaxException;
  *
  * @see <A href="http://www.w3.org/TR/REC-xml#sec-logical-struct">XML: Logical Structures</A>
  * @author R.W. van 't Veer
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class TagToken implements Token {
     /** tag name */
@@ -135,7 +135,7 @@ public class TagToken implements Token {
                 } else {
                     break;
 		}
-                val = valMa.group(1); // TODO handle entity and char refs
+                val = valMa.group(1);
                 pos += valMa.end(1);
 
 		if (ds.getIgnoreCase()) {

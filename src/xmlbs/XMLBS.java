@@ -35,7 +35,7 @@ import java.util.*;
  * </UL>
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.40 $
+ * @version $Revision: 1.41 $
  */
 public class XMLBS {
     /** input */
@@ -118,9 +118,6 @@ public class XMLBS {
 
 	// cleanup empty tags
 	cleanEmptyTags();
-
-	// remove unknown entities
-	// TODO
 
 	processed = true;
     }
