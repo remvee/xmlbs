@@ -29,7 +29,7 @@ import org.apache.regexp.RESyntaxException;
  * preserved when possible and new are introduced for &lt;, &gt;
  * and &amp;.
  * @author R.W. van 't Veer
- * @version $Id: TextToken.java,v 1.4 2002/10/11 12:41:36 remco Exp $
+ * @version $Id: TextToken.java,v 1.5 2002/10/13 13:55:47 remco Exp $
  */
 public class TextToken implements Token {
     /** processed text */
@@ -50,6 +50,21 @@ public class TextToken implements Token {
      */
     public String getData () {
         return data;
+    }
+
+    /**
+     * @param data text for this block
+     */
+    public void setData (String data) {
+	this.data = data;
+	this.txt = fixText(data);
+    }
+
+    /**
+     * @return true when block only contains whitespace
+     */
+    public boolean isWhiteSpace () {
+	return data.trim().length() == 0;
     }
 
     /**

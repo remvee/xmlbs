@@ -22,15 +22,14 @@
 package xmlbs;
 
 import java.io.*;
+import java.util.*;
 
-public class XMLBSUtil
-{
-    public static String process (DTD dtd, String in)
-    throws Exception
-    {
-	ByteArrayInputStream _in = new ByteArrayInputStream(in.getBytes());
-	ByteArrayOutputStream _out = new ByteArrayOutputStream();
-	(new xmlbs.XMLBS(dtd, _in)).write(_out);
-	return _out.toString();
-    }
+/**
+ * @author R.W. van 't Veer
+ * @version $Revision: 1.1 $
+ */
+public interface DocumentStructure {
+    boolean isKnownTag (TagToken tag);
+    void retainKnownAttributes (TagToken tag);
+    boolean canContain (TagToken parent, Token child);
 }

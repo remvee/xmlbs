@@ -25,129 +25,233 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Patchup malformed XML, XML bodyshop.  This class tries to fix
- * the given malformed XML file by:
- * <UL>
- *   <LI>
- *     cleaning up tags; ensure attributes are quoted
- *     properly
- *   </LI>
- *   <LI>
- *     fixing XML escaping in text; detect references and escape
- *     &gt;, &lt;, &quote; and &apos;
- *   </LI>
- *   <LI>
- *     closing all unclosed tags
- *   </LI>
- *   <LI>
- *     fixing tag overlap
- *   </LI>
- * </UL>
- * Useful when, for example, converting HTML to XHTML.
- *
- *
  * @author R.W. van 't Veer
- * @version $Revision: 1.24 $
+ * @version $Revision: 1.25 $
  */
-public class XMLBS
-{
-    InputStream in;
-    List nodes;
+public class XMLBS {
+    private InputStream in = null;
+    private DocumentStructure ds = null;
+    private List tokens = null;
 
-    public XMLBS (DTD dtd, InputStream in)
-    throws IOException
-    {
-	this.in = new BufferedInputStream(in);
+    private boolean debug = false;
+    private boolean commentIllegalCode = false;
+    private String WARNING_MARKER = "XMLBS!";
 
-	List tokens = tokenize();
-	// TODO: remove overclosed tags to prevented early close
-	nodes = createTree(dtd, tokens);
-    }
-    public XMLBS (DTD dtd, File f)
-    throws IOException
-    {
-	this(dtd, new FileInputStream(f));
+    public XMLBS (InputStream in, DocumentStructure ds)
+    throws IOException {
+	this.in = in;
+	this.ds = ds;
     }
 
-    /**
-     * Create a list of tags and text from input.
-     */
-    private List tokenize ()
-    throws IOException
-    {
-	List v = new Vector();
+    public void process ()
+    throws IOException {
+	tokenize();
 
-	Tokenizer tokenizer = new Tokenizer(in);
-	Token tok;
-	while ((tok = tokenizer.readToken()) != null)
-	{
-	    v.add(tok);
+	// remove unknown tags and unknown tag attributes
+	cleanupTags();
+	if (debug) {
+	    System.err.println("after 'cleanupTags': " + tokens);
 	}
-	return v;
+
+	// remove unknown entities
+	// TODO
+
+	// remove stay close tags
+	removeStrayCloseTags();
+	if (debug) {
+	    System.err.println("after 'removeStayCloseTags': " + tokens);
+	}
+
+	// reconstruct hierarchy
+	reconstHierarchy();
+	if (debug) {
+	    System.err.println("after 'reconstHierarchy': " + tokens);
+	}
+
+	// merge adjoined text tokens
+	mergeAdjoinedText();
+	if (debug) {
+	    System.err.println("after 'mergeAdjoinedText': " + tokens);
+	}
     }
 
-    /**
-     * Make a hierarcy of nodes from the given list.
-     * @param dtd simple document definition
-     * @param tokens list of tags and text
-     * @return list of nodes and text
-     */
-    private List createTree (DTD dtd, List tokens)
-    {
-	List children = new Vector();
-	for (int i = 0; i < tokens.size(); i++)
-	{
-	    Object o = tokens.get(i);
-	    if (o instanceof TagToken)
-	    {
-		TagToken t = (TagToken) o;
-		if (t.isOpenTag() || t.isEmptyTag())
-		{
-		    if (! dtd.isKnownTag(t)) continue;
+    public void setCommentIllegalCode (boolean flag) {
+	commentIllegalCode = flag;
+    }
 
-		    if (dtd.isEmptyTag(t) || t.isEmptyTag())
-		    {
-			children.add(t.emptyTag());
+    public boolean getCommentIllegalCode () {
+	return commentIllegalCode;
+    }
+
+// private stuff
+    private void tokenize ()
+    throws IOException {
+	Tokenizer tok = new Tokenizer(in);
+	tokens = tok.readAllTokens();
+    }
+
+    private void cleanupTags () {
+	for (ListIterator it = tokens.listIterator(); it.hasNext();) {
+	    Token tok = (Token) it.next();
+	    if (tok instanceof TagToken) {
+		TagToken tag = (TagToken) tok;
+		if (! ds.isKnownTag(tag)) {
+		    if (commentIllegalCode) {
+			it.set(new CommentToken(WARNING_MARKER + ": UNKNOWN TAG: " + tag));
+		    } else {
+			it.remove();
 		    }
-		    else
-		    {
-			Node n = new Node(dtd, t, tokens, i);
-			children.add(n);
+		} else {
+		    ds.retainKnownAttributes(tag);
+		}
+	    }
+	}
+    }
 
-			int j = n.getEndPosition();
-			if (j != -1) i = j;
+    private void removeStrayCloseTags () {
+	Map m = new HashMap();
+	for (ListIterator it = tokens.listIterator(); it.hasNext();) {
+	    Token tok = (Token) it.next();
+	    if (tok instanceof TagToken) {
+		TagToken tag = (TagToken) tok;
+		if (tag.isOpenTag()) {
+		    // increment map entry
+		    Integer i = (Integer) m.get(tag.getName());
+		    if (i == null) {
+			i = new Integer(0);
+		    }
+		    i = new Integer(i.intValue() + 1);
+		    m.put(tag.getName(), i);
+		} else if (tag.isCloseTag()) {
+		    // decrement map entry
+		    Integer i = (Integer) m.get(tag.getName());
+		    if (i == null) {
+			i = new Integer(0);
+		    }
+		    i = new Integer(i.intValue() - 1);
+		    // remove tag if entry sub zeros
+		    if (i.intValue() < 0) {
+			if (commentIllegalCode) {
+			    it.set(new CommentToken(WARNING_MARKER + ": STRAY CLOSE TAG: " + tag));
+			} else {
+			    it.remove();
+			}
+		    } else {
+			m.put(tag.getName(), i);
 		    }
 		}
 	    }
-	    else
-	    {
-		children.add(o);
-	    }
 	}
-	return children;
     }
 
-    /**
-     * Write end result to stream.
-     * @param out stream to write to
-     */
-    public void write (OutputStream out)
-    {
-	PrintWriter pw = new PrintWriter(out);
-	Iterator it = nodes.iterator();
-	while (it.hasNext()) pw.print(""+it.next());
-	pw.println();
-	pw.flush();
-	pw.close();
+    private void reconstHierarchy() {
+	Stack stack = new Stack();
+	for (int i = 0; i < tokens.size(); i++) {
+	    Token tok = (Token) tokens.get(i);
+	    TagToken top = stack.empty() ? null : (TagToken) stack.peek();
+
+	    if (tok instanceof TextToken) {
+		TextToken txt = (TextToken) tok;
+		if (!txt.isWhiteSpace() && !ds.canContain(top, txt)) {
+System.err.println("  text in: "+top);
+		    // remove stray text??
+		    tokens.remove(i--);
+		}
+	    } else if (tok instanceof TagToken) {
+System.err.println("  for: "+tok);
+		TagToken tag = (TagToken) tok;
+		if (tag.isOpenTag()) {
+		    if (!ds.canContain(top, tag)) {
+			if (stack.empty()) {
+			    // illegal tag in root
+System.err.println("  illegal in root: "+tok);
+			    tokens.remove(i--);
+			    continue;
+			} else {
+			    // add close tags till top will have us
+			    do {
+				tokens.add(i++, top.closeTag());
+System.err.println("  close first: "+top.closeTag());
+				stack.pop();
+				if (!stack.empty()) {
+				    top = (TagToken) stack.peek();
+				}
+			    } while (!ds.canContain(top, tag) && !stack.empty());
+			}
+		    }
+		    // new top
+		    stack.push(tag);
+		} else if (tag.isCloseTag()) {
+		    if (! stackContainsOpenTag(stack, tag)) {
+			// remove stray close tag in root
+System.err.println("  remove stray close: "+tag);
+			tokens.remove(i--);
+		    } else if (!tag.isSameTag(top)) {
+			if (!stack.empty()) {
+			    // add close tags till top same tag
+			    do {
+				tokens.add(i++, top.closeTag());
+System.err.println("  close also: "+top.closeTag());
+				stack.pop();
+				if (!stack.empty()) {
+				    top = (TagToken) stack.peek();
+				}
+			    } while (!tag.isSameTag(top) && !stack.empty());
+
+			    // keep close tag and remove top
+			    if (!stack.empty()) {
+				stack.pop();
+			    }
+			} else {
+			    // illegal tag in root
+System.err.println("  illegal in root: "+tok);
+			    tokens.remove(i--);
+			}
+		    } else {
+			stack.pop();
+		    }
+		}
+	    }
+	}
+    }
+
+    private static boolean stackContainsOpenTag(Stack stack, TagToken tag) {
+	for (Iterator it = stack.iterator(); it.hasNext();) {
+	    TagToken t = (TagToken) it.next();
+	    if (t.isSameTag(tag)) {
+		return true;
+	    }
+	}
+	return false;
+    }
+
+    private void mergeAdjoinedText () {
+	Token last = null;
+	for (Iterator it = tokens.iterator(); it.hasNext();) {
+	    Token tok = (Token) it.next();
+	    if (tok instanceof TextToken && last instanceof TextToken) {
+		it.remove();
+		TextToken txt = (TextToken) tok;
+		TextToken ltxt = (TextToken) last;
+		ltxt.setData(ltxt.getData() + " " + txt.getData());
+	    }
+	    last = tok;
+	}
     }
 
     /**
      * Debug..
      */
     public static void main (String[] args)
-    throws Exception
-    {
-	XMLBS bs = new XMLBS(new DTD(DTD.HTML), new File(args[0]));
-	bs.write(System.out);
+    throws Exception {
+	InputStream in = new java.io.FileInputStream(args[0]);
+	DocumentStructure ds = new TestDocumentStructure();
+        XMLBS bs = new XMLBS(in, ds);
+	bs.debug = true;
+	bs.process();
+
+	for (Iterator it = bs.tokens.iterator(); it.hasNext();) {
+	    System.out.print(it.next().toString());
+	}
     }
 }
