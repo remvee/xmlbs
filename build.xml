@@ -1,0 +1,45 @@
+<project name="xmlbs" default="compile" basedir=".">
+  <property name="project.name" value="xmlbs"/>
+
+<!-- build tool configuration -->
+  <property name="ctags.exec" value="exctags"/>
+  <property name="build.compiler" value="jikes"/>
+
+<!-- building sites -->
+  <property name="src.dir" value="src"/>
+  <property name="build.dir" value="build"/>
+  <property name="jar.file" value="${project.name}.jar"/>
+
+<!-- targets -->
+  <target name="prepare">
+    <mkdir dir="${build.dir}"/>
+  </target>
+
+  <target name="compile" depends="prepare">
+    <javac srcdir="${src.dir}" destdir="${build.dir}"/>
+    <copy todir="${build.dir}">
+      <fileset dir="${src.dir}">
+	<include name="**/*.properties"/>
+	<include name="**/*.xml"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="jar" depends="compile">
+    <jar jarfile="${jar.file}" basedir="${build.dir}"/>
+  </target>
+
+  <target name="ctags">
+    <exec executable="${ctags.exec}">
+      <arg value="-R"/>
+      <arg value="${src.dir}"/>
+    </exec>
+  </target>
+
+  <target name="clean">
+    <delete dir="${build.dir}"/>
+    <delete file="${jar.file}"/>
+    <delete file="tags"/>
+  </target>
+
+</project>
