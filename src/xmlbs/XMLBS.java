@@ -35,7 +35,7 @@ import java.util.*;
  * </UL>
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.30 $
+ * @version $Revision: 1.31 $
  */
 public class XMLBS {
     /** input */
@@ -83,6 +83,9 @@ public class XMLBS {
 
 	// merge adjoined text tokens
 	mergeAdjoinedText();
+
+	// cleanup empty tags
+	cleanEmptyTags();
 
 	// remove unknown entities
 	// TODO
@@ -266,6 +269,36 @@ public class XMLBS {
     }
 
     /**
+     * Merge adjoined text blocks.
+     */
+    private void cleanEmptyTags () {
+	TagToken last = null;
+	for (int i = 2; i < tokens.size(); i++) {
+	    Token tok = (Token) tokens.get(i);
+	    if (tok instanceof TagToken) {
+		TagToken tag = (TagToken) tok;
+		if (tag.isCloseTag()
+			&& tokens.get(i-1) instanceof TextToken
+			&& ((TextToken)tokens.get(i-1)).isWhiteSpace()
+			&& tokens.get(i-2) instanceof TagToken
+			&& ((TagToken)tokens.get(i-2)).isOpenTag()
+			&& ((TagToken)tokens.get(i-2)).isSameTag(tag)) {
+		    tokens.set(i-2, ((TagToken)tokens.get(i-2)).emptyTag());
+		    tokens.remove(i);
+		    tokens.remove(i-1);
+		}
+		if (tag.isCloseTag()
+			&& tokens.get(i-1) instanceof TagToken
+			&& ((TagToken)tokens.get(i-1)).isOpenTag()
+			&& ((TagToken)tokens.get(i-1)).isSameTag(tag)) {
+		    tokens.set(i-1, ((TagToken)tokens.get(i-1)).emptyTag());
+		    tokens.remove(i);
+		}
+	    }
+	}
+    }
+
+    /**
      * Create comment token for annotation.
      * @param msg message
      * @param tok token to include
@@ -363,7 +396,7 @@ public class XMLBS {
 	DocumentStructure ds = new PropertiesDocumentStructure(prop);
 
         XMLBS bs = new XMLBS(in, ds);
-	bs.setAnnotate(false);
+	bs.setAnnotate(true);
 	bs.process();
 	bs.write(System.out);
     }
