@@ -130,6 +130,7 @@ class Tag
     public boolean isEmptyTag () { return type == EMPTY; }
 
     public Tag closeTag () { return new Tag(getName(), null, Tag.CLOSE); }
+    public Tag emptyTag () { return new Tag(getName(), null, Tag.EMPTY); }
 
     public String toString ()
     {
@@ -155,18 +156,21 @@ class Tag
 
 	sb.append(tagName);
 
-	Iterator it = attrs.keySet().iterator();
-	while (it.hasNext())
+	if (attrs != null)
 	{
-	    String attr = (String) it.next();
-	    String val = (String) attrs.get(attr);
+	    Iterator it = attrs.keySet().iterator();
+	    while (it.hasNext())
+	    {
+		String attr = (String) it.next();
+		String val = (String) attrs.get(attr);
 
-	    sb.append(' ');
-	    sb.append(attr);
-	    sb.append('=');
-	    sb.append('"');
-	    sb.append(Text.fixText(val));
-	    sb.append('"');
+		sb.append(' ');
+		sb.append(attr);
+		sb.append('=');
+		sb.append('"');
+		sb.append(Text.fixText(val));
+		sb.append('"');
+	    }
 	}
 
 	if (type == EMPTY) sb.append('/');

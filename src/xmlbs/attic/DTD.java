@@ -6,6 +6,7 @@ import java.io.*;
 class DTD
 {
     Map elementMap = new HashMap();
+    Set emptySet = new HashSet();
 
     final static int HTML = 0;
 
@@ -64,6 +65,10 @@ class DTD
 			{
 			    l.addAll(resolveSet((Set) setMap.get(t)));
 			}
+			else if (t.equals("!EMPTY"))
+			{
+			    emptySet.add(tag);
+			}
 			else
 			{
 			    l.add(t);
@@ -96,5 +101,15 @@ class DTD
     public Set decendantSet (String name)
     {
 	return (Set) elementMap.get(name.toLowerCase());
+    }
+
+    public boolean isKnownTag (String name)
+    {
+	return elementMap.containsKey(name);
+    }
+
+    public boolean isEmptyTag (String name)
+    {
+	return emptySet.contains(name);
     }
 }

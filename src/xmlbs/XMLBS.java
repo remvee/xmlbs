@@ -26,8 +26,9 @@ import org.apache.regexp.*;
  * </UL>
  * Useful when, for example, converting HTML to XHTML.
  *
+ *
  * @author R.W. van 't Veer
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class XMLBS
 {
@@ -40,6 +41,7 @@ public class XMLBS
 	this.in = new BufferedInputStream(in);
 
 	List tokens = tokenize();
+	// TODO: remove overclosed tags to prevented early close
 	nodes = createTree(dtd, tokens);
     }
     public XMLBS (DTD dtd, File f)
@@ -100,11 +102,20 @@ public class XMLBS
 		Tag t = (Tag) o;
 		if (t.isOpenTag())
 		{
-		    Node n = new Node(dtd, t, tokens, i);
-		    children.add(n);
+		    if (! dtd.isKnownTag(t.getName().toLowerCase())) continue;
 
-		    int j = n.getEndPosition();
-		    if (j != -1) i = j-1;
+		    if (dtd.isEmptyTag(t.getName().toLowerCase()))
+		    {
+			children.add(t.emptyTag());
+		    }
+		    else
+		    {
+			Node n = new Node(dtd, t, tokens, i);
+			children.add(n);
+
+			int j = n.getEndPosition();
+			if (j != -1) i = j-1;
+		    }
 		}
 	    }
 	    else if (o instanceof Text)

@@ -30,35 +30,38 @@ class Node
 		Tag t = (Tag) o;
 		if (t.isCloseTag())
 		{
+		    if (! dtd.isKnownTag(t.getName().toLowerCase())) continue;
+
 		    if (! t.equals(closeTag)) closedBy = t;
 		    endPos = i;
 		    break;
 		}
 		else if (t.isOpenTag())
 		{
+		    if (! dtd.isKnownTag(t.getName().toLowerCase())) continue;
+
 		    Set types = (Set) dtd.decendantSet(openTag.getName());
 		    if (types != null && ! types.contains(t.getName().toLowerCase()))
 		    {
-			endPos = (i != startPos + 1) ? i-1 : i;
+			endPos = (i > startPos + 1) ? i-1 : i;
 			break;
-		    }
-		    else if (types == null)
-		    {
-			continue;
-			/*
-			endPos = i;
-			break;
-			*/
 		    }
 
-		    Node n = new Node(dtd, t, tokens, i);
-		    children.add(n);
-		    int j = n.getEndPosition();
-		    if (j != -1) i = j;
-		    if (n.closedByTag(closeTag))
+		    if (dtd.isEmptyTag(t.getName().toLowerCase()))
 		    {
-			endPos = i;
-			break;
+			children.add(t.emptyTag());
+		    }
+		    else
+		    {
+			Node n = new Node(dtd, t, tokens, i);
+			children.add(n);
+			int j = n.getEndPosition();
+			if (j != -1) i = j;
+			if (n.closedByTag(closeTag))
+			{
+			    endPos = i;
+			    break;
+			}
 		    }
 		}
 	    }
