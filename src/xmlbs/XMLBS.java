@@ -27,7 +27,7 @@ import org.apache.regexp.*;
  * Useful when, for example, converting HTML to XHTML.
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class XMLBS
 {
@@ -100,8 +100,9 @@ public class XMLBS
 		if (tag.isOpenTag())
 		{
 		    Tag openTag = tag;
-		    Tag closeTag = new Tag(tag.getName(), null, Tag.CLOSE);
+		    Tag closeTag = tag.closeTag();
 		    List l = tokens.subList(i+1, tokens.size());
+
 		    // locate close tag
 		    int close = findCloseTag(openTag, l);
 		    if (close == -1)
@@ -114,6 +115,7 @@ public class XMLBS
 			{
 			    if (open != -1)
 			    {
+				// TODO allow nesting for certain tags
 				tokens.add(open+i+1, closeTag);
 			    }
 			    else
@@ -131,29 +133,46 @@ public class XMLBS
 	    }
 	}
     }
+
+    static int fct_ = 0;
     private final static int findCloseTag (Tag tag, List tokens)
     {
+	int fct = fct_++;
+	String thiz = "findCloseTag"+fct+"("+tag+","+tokens+")";
+System.out.println(thiz);
 	int depth = 0, i = 0;
 	Tag openTag = tag;
-	Tag closeTag = new Tag(tag.getName(), null, Tag.CLOSE);
+	Tag closeTag = tag.closeTag();
 	for (; i < tokens.size(); i++)
 	{
 	    Object o = tokens.get(i);
 	    if (o instanceof Tag)
 	    {
-		if (o.equals(openTag))
+		Tag t = (Tag) o;
+		if (t.equals(closeTag))
 		{
+System.out.println(thiz+t+"@"+i+".depth="+depth);
+		    if (depth == 0) break;
+		    depth--;
+		}
+		else if (t.equals(openTag))
+		{
+System.out.println(thiz+t+"@"+i+".depth="+depth);
 		    depth++;
 		}
-		else if (o.equals(closeTag))
+		else if (t.isOpenTag())
 		{
-		    depth--;
-		    if (depth < 0) break;
+System.out.println(thiz+t+"@"+i);
+		    List list = tokens.subList(i+1, tokens.size());
+		    int j = findCloseTag(t, list);
+		    if (j != -1) i += j + 1;
 		}
 	    }
 	}
-	
-	return i < tokens.size() ? i : -1;
+
+	int r = i < tokens.size() ? i : -1;
+System.out.println(thiz+"="+r);
+	return r;
     }
 
     /**
@@ -163,20 +182,20 @@ public class XMLBS
      */
     void fixOverlap (List tokens)
     {
-	Vector result = new Vector();
-	ListIterator it = tokens.listIterator();
-	while (it.hasNext())
-	{
-	    Object o = it.next();
-	    if (o instanceof Tag)
-	    {
-		Tag t = (Tag) o;
-		if (t.isOpenTag() || t.isEmptyTag())
-		{
-		    result.add(new Block(t, it));
-		}
-		else
-		{
+        Vector result = new Vector();
+        ListIterator it = tokens.listIterator();
+        while (it.hasNext())
+        {
+            Object o = it.next();
+            if (o instanceof Tag)
+            {
+                Tag t = (Tag) o;
+                if (t.isOpenTag() || t.isEmptyTag())
+                {
+                    result.add(new Block(t, it));
+                }
+                else
+                {
 		    // discard close/other tag
 		}
 	    }
@@ -293,7 +312,7 @@ class Block
 	result.add(openTag);
 	if (openTag.isEmptyTag()) return;
 
-	Tag closeTag = new Tag(openTag.getName(), null, Tag.CLOSE);
+	Tag closeTag = openTag.closeTag();
 	while (it.hasNext())
 	{
 	    Object o = it.next();
