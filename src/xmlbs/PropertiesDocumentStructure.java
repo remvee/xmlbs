@@ -45,7 +45,7 @@ import java.util.*;
  * </pre>
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class PropertiesDocumentStructure implements DocumentStructure {
     /** set to keep tag names */
@@ -54,6 +54,8 @@ public class PropertiesDocumentStructure implements DocumentStructure {
     private Map tagAttributes = new HashMap();
     /** map to keep lists of possible tag parents */
     private Map tagHierarchy = new HashMap();
+    /** ignore case flag */
+    private boolean icase = false;
 
     /**
      * @param prop properties map describing possible parent tags
@@ -147,6 +149,67 @@ public class PropertiesDocumentStructure implements DocumentStructure {
 	}
 	return l;
     }
+
+    /**
+     * Set ignore case flag for matching tagnames, attributes and
+     * entities.
+     * @param icase true where character case should be ignored
+     */
+    public void setIgnoreCase (boolean icase) {
+	this.icase = icase;
+    }
+
+    /**
+     * Get ignore case flag.
+     * @return true where character case should be ignored
+     */
+    public boolean getIgnoreCase () {
+	return icase;
+    }
+
+    /**
+     * Get tag name.
+     * Ignoring character case if needed.
+     * @param name tag name to lookup
+     * @return tag name in proper case
+     */
+    public String getTagName (String name) {
+	if (!icase) {
+	    return name;
+	}
+
+	String in = name.toLowerCase();
+	for (Iterator it = tagNames.iterator(); it.hasNext();) {
+	    String n = (String) it.next();
+	    if (n.toLowerCase().equals(in)) {
+		return n;
+	    }
+	}
+	return name;
+    }
+
+    /**
+     * Get attribute name.
+     * Ignoring character case if needed.
+     * @param name tag name to lookup
+     * @param attr attribute name to lookup
+     * @return attribute name in proper case
+     */
+    public String getTagAttribute (String name, String attr) {
+	if (!icase) {
+	    return attr;
+	}
+	String in = attr.toLowerCase();
+	List names = (List) tagAttributes.get(name);
+	for (Iterator it = names.iterator(); it.hasNext();) {
+	    String n = (String) it.next();
+	    if (n.toLowerCase().equals(in)) {
+		return n;
+	    }
+	}
+	return attr;
+    }
+
 
     /**
      * @param tag a tag token

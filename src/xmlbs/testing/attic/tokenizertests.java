@@ -35,7 +35,7 @@ import xmlbs.*;
  *
  * @see xmlbs.Tokenizer
  * @author R.W. van ' t Veer
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class TokenizerTests extends TestCase {
     /**
@@ -68,6 +68,8 @@ public class TokenizerTests extends TestCase {
      */
     public void testTag ()
     throws IOException {
+	DocumentStructure ds = new DummyDocumentStructure();
+
         // test open tags
         {
             final String d[] =
@@ -76,7 +78,7 @@ public class TokenizerTests extends TestCase {
                     "<foo foo=bar bar=foo>", "<foo foo=bar bar=foo >"
                 };
             for (int i = 0; i < d.length; i++) {
-                Tokenizer tokenizer = new Tokenizer(d[i]);
+                Tokenizer tokenizer = new Tokenizer(d[i], ds);
                 List tokens = tokenizer.readAllTokens();
 
                 assertTrue(
@@ -102,7 +104,7 @@ public class TokenizerTests extends TestCase {
                     "<foo foo=bar bar=foo/>", "<foo foo=bar bar=foo />"
                 };
             for (int i = 0; i < d.length; i++) {
-                Tokenizer tokenizer = new Tokenizer(d[i]);
+                Tokenizer tokenizer = new Tokenizer(d[i], ds);
                 List tokens = tokenizer.readAllTokens();
 
                 assertTrue(
@@ -127,7 +129,7 @@ public class TokenizerTests extends TestCase {
                     "</foo>", "</ foo>", "</ foo >"
                 };
             for (int i = 0; i < d.length; i++) {
-                Tokenizer tokenizer = new Tokenizer(d[i]);
+                Tokenizer tokenizer = new Tokenizer(d[i], ds);
                 List tokens = tokenizer.readAllTokens();
 
                 assertTrue(
@@ -154,7 +156,7 @@ public class TokenizerTests extends TestCase {
                     "<foo\nfoo=bar\r\nbar=foo\r\b>", "<foo\tfoo='bar'\tbar='foo'\t>",
                 };
             for (int i = 0; i < d.length; i++) {
-                Tokenizer tokenizer = new Tokenizer(d[i]);
+                Tokenizer tokenizer = new Tokenizer(d[i], ds);
                 List tokens = tokenizer.readAllTokens();
 
                 assertTrue(
@@ -194,7 +196,7 @@ public class TokenizerTests extends TestCase {
 		String in = d[i][0];
 		String out = d[i][1];
 
-                Tokenizer tokenizer = new Tokenizer(in);
+                Tokenizer tokenizer = new Tokenizer(in, ds);
                 List tokens = tokenizer.readAllTokens();
 
                 assertTrue(
@@ -217,9 +219,11 @@ public class TokenizerTests extends TestCase {
      */
     public void testText ()
     throws IOException {
+	DocumentStructure ds = new DummyDocumentStructure();
+
         {
             String d = " ";
-            Tokenizer tokenizer = new Tokenizer(d);
+            Tokenizer tokenizer = new Tokenizer(d, ds);
             List tokens = tokenizer.readAllTokens();
 
             assertTrue(
@@ -238,7 +242,7 @@ public class TokenizerTests extends TestCase {
         }
         {
             String d = "<";
-            Tokenizer tokenizer = new Tokenizer(d);
+            Tokenizer tokenizer = new Tokenizer(d, ds);
             List tokens = tokenizer.readAllTokens();
 
             assertTrue(
@@ -258,7 +262,7 @@ public class TokenizerTests extends TestCase {
         }
         {
             String d = "<foobar<>";
-            Tokenizer tokenizer = new Tokenizer(d);
+            Tokenizer tokenizer = new Tokenizer(d, ds);
             List tokens = tokenizer.readAllTokens();
 
             assertTrue(
@@ -278,7 +282,7 @@ public class TokenizerTests extends TestCase {
         }
         {
             String d = "<<foobar>>";
-            Tokenizer tokenizer = new Tokenizer(d);
+            Tokenizer tokenizer = new Tokenizer(d, ds);
             List tokens = tokenizer.readAllTokens();
 
             assertTrue(
@@ -299,7 +303,7 @@ public class TokenizerTests extends TestCase {
         }
         {
             String d = ">'foobar\"<";
-            Tokenizer tokenizer = new Tokenizer(d);
+            Tokenizer tokenizer = new Tokenizer(d, ds);
             List tokens = tokenizer.readAllTokens();
 
             assertTrue(
@@ -325,9 +329,11 @@ public class TokenizerTests extends TestCase {
      */
     public void testComment ()
     throws IOException {
+	DocumentStructure ds = new DummyDocumentStructure();
+
         {
             String d = "<!---->";
-            Tokenizer tokenizer = new Tokenizer(d);
+            Tokenizer tokenizer = new Tokenizer(d, ds);
             List tokens = tokenizer.readAllTokens();
 
             assertTrue(
@@ -346,7 +352,7 @@ public class TokenizerTests extends TestCase {
         }
         {
             String d = " <!----> ";
-            Tokenizer tokenizer = new Tokenizer(d);
+            Tokenizer tokenizer = new Tokenizer(d, ds);
             List tokens = tokenizer.readAllTokens();
 
             assertTrue(
@@ -355,7 +361,7 @@ public class TokenizerTests extends TestCase {
         }
         {
             String d = "<!-- -->";
-            Tokenizer tokenizer = new Tokenizer(d);
+            Tokenizer tokenizer = new Tokenizer(d, ds);
             List tokens = tokenizer.readAllTokens();
 
             assertTrue(
@@ -371,7 +377,7 @@ public class TokenizerTests extends TestCase {
         }
         {
             String d = "<!-<!--<!---->-->";
-            Tokenizer tokenizer = new Tokenizer(d);
+            Tokenizer tokenizer = new Tokenizer(d, ds);
             List tokens = tokenizer.readAllTokens();
 
             assertTrue(
@@ -389,7 +395,7 @@ public class TokenizerTests extends TestCase {
         }
         {
             String d = "<!--->-->";
-            Tokenizer tokenizer = new Tokenizer(d);
+            Tokenizer tokenizer = new Tokenizer(d, ds);
             List tokens = tokenizer.readAllTokens();
 
             assertTrue(
@@ -411,9 +417,11 @@ public class TokenizerTests extends TestCase {
      */
     public void testCDATA ()
     throws IOException {
+	DocumentStructure ds = new DummyDocumentStructure();
+
         {
             String d = "<![CDATA[]]>";
-            Tokenizer tokenizer = new Tokenizer(d);
+            Tokenizer tokenizer = new Tokenizer(d, ds);
             List tokens = tokenizer.readAllTokens();
 
             assertTrue(
@@ -425,7 +433,7 @@ public class TokenizerTests extends TestCase {
         }
         {
             String d = " <![CDATA[]]> ";
-            Tokenizer tokenizer = new Tokenizer(d);
+            Tokenizer tokenizer = new Tokenizer(d, ds);
             List tokens = tokenizer.readAllTokens();
 
             assertTrue(
@@ -434,7 +442,7 @@ public class TokenizerTests extends TestCase {
         }
         {
             String d = "<![CDATA[ ]]>";
-            Tokenizer tokenizer = new Tokenizer(d);
+            Tokenizer tokenizer = new Tokenizer(d, ds);
             List tokens = tokenizer.readAllTokens();
 
             assertTrue(
@@ -450,7 +458,7 @@ public class TokenizerTests extends TestCase {
         }
         {
             String d = "<![CDATA<![CDATA[<![CDATA[]]>]]>";
-            Tokenizer tokenizer = new Tokenizer(d);
+            Tokenizer tokenizer = new Tokenizer(d, ds);
             List tokens = tokenizer.readAllTokens();
 
             assertTrue(
@@ -468,7 +476,7 @@ public class TokenizerTests extends TestCase {
         }
         {
             String d = "<![CDATA[]>]]>";
-            Tokenizer tokenizer = new Tokenizer(d);
+            Tokenizer tokenizer = new Tokenizer(d, ds);
             List tokens = tokenizer.readAllTokens();
 
             assertTrue(

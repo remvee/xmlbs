@@ -29,7 +29,6 @@
 - frontends:
     - commandline:
 	--annotate
-	--case-insensitive-tags
 	--discard-comments
 	--discard-special
 	--discard-decl

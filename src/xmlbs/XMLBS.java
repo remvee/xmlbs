@@ -35,7 +35,7 @@ import java.util.*;
  * </UL>
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.36 $
+ * @version $Revision: 1.37 $
  */
 public class XMLBS {
     /** input */
@@ -135,7 +135,7 @@ public class XMLBS {
      */
     private void tokenize ()
     throws IOException {
-	Tokenizer tok = new Tokenizer(in);
+	Tokenizer tok = new Tokenizer(in, ds);
 	tokens = tok.readAllTokens();
     }
 
@@ -409,24 +409,5 @@ public class XMLBS {
 	    }
 	    return false;
 	}
-    }
-
-    /**
-     * Commandline interface.
-     * @param args commandline arguments, 1st used as input filename
-     * @throws Exception when anything goes wrong..
-     */
-    public static void main (String[] args)
-    throws Exception {
-	Properties prop = new Properties();
-	prop.load(new java.io.FileInputStream("src/xmlbs/HTML.properties"));
-
-	InputStream in = new java.io.FileInputStream(args[0]);
-	DocumentStructure ds = new PropertiesDocumentStructure(prop);
-
-        XMLBS bs = new XMLBS(in, ds);
-	bs.setAnnotate(true);
-	bs.process();
-	bs.write(System.out);
     }
 }

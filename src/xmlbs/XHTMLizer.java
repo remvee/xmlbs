@@ -30,33 +30,9 @@ import gnu.getopt.Getopt;
  * Commandline tool to help translate html4 to xhtml.
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class XHTMLizer {
-
-    private XMLBS bs = null;
-
-    public XHTMLizer (InputStream in)
-    throws IOException {
-	Properties prop = new Properties();
-	prop.load(getClass().getClassLoader().getResourceAsStream("xmlbs/HTML.properties"));
-	DocumentStructure ds = new PropertiesDocumentStructure(prop);
-
-	bs = new XMLBS(in, ds);
-    }
-
-    public void setAnnotate (boolean flag) {
-	bs.setAnnotate(flag);
-    }
-    public void process ()
-    throws IOException {
-	bs.process();
-    }
-    public void write (OutputStream out)
-    throws IOException {
-	bs.write(out);
-    }
-
     /**
      * Commandline interface.
      * @param args commandline arguments, 1st used as input filename
@@ -65,15 +41,19 @@ public class XHTMLizer {
     public static void main (String[] args)
     throws Exception {
 	boolean annotate = false;
+	boolean icase = false;
 	int argn = 0;
 	{
 	    String progname = XHTMLizer.class.getName();
-	    Getopt opt = new Getopt(progname, args, "a");
+	    Getopt opt = new Getopt(progname, args, "ai");
 	    int c;
 	    while ((c = opt.getopt()) != -1) {
 		switch (c) {
 		    case 'a':
 			annotate = true;
+			break;
+		    case 'i':
+			icase = true;
 			break;
 		    default:
 		    case '?':
@@ -90,14 +70,19 @@ public class XHTMLizer {
 	    }
 	}
 
-	InputStream in = new FileInputStream(args[argn]);
-	XHTMLizer xhtmlizer = new XHTMLizer(in);
-	xhtmlizer.setAnnotate(annotate);
-	xhtmlizer.process();
-	xhtmlizer.write(System.out);
+	// prepare document structure
+	Properties prop = new Properties();
+	prop.load(ClassLoader.getSystemResourceAsStream("xmlbs/HTML.properties"));
+	DocumentStructure ds = new PropertiesDocumentStructure(prop);
+	ds.setIgnoreCase(icase);
+
+	XMLBS bs = new XMLBS(new FileInputStream(args[argn]), ds);
+	bs.setAnnotate(annotate);
+	bs.process();
+	bs.write(System.out);
     }
 
     public static void usage (String progname) {
-	System.err.println("java "+progname+" [-a] FILE");
+	System.err.println("java "+progname+" [-ai] FILE");
     }
 }

@@ -25,9 +25,39 @@ package xmlbs;
  * Interface for writing document structure descriptions.
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public interface DocumentStructure {
+    /**
+     * Set ignore case flag for matching tagnames, attributes and
+     * entities.
+     * @param icase true where character case should be ignored
+     */
+    void setIgnoreCase (boolean icase);
+
+    /**
+     * Get ignore case flag.
+     * @return true where character case should be ignored
+     */
+    boolean getIgnoreCase ();
+
+    /**
+     * Get tag name.
+     * Ignoring character case if needed.
+     * @param name tag name to lookup
+     * @return tag name in proper case
+     */
+    String getTagName (String name);
+
+    /**
+     * Get attribute name.
+     * Ignoring character case if needed.
+     * @param name tag name to lookup
+     * @param attr attribute name to lookup
+     * @return attribute name in proper case
+     */
+    String getTagAttribute (String name, String attr);
+
     /**
      * Determine if tag is known.
      * @param tag tag token to lookup

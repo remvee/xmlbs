@@ -36,7 +36,7 @@ import org.apache.regexp.RESyntaxException;
  *
  * @see <A href="http://www.w3.org/TR/REC-xml#sec-logical-struct">XML: Logical Structures</A>
  * @author R.W. van 't Veer
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class TagToken implements Token {
     /** tag name */
@@ -85,7 +85,7 @@ public class TagToken implements Token {
     /**
      * @param raw tag text without &lt; and &gt;
      */
-    public TagToken (String raw) {
+    public TagToken (String raw, DocumentStructure ds) {
         // determine tag type
         {
             if (closeRe.match(raw)) {
@@ -101,6 +101,11 @@ public class TagToken implements Token {
         {
             nameRe.match(raw);
             tagName = nameRe.getParen(1);
+
+	    if (ds.getIgnoreCase()) {
+		String t = ds.getTagName(tagName);
+		tagName = t == null ? tagName : t;
+	    }
         }
 
         // collect attributes
@@ -125,6 +130,10 @@ public class TagToken implements Token {
                 val = valRe.getParen(1); // TODO handle entity and char refs
                 pos += valRe.getParenEnd(1);
 
+		if (ds.getIgnoreCase()) {
+		    String t = ds.getTagAttribute(tagName, attr);
+		    attr = t == null ? attr : t;
+		}
                 attrs.put(attr, val);
             }
         }

@@ -35,13 +35,15 @@ import java.util.Vector;
  *
  * @see xmlbs.Token
  * @author R.W. van ' t Veer
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class Tokenizer {
     /** token we bumbed into before returning a text token */
     private Token holdBack = null;
     /** stream we are reading from */
     private InputStream in = null;
+    /** document structure */
+    private DocumentStructure ds = null;
 
     /** buffer size for stream rewind */
     static final int BUFFER_SIZE = 64 * 1024;
@@ -49,17 +51,20 @@ public class Tokenizer {
     /**
      * Construct tokenizer reading from stream.
      * @param in input stream
+     * @param ds document structure
      */
-    public Tokenizer (InputStream in) {
+    public Tokenizer (InputStream in, DocumentStructure ds) {
         this.in = new BufferedInputStream(in);
+	this.ds = ds;
     }
 
     /**
      * Construct tokenizer reading from string.
      * @param data string to read
      */
-    public Tokenizer (String data) {
+    public Tokenizer (String data, DocumentStructure ds) {
         this.in = new ByteArrayInputStream(data.getBytes());
+	this.ds = ds;
     }
 
     /**
@@ -151,7 +156,7 @@ public class Tokenizer {
         }
 
         String raw = sb.toString();
-        return raw.length() > 0 ? new TagToken(raw) : null;
+        return raw.length() > 0 ? new TagToken(raw, ds) : null;
     }
 
     /**
