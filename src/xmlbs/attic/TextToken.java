@@ -27,11 +27,11 @@ import org.apache.regexp.*;
  * Class to wrap blocks of text.  Entity refs are preserved when
  * possible and new are introduced for &lt;, &gt; and &amp;.
  */
-class Text
+class TextToken implements Token
 {
     String txt;
 
-    Text (String txt)
+    public TextToken (String txt)
     {
 	this.txt = fixText(txt);
     }

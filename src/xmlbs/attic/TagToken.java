@@ -29,32 +29,19 @@ import org.apache.regexp.*;
 /**
  * A tag object.
  */
-class Tag
+class TagToken implements Token
 {
-    String raw;
+    int type;
     String tagName;
     Map attrs = new HashMap();
-    int type;
 
     final static int OPEN = 0;
     final static int CLOSE = 1;
     final static int EMPTY = 2;
-    final static int SPECIAL = 3;
-    final static int DECLARATION = 4;
 
-    final static int BUFFER_SIZE = 64*1024;
-
-    static RE closeRe;
-    static RE emptyRe;
-    static RE specialRe;
-    static RE declRe;
-
+    static RE closeRe, emptyRe;
     static RE nameRe;
-
-    static RE attRe;
-    static RE valRe1;
-    static RE valRe2;
-    static RE valRe3;
+    static RE attRe, valRe1, valRe2, valRe3;
 
     static
     {
@@ -62,8 +49,6 @@ class Tag
 	{
 	    closeRe = new RE("^\\s*/");
 	    emptyRe = new RE("/\\s*$");
-	    specialRe = new RE("^\\s*\\?");
-	    declRe = new RE("^\\s*\\!");
 
 	    nameRe = new RE("([a-zA-Z0-9:]+)\\s*");
 
@@ -78,41 +63,12 @@ class Tag
 	}
     }
 
-    /**
-     * Try to read a tag from a stream.  The '&lt;' character was
-     * already read.
-     * @param in stream to read from
-     * @throws Exception when tag could not be read, this
-     * possibly a stray '&lt;' character.
-     */
-    public Tag (InputStream in)
-    throws IOException, Exception
+    public TagToken (String raw)
     {
-	// try to read full tag
-	StringBuffer b = new StringBuffer();
-	int c;
-	in.mark(BUFFER_SIZE);
-	while ((c = in.read()) != -1)
-	{
-	    if (c == '<') // illegal in attribute value TODO allow it?
-	    {
-		in.reset();
-		// TODO signalling stray < is expensive!
-		throw new Exception();
-	    }
-	    // TODO allow > to be in attribute value
-	    if (c == '>') break;
-	    b.append((char) c);
-	}
-	// TODO handle if c == -1
-	raw = b.toString();
-
 	// determine tag type
 	{
 	    if (closeRe.match(raw)) type = CLOSE;
 	    else if (emptyRe.match(raw)) type = EMPTY;
-	    else if (specialRe.match(raw)) type = SPECIAL; // TODO handle it!!
-	    else if (declRe.match(raw)) type = DECLARATION; // TODO handle it!!
 	    else type = OPEN;
 	}
 
@@ -145,18 +101,23 @@ class Tag
 	}
     }
 
-    /**
-     * Create a new tag from given data.
-     * @param tagName name of tag
-     * @param attrs map of attributes
-     * @param type one of <TT>CLOSE</TT>, <TT>EMPTY</TT>,
-     * <TT>SPECIAL</TT>, <TT>DECLARATION</TT>.
-     */
-    public Tag (String tagName, Map attrs, int type)
+    public TagToken (String tagName, Map attrs, int type)
     {
 	this.tagName = tagName;
 	this.attrs = attrs;
 	this.type = type;
+    }
+
+    public TagToken emptyTag ()
+    {
+	TagToken tok = new TagToken(tagName, attrs, EMPTY);
+	return tok;
+    }
+
+    public TagToken closeTag ()
+    {
+	TagToken tok = new TagToken(tagName, attrs, CLOSE);
+	return tok;
     }
 
     /**
@@ -175,15 +136,10 @@ class Tag
      * @return true if this is a empty tag
      */
     public boolean isEmptyTag () { return type == EMPTY; }
-
     /**
-     * Get close version for this tag.
+     * @return true if name of given tag matches
      */
-    public Tag closeTag () { return new Tag(getName(), null, Tag.CLOSE); }
-    /**
-     * Get empty version of this tag.
-     */
-    public Tag emptyTag () { return new Tag(getName(), attrs, Tag.EMPTY); }
+    public boolean isSameTag (TagToken tag) { return tagName.equals(tag.getName()); }
 
     /**
      * @return proper string representation of this tag
@@ -202,14 +158,8 @@ class Tag
 
 	    return sb.toString();
 	}
-	else if (type == SPECIAL || type == DECLARATION) // TODO
-	{
-	    sb.append(raw);
-	    sb.append('>');
 
-	    return sb.toString();
-	}
-
+	// else OPEN or EMPTY
 	sb.append(tagName);
 
 	if (attrs != null)
@@ -226,7 +176,7 @@ class Tag
 		sb.append(attr);
 		sb.append('=');
 		sb.append('"');
-		sb.append(Text.fixText(val));
+		sb.append(TextToken.fixText(val));
 		sb.append('"');
 	    }
 	}
@@ -235,30 +185,5 @@ class Tag
 	sb.append('>');
 
 	return sb.toString();
-    }
-
-    /**
-     * TODO this violates java rules!
-     */
-    public boolean equals (Object that)
-    {
-	if (that instanceof Tag)
-	{
-	    Tag t = (Tag) that;
-	    if (t.type == type && t.getName().equals(tagName))
-	    {
-		return true;
-	    }
-	}
-	return false;
-    }
-
-    /**
-     * TODO this violates java rules!
-     */
-    public int hashCode ()
-    {
-	if (tagName != null) return tagName.hashCode();
-	return 0;
     }
 }

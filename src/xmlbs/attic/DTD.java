@@ -133,7 +133,7 @@ public class DTD
      * @param child tag
      * @return true if child may be a child of parent
      */
-    public boolean canInclude (Tag parent, Tag child)
+    public boolean canInclude (TagToken parent, TagToken child)
     {
 	Set set = (Set) elementMap.get(parent.getName().toLowerCase());
 	return set.contains(child.getName().toLowerCase());
@@ -144,7 +144,7 @@ public class DTD
      * @param tag
      * @return true if tag is included in definition
      */
-    public boolean isKnownTag (Tag tag)
+    public boolean isKnownTag (TagToken tag)
     {
 	return elementMap.containsKey(tag.getName().toLowerCase());
     }
@@ -154,7 +154,7 @@ public class DTD
      * @param tag
      * @return true if tag may not have offspring
      */
-    public boolean isEmptyTag (Tag tag)
+    public boolean isEmptyTag (TagToken tag)
     {
 	return emptySet.contains(tag.getName().toLowerCase());
     }

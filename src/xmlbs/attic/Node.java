@@ -29,13 +29,13 @@ import java.util.*;
 class Node
 {
     DTD dtd;
-    Tag openTag;
+    TagToken openTag;
     List tokens;
     int startPos;
 
     int endPos = -1; // exclusive
     List children = new Vector();
-    Tag closedBy = null;
+    TagToken closedBy = null;
 
     /**
      * Create node from tag in list of tag/ text tokens.
@@ -44,21 +44,21 @@ class Node
      * @param tokens list of tag/text tokens
      * @param startPos position of openTag in list
      */
-    public Node (DTD dtd, Tag openTag, List tokens, int startPos)
+    public Node (DTD dtd, TagToken openTag, List tokens, int startPos)
     {
 	this.dtd = dtd;
 	this.openTag = openTag;
 	this.tokens = tokens;
 	this.startPos = startPos;
 
-	Tag closeTag = openTag.closeTag();
+	TagToken closeTag = openTag.closeTag();
 	int i = startPos + 1;
 	for (; i < tokens.size(); i++)
 	{
 	    Object o = tokens.get(i);
-	    if (o instanceof Tag)
+	    if (o instanceof TagToken)
 	    {
-		Tag t = (Tag) o;
+		TagToken t = (TagToken) o;
 		if (t.isCloseTag())
 		{
 		    if (! dtd.isKnownTag(t))
@@ -66,7 +66,7 @@ class Node
 			continue;
 		    }
 
-		    if (! t.equals(closeTag))
+		    if (! t.isSameTag(closeTag))
 		    {
 			closedBy = t;
 		    }
@@ -105,7 +105,7 @@ class Node
 		    }
 		}
 	    }
-	    else if (o instanceof Text)
+	    else
 	    {
 		children.add(o);
 	    }
@@ -120,9 +120,9 @@ class Node
      * nullified after a positive hit.
      * @return true if close by given tag
      */
-    boolean closedByTag (Tag t)
+    boolean closedByTag (TagToken t)
     {
-	if (closedBy != null && closedBy.equals(t))
+	if (closedBy != null && closedBy.isSameTag(t))
 	{
 	    closedBy = null;
 	    return true;

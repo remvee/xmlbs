@@ -47,7 +47,7 @@ import java.util.*;
  *
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.23 $
+ * @version $Revision: 1.24 $
  */
 public class XMLBS
 {
@@ -76,45 +76,12 @@ public class XMLBS
     throws IOException
     {
 	List v = new Vector();
-	StringBuffer b = new StringBuffer();
-	int c;
-	while ((c = in.read()) != -1)
+
+	Tokenizer tokenizer = new Tokenizer(in);
+	Token tok;
+	while ((tok = tokenizer.readToken()) != null)
 	{
-	    switch (c)
-	    {
-		case '<':
-		    Tag t = null;
-		    try
-		    {
-			t = new Tag(in);
-		    }
-		    catch (Exception ex) { /* ignore */ }
-
-		    if (t != null)
-		    {
-			String s = b.toString();
-			if (s.length() > 0)
-			{
-			    v.add(new Text(s));
-			    b = new StringBuffer();
-			}
-			v.add(t);
-		    }
-		    else
-		    {
-			b.append((char) c);
-		    }
-
-		    break;
-		default:
-		    b.append((char) c);
-	    }
-	}
-
-	String s = b.toString();
-	if (s.length() > 0)
-	{
-	    v.add(new Text(s));
+	    v.add(tok);
 	}
 	return v;
     }
@@ -131,9 +98,9 @@ public class XMLBS
 	for (int i = 0; i < tokens.size(); i++)
 	{
 	    Object o = tokens.get(i);
-	    if (o instanceof Tag)
+	    if (o instanceof TagToken)
 	    {
-		Tag t = (Tag) o;
+		TagToken t = (TagToken) o;
 		if (t.isOpenTag() || t.isEmptyTag())
 		{
 		    if (! dtd.isKnownTag(t)) continue;
@@ -152,7 +119,7 @@ public class XMLBS
 		    }
 		}
 	    }
-	    else if (o instanceof Text)
+	    else
 	    {
 		children.add(o);
 	    }
