@@ -14,6 +14,14 @@
 	- handle #implied, #required and cdata, nmtoken and id
 	  attributes
     - include xhtml-1.0 document structure object
+    - optional case insensitive tags (using ds version)
+    - handle empty tags
+    - passes:
+	- tokenize
+	- hierarchy
+	- tree balansing
+	    - merge too many tags
+	    - move lost tags
 - frontends:
     - commandline:
 	--comment-illegal-code
