@@ -60,7 +60,7 @@ class Text
 			if (entityRefRe.match(s) || charRefRe.match(s))
 			{
 			    out.append(in.substring(i, j+1));
-			    i = j+1;
+			    i = j;
 			}
 			else
 			{

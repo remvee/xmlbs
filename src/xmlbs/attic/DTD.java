@@ -10,7 +10,7 @@ class DTD
     final static int HTML = 0;
 
     public DTD (int type)
-    throws Exception
+    throws IOException
     {
 	if (type == HTML)
 	{
@@ -18,23 +18,83 @@ class DTD
 	    InputStream in = cl.getResourceAsStream("xmlbs/HTML.properties");
 	    Properties propMap = new Properties();
 	    propMap.load(in);
+	    in.close();
 
+	    fromProperties(propMap);
+	}
+    }
+
+    Map setMap = new HashMap();
+    private void fromProperties (Properties propMap)
+    {
+	// collect sets
+	{
 	    Iterator it = propMap.keySet().iterator();
 	    while (it.hasNext())
 	    {
 		String tag = (String) it.next();
 		String val = (String) propMap.get(tag);
 
-		Set l = new HashSet();
-		StringTokenizer st = new StringTokenizer(val);
-		while (st.hasMoreTokens()) l.add(st.nextToken());
-		elementMap.put(tag, l);
+		if (tag.startsWith("_"))
+		{
+		    Set l = new HashSet();
+		    StringTokenizer st = new StringTokenizer(val);
+		    while (st.hasMoreTokens()) l.add(st.nextToken());
+		    setMap.put(tag, l);
+		}
 	    }
-	    in.close();
+	}
+
+	// collect decendant lists
+	{
+	    Iterator it = propMap.keySet().iterator();
+	    while (it.hasNext())
+	    {
+		String tag = (String) it.next();
+		String val = (String) propMap.get(tag);
+
+		if (! tag.startsWith("_"))
+		{
+		    Set l = new HashSet();
+		    StringTokenizer st = new StringTokenizer(val);
+		    while (st.hasMoreTokens())
+		    {
+			String t = st.nextToken();
+			if (t.startsWith("_"))
+			{
+			    l.addAll(resolveSet((Set) setMap.get(t)));
+			}
+			else
+			{
+			    l.add(t);
+			}
+		    }
+		    elementMap.put(tag, l);
+		}
+	    }
 	}
     }
+    private Set resolveSet (Set in)
+    {
+	Set out = new HashSet();
+	Iterator it = in.iterator();
+	while (it.hasNext())
+	{
+	    String t = (String) it.next();
+	    if (t.startsWith("_"))
+	    {
+		out.addAll(resolveSet((Set) setMap.get(t)));
+	    }
+	    else
+	    {
+		out.add(t);
+	    }
+	}
+	return out;
+    }
+
     public Set decendantSet (String name)
     {
-	return (Set) elementMap.get(name);
+	return (Set) elementMap.get(name.toLowerCase());
     }
 }
