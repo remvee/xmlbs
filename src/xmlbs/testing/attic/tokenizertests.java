@@ -36,7 +36,7 @@ import xmlbs.*;
  *
  * @see xmlbs.Tokenizer
  * @author R.W. van ' t Veer
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class TokenizerTests extends TestCase {
     /**
@@ -444,10 +444,8 @@ public class TokenizerTests extends TestCase {
 		    "didn't read 3 token from '" + d + "' but " + tokens.size(),
 		    tokens.size() == 3);
 
-            TextToken tok0 = (TextToken) tokens.get(0);
-            CommentToken tok1 = (CommentToken) tokens.get(1);
-            String data = tok1.getData();
-            TextToken tok2 = (TextToken) tokens.get(2);
+            CommentToken tok = (CommentToken) tokens.get(1);
+            String data = tok.getData();
 
             assertTrue(
 		    "didn't read '<!--' from '" + d + "' but '" + data + "'",
@@ -525,10 +523,8 @@ public class TokenizerTests extends TestCase {
 		    "didn't read 3 token from '" + d + "' but " + tokens.size(),
 		    tokens.size() == 3);
 
-            TextToken tok0 = (TextToken) tokens.get(0);
             CDATAToken tok1 = (CDATAToken) tokens.get(1);
             String data = tok1.getData();
-            TextToken tok2 = (TextToken) tokens.get(2);
 
             assertTrue(
 		    "didn't read '<![CDATA[' from '" + d + "' but '" + data + "'",
