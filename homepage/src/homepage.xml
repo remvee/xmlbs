@@ -35,7 +35,8 @@
 	<release tag="PRERELEASE-2" filebase="xmlbs-0.0.2"><![CDATA[
 	    26.X.2002
 	    <ul>
-		<li>initial release</li>
+		<li>new implementation of tokenizer</li>
+		<li>sun code style</li>
 	    </ul>
 	]]></release>
 	<release tag="PRERELEASE-1" filebase="xmlbs-0.0.1"><![CDATA[
