@@ -30,8 +30,13 @@ public class CDATAToken implements Token
 	this.data = data;
     }
 
+    public String getData ()
+    {
+	return data;
+    }
+
     public String toString ()
     {
-	return "<![CDATA["+data+"]]>";
+	return "<![CDATA["+getData()+"]]>";
     }
 }

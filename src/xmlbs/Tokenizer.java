@@ -38,6 +38,11 @@ public class Tokenizer
 	this.in = new BufferedInputStream(in);
     }
 
+    public Tokenizer (String data)
+    {
+	this.in = new ByteArrayInputStream(data.getBytes());
+    }
+
     public Token readToken ()
     throws IOException
     {
@@ -98,6 +103,18 @@ public class Tokenizer
 
 	String t = sb.toString();
 	return (t.length() > 0) ? new TextToken(t) : null;
+    }
+
+    public List readAllTokens ()
+    throws IOException
+    {
+	List l = new Vector();
+	Token t;
+	while ((t = readToken()) != null)
+	{
+	    l.add(t);
+	}
+	return l;
     }
 
     private Token readTagToken (char firstChar)
