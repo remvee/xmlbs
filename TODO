@@ -1,9 +1,4 @@
 - core:
-    - ensure only one root node exists
-    - don't let loose tag destroy structure when now parent
-      allows it, actions in this case could be:
-      - find container for a parent
-    - merge tags of which only one is allowed (like head for html)
     - move parsing stuff to a parser class
 	- create unit tests for parser
 	- treat cdata as text (cdata should extend text?)
@@ -13,18 +8,25 @@
 	- smarter container rules for |, + and ?
 	- handle #implied, #required and cdata, nmtoken and id
 	  attributes
+	- add isEmptyTag
     - include xhtml-1.0 document structure object
-    - optional case insensitive tags (using ds version)
-    - handle empty tags
     - passes:
 	- tokenize
+	    - read and fix tag attributes
+		- optional case insensitive tag matching
+	    - record line number in tokens for reporting !!TODO!!
+	    - keep known entities if text tokens !!TODO!!
+	    - handle empty tags !!TODO!!
 	- hierarchy
-	- tree balansing
-	    - merge too many tags
-	    - move lost tags
+	    - add missing close tags
+	    - mark lost tags !!TODO!!
+	- tree balansing !!TODO!!
+	    - merge too many tags !!TODO!!
+	    - move lost tags !!TODO!!
 - frontends:
     - commandline:
-	--comment-illegal-code
+	--annotate
+	--case-insensitive-tags
 	--discard-comments
 	--discard-special
 	--discard-decl
