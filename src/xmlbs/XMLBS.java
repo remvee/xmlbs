@@ -21,8 +21,21 @@
 
 package xmlbs;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Vector;
+
+import xmlbs.tokens.CommentToken;
+import xmlbs.tokens.TagToken;
+import xmlbs.tokens.TextToken;
+import xmlbs.tokens.Token;
 
 /**
  * XML body shop tries to correct broken XML files.  XMLBS is
@@ -35,7 +48,7 @@ import java.util.*;
  * </UL>
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.41 $
+ * @version $Revision: 1.42 $
  */
 public class XMLBS {
     /** input */
@@ -223,6 +236,12 @@ public class XMLBS {
      * Verify and restructure tag hierarchy.
      */
     private void hierarchy () {
+        /* TODO implement!
+            TreeNode root = TreeBuilder.construct(tokens);
+            tokens = new ArrayList();
+            TreeSerializer.flatten(root, tokens);
+        */
+        
 	CrumbTrail trail = new CrumbTrail(ds);
 	for (int i = 0; i < tokens.size(); i++) {
 	    Token tok = (Token) tokens.get(i);

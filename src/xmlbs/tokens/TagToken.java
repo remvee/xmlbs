@@ -19,7 +19,7 @@
  * MA 02111-1307, USA.
  */
 
-package xmlbs;
+package xmlbs.tokens;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,12 +31,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import xmlbs.DocumentStructure;
+
 /**
  * Tag token.  Represents an XML element.
  *
  * @see <A href="http://www.w3.org/TR/REC-xml#sec-logical-struct">XML: Logical Structures</A>
  * @author R.W. van 't Veer
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.1 $
  */
 public class TagToken implements Token {
     /** tag name */

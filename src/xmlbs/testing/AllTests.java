@@ -21,27 +21,27 @@
 
 package xmlbs.testing;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
-public class AllTests extends TestCase
-{
-    public AllTests (String name)
-    {
+public class AllTests extends TestCase {
+    public AllTests(String name) {
         super(name);
     }
 
-    public static void main (String[] args)
-    {
+    public static void main(String[] args) {
         String[] par = new String[1];
         par[0] = AllTests.class.getName();
         junit.swingui.TestRunner.main(par);
     }
 
-    public static Test suite()
-    {
-	TestSuite suite = new TestSuite("All XMLBS tests");
-	suite.addTestSuite(XMLBSTests.class);
-	suite.addTestSuite(TokenizerTests.class);
+    public static Test suite() {
+        TestSuite suite = new TestSuite("All XMLBS tests");
+        suite.addTestSuite(XMLBSTests.class);
+        suite.addTestSuite(TokenizerTest.class);
+        suite.addTestSuite(TreeNodeTest.class);
+        suite.addTestSuite(TreeBuilderTest.class);
         return suite;
     }
 }

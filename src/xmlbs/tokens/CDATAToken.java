@@ -19,14 +19,14 @@
  * MA 02111-1307, USA.
  */
 
-package xmlbs;
+package xmlbs.tokens;
 
 /**
  * Token to represent and hold CDATA blocks.
  *
  * @see <A href="http://www.w3.org/TR/REC-xml#sec-cdata-sect">XML: CDATA Sections</A>
  * @author R.W. van 't Veer
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.1 $
  */
 public class CDATAToken implements Token {
     /** character data */

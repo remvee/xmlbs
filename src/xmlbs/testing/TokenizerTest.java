@@ -22,27 +22,34 @@
 package xmlbs.testing;
 
 import java.io.IOException;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import junit.framework.*;
-
-import xmlbs.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import xmlbs.DocumentStructure;
+import xmlbs.PropertiesDocumentStructure;
+import xmlbs.Tokenizer;
+import xmlbs.tokens.CDATAToken;
+import xmlbs.tokens.CommentToken;
+import xmlbs.tokens.TagToken;
+import xmlbs.tokens.TextToken;
+import xmlbs.tokens.Token;
 
 /**
  * Unit tests for tokenizer.
  *
  * @see xmlbs.Tokenizer
  * @author R.W. van ' t Veer
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.1 $
  */
-public class TokenizerTests extends TestCase {
+public class TokenizerTest extends TestCase {
     /**
      * @param name test name
      */
-    public TokenizerTests (String name) {
+    public TokenizerTest (String name) {
         super(name);
     }
 
@@ -52,7 +59,7 @@ public class TokenizerTests extends TestCase {
      */
     public static void main (String[] args) {
         String[] par = new String[1];
-        par[0] = TokenizerTests.class.getName();
+        par[0] = TokenizerTest.class.getName();
         junit.swingui.TestRunner.main(par);
     }
 
@@ -60,7 +67,7 @@ public class TokenizerTests extends TestCase {
      * @return suite of test available from this class
      */
     public static Test suite() {
-        return new TestSuite(TokenizerTests.class);
+        return new TestSuite(TokenizerTest.class);
     }
 
     /**

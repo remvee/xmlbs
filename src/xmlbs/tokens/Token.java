@@ -19,14 +19,14 @@
  * MA 02111-1307, USA.
  */
 
-package xmlbs;
+package xmlbs.tokens;
 
 /**
  * Interface for tokens created by tokenizer.
  *
  * @see xmlbs.Tokenizer
  * @author R.W. van 't Veer
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.1 $
  */
 public interface Token {
     /**

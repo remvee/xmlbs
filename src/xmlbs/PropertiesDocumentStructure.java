@@ -21,8 +21,20 @@
 
 package xmlbs;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import xmlbs.tokens.TagToken;
+import xmlbs.tokens.TextToken;
+import xmlbs.tokens.Token;
 
 /**
  * Document structure configurable using a property file.  A
@@ -47,7 +59,7 @@ import java.util.*;
  * </pre>
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class PropertiesDocumentStructure implements DocumentStructure {
     /** set to keep tag names */

@@ -21,16 +21,16 @@
 
 package xmlbs;
 
-import java.io.*;
-import java.util.*;
-
 import gnu.getopt.Getopt;
+
+import java.io.FileInputStream;
+import java.util.Properties;
 
 /**
  * Commandline tool to help translate html4 to xhtml.
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class XHTMLizer {
     /**

@@ -19,7 +19,7 @@
  * MA 02111-1307, USA.
  */
 
-package xmlbs;
+package xmlbs.tokens;
 
 /**
  * Token to represent and hold comment blocks.
@@ -30,7 +30,7 @@ package xmlbs;
  *
  * @see <A href="http://www.w3.org/TR/REC-xml#sec-comments">XML: Comments</A>
  * @author R.W. van 't Veer
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.1 $
  */
 public class CommentToken implements Token {
     /** comment data */

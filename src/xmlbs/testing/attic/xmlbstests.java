@@ -21,19 +21,24 @@
 
 package xmlbs.testing;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Properties;
 
-import junit.framework.*;
-
-import xmlbs.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import xmlbs.DocumentStructure;
+import xmlbs.PropertiesDocumentStructure;
+import xmlbs.XMLBS;
 
 /**
  * Global tests for XMLBS.
  *
  * @see xmlbs.Tokenizer
  * @author R.W. van ' t Veer
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class XMLBSTests extends TestCase {
     /**

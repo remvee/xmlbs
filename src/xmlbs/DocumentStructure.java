@@ -21,11 +21,14 @@
 
 package xmlbs;
 
+import xmlbs.tokens.TagToken;
+import xmlbs.tokens.Token;
+
 /**
  * Interface for writing document structure descriptions.
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public interface DocumentStructure {
     /**

@@ -19,9 +19,13 @@
  * MA 02111-1307, USA.
  */
 
-package xmlbs;
+package xmlbs.tokens;
 
-import java.util.regex.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import xmlbs.DocumentStructure;
 
 /**
  * Token to represent and hold text blocks.  Entity refs are
@@ -30,7 +34,7 @@ import java.util.regex.*;
  *
  * @see <A href="http://www.w3.org/TR/REC-xml#syntax">XML: Character Data and Markup</A>
  * @author R.W. van 't Veer
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.1 $
  */
 public class TextToken implements Token {
     /** processed text */

@@ -24,9 +24,14 @@ package xmlbs;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-
 import java.util.List;
 import java.util.Vector;
+
+import xmlbs.tokens.CDATAToken;
+import xmlbs.tokens.CommentToken;
+import xmlbs.tokens.TagToken;
+import xmlbs.tokens.TextToken;
+import xmlbs.tokens.Token;
 
 /**
  * The tokenizer class generates a list of XML Tokens from a stream
@@ -34,7 +39,7 @@ import java.util.Vector;
  *
  * @see xmlbs.Token
  * @author R.W. van ' t Veer
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class Tokenizer {
     /** token we bumbed into before returning a text token */

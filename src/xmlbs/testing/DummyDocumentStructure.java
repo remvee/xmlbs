@@ -21,11 +21,13 @@
 
 package xmlbs.testing;
 
-import xmlbs.*;
+import xmlbs.DocumentStructure;
+import xmlbs.tokens.TagToken;
+import xmlbs.tokens.Token;
 
 /**
  * @author R.W. van 't Veer
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class DummyDocumentStructure implements DocumentStructure {
     /**
