@@ -26,14 +26,15 @@ import java.util.*;
 
 /**
  * @author R.W. van 't Veer
- * @version $Revision: 1.26 $
+ * @version $Revision: 1.27 $
  */
 public class XMLBS {
     private InputStream in = null;
     private DocumentStructure ds = null;
     private List tokens = null;
 
-    private boolean debug = false;
+    private boolean annotate = false;
+    private static final String WARNING_MARKER = "XMLBS!";
 
     public XMLBS (InputStream in, DocumentStructure ds)
     throws IOException {
@@ -71,8 +72,11 @@ public class XMLBS {
 	    if (tok instanceof TagToken) {
 		TagToken tag = (TagToken) tok;
 		if (! ds.isKnownTag(tag)) {
-		    log("remove unknow tag", tag);
-		    it.remove();
+		    if (annotate) {
+			it.set(comment("unknow tag", tag));
+		    } else {
+			it.remove();
+		    }
 		} else {
 		    ds.retainKnownAttributes(tag);
 		}
@@ -90,8 +94,11 @@ public class XMLBS {
 		TextToken txt = (TextToken) tok;
 		if (!txt.isWhiteSpace() && !ds.canContain(top, txt)) {
 		    // remove stray text??
-		    log("remove text", txt);
-		    tokens.remove(i--);
+		    if (annotate) {
+			tokens.set(i, comment("stray text", txt));
+		    } else {
+			tokens.remove(i--);
+		    }
 		}
 	    } else if (tok instanceof TagToken) {
 		TagToken tag = (TagToken) tok;
@@ -99,12 +106,17 @@ public class XMLBS {
 		    if (!ds.canContain(top, tag)) {
 			if (!trail.hasContainerFor(tag)) {
 			    // misplaced tag
-			    log("misplaced tag", tag);
-			    tokens.remove(i--);
+			    if (annotate) {
+				tokens.set(i, comment("misplaced tag", tag));
+			    } else {
+				tokens.remove(i--);
+			    }
 			} else {
 			    // add close tags till top will have us
 			    do {
-				log("close first", top);
+				if (annotate) {
+				    tokens.add(i++, comment("close first", top));
+				}
 				tokens.add(i++, top.closeTag());
 				trail.pop();
 				top = trail.getTop();
@@ -119,15 +131,19 @@ public class XMLBS {
 		} else if (tag.isCloseTag()) {
 		    if (!trail.hasOpenFor(tag)) {
 			// remove stray close tag in root
-			log("remove close", tag);
-			tokens.remove(i--);
+			if (annotate) {
+			    tokens.set(i, comment("remove close", tag));
+			} else {
+			    tokens.remove(i--);
+			}
 		    } else if (!tag.isSameTag(top)) {
 			if (trail.getDepth() > 0) {
 			    // add close tags till top same tag
 			    do {
-				TagToken ctag = top.closeTag();
-				log("close also", top);
-				tokens.add(i++, ctag);
+				if (annotate) {
+				    tokens.add(i++, comment("close also", top));
+				}
+				tokens.add(i++, top.closeTag());
 				trail.pop();
 				top = trail.getTop();
 			    } while (!tag.isSameTag(top) && trail.getDepth() > 0);
@@ -136,8 +152,11 @@ public class XMLBS {
 			    trail.pop();
 			} else {
 			    // stray close
-			    log("stray close", top);
-			    tokens.remove(i--);
+			    if (annotate) {
+				tokens.set(i, comment("stray close", tag));
+			    } else {
+				tokens.remove(i--);
+			    }
 			}
 		    } else {
 			// keep close tag and remove top
@@ -162,10 +181,8 @@ public class XMLBS {
 	}
     }
 
-    private void log (String msg, Token loc) {
-	if (debug) {
-	    System.err.println(msg+": "+loc);
-	}
+    private CommentToken comment (String msg, Token loc) {
+	return new CommentToken(WARNING_MARKER + "(" + msg + ")" + loc);
     }
 
     class CrumbTrail {
@@ -221,7 +238,7 @@ public class XMLBS {
 	InputStream in = new java.io.FileInputStream(args[0]);
 	DocumentStructure ds = new TestDocumentStructure();
         XMLBS bs = new XMLBS(in, ds);
-	bs.debug = true;
+	bs.annotate = true;
 	bs.process();
 
 	for (Iterator it = bs.tokens.iterator(); it.hasNext();) {
