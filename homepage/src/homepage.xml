@@ -1,129 +1,129 @@
 <homepage>
-    <title>XMLBS - XML body shop</title>
-    <location>http://www.xs4all.nl/~rwvtveer/xmlbs</location>
-    <description>
-	<html><![CDATA[
-	    <p>
-		XMLBS transforms data to XML parsable state.  Useful for
-		tidying, parsing or even transferring HTML to XHTML.
-	    </p>
-	]]></html>
-    </description>
+	<title>XMLBS - XML body shop</title>
+	<location>http://www.xs4all.nl/~rwvtveer/xmlbs</location>
+	<description>
+		<html><![CDATA[
+			<p>
+				XMLBS transforms data to XML parsable state.  Useful for
+				tidying, parsing or even transferring HTML to XHTML.
+			</p>
+		]]></html>
+	</description>
 
-    <section>
-	<title>Features</title>
-	<html><![CDATA[
-	    <ul>
-		<li>unquoted tag attributes</li>
-		<li>stray illegal characters like &lt; and &gt;</li>
-		<li>close unclosed tags trying to obey structure rules</li>
-		<li>fix tag overlap like <tt>&lt;i&gt; foo &lt;b&gt; bar &lt;/i&gt; boo &lt;/b&gt;</tt></li>
-	    </ul>
-	    <p>
-		Please see the <a href="projects/xmlbs/TODO">TODO</a>
-		file for bugs and future enhancements.
-	    </p>
-	]]></html>
-    </section>
+	<section>
+		<title>Features</title>
+		<html><![CDATA[
+			<ul>
+				<li>unquoted tag attributes</li>
+				<li>stray illegal characters like &lt; and &gt;</li>
+				<li>close unclosed tags trying to obey structure rules</li>
+				<li>fix tag overlap like <tt>&lt;i&gt; foo &lt;b&gt; bar &lt;/i&gt; boo &lt;/b&gt;</tt></li>
+			</ul>
+			<p>
+				Please see the <a href="projects/xmlbs/TODO">TODO</a>
+				file for bugs and future enhancements.
+			</p>
+		]]></html>
+	</section>
 
-    <section>
-	<title>News</title>
-	<changelog file="../build/projects/xmlbs/ChangeLog.xml" max="15" dist="projects/xmlbs/ChangeLog.html"/>
-    </section>
+	<section>
+		<title>News</title>
+		<changelog file="../build/projects/xmlbs/ChangeLog.xml" max="15" dist="projects/xmlbs/ChangeLog.html"/>
+	</section>
 
-    <section>
-	<title>Downloads</title>
-	<html>
-	    The following releases are considered to be stable.
-	</html>
-	<release tag="PRERELEASE-6" filebase="xmlbs-0.0.6">
-	    <html><![CDATA[
-		9.II.2004
-		<ul>
-		    <li>handle character encodings</li>
-		</ul>
-	    ]]></html>
-	</release>
-	<release tag="PRERELEASE-5" filebase="xmlbs-0.0.5">
-	    <html><![CDATA[
-		16.IV.2003
-		<ul>
-		    <li>fix null pointer exception in entity ref handling</li>
-		    <li>properly handle character refs</li>
-		    <li>quot and apos an not "universal" entities</li>
-		</ul>
-	    ]]></html>
-	</release>
-	<release tag="PRERELEASE-4" filebase="xmlbs-0.0.4">
-	    <html><![CDATA[
-		8.IV.2003
-		<ul>
-		    <li>fix adjoined whitespace handling</li>
-		    <li>avoid exception when ignore-case encounters unknown attribute</li>
-		    <li>fix build process</li>
-		</ul>
-	    ]]></html>
-	</release>
-	<release tag="PRERELEASE-3" filebase="xmlbs-0.0.3">
-	    <html><![CDATA[
-		29.XII.2002
-		<ul>
-		    <li>entity reference handling</li>
-		    <li>ignore case option</li>
-		    <li>improved build dependency handling</li>
-		    <li>XHTMLizer commandline utility</li>
-		</ul>
-	    ]]></html>
-	</release>
-	<release tag="PRERELEASE-2" filebase="xmlbs-0.0.2">
-	    <html><![CDATA[
-		26.X.2002
-		<ul>
-		    <li>new implementation of tokenizer</li>
-		    <li>sun code style</li>
-		</ul>
-	    ]]></html>
-	</release>
-	<release tag="PRERELEASE-1" filebase="xmlbs-0.0.1">
-	    <html><![CDATA[
-		25.VI.2002
-		<ul>
-		    <li>initial release</li>
-		</ul>
-	    ]]></html>
-	</release>
-    </section>
+	<section>
+		<title>Downloads</title>
+		<html>
+			The following releases are considered to be stable.
+		</html>
+		<release tag="PRERELEASE-6" filebase="xmlbs-0.0.6">
+			<html><![CDATA[
+				9.II.2004
+				<ul>
+					<li>handle character encodings</li>
+				</ul>
+			]]></html>
+		</release>
+		<release tag="PRERELEASE-5" filebase="xmlbs-0.0.5">
+			<html><![CDATA[
+				16.IV.2003
+				<ul>
+					<li>fix null pointer exception in entity ref handling</li>
+					<li>properly handle character refs</li>
+					<li>quot and apos an not "universal" entities</li>
+				</ul>
+			]]></html>
+		</release>
+		<release tag="PRERELEASE-4" filebase="xmlbs-0.0.4">
+			<html><![CDATA[
+				8.IV.2003
+				<ul>
+					<li>fix adjoined whitespace handling</li>
+					<li>avoid exception when ignore-case encounters unknown attribute</li>
+					<li>fix build process</li>
+				</ul>
+			]]></html>
+		</release>
+		<release tag="PRERELEASE-3" filebase="xmlbs-0.0.3">
+			<html><![CDATA[
+				29.XII.2002
+				<ul>
+					<li>entity reference handling</li>
+					<li>ignore case option</li>
+					<li>improved build dependency handling</li>
+					<li>XHTMLizer commandline utility</li>
+				</ul>
+			]]></html>
+		</release>
+		<release tag="PRERELEASE-2" filebase="xmlbs-0.0.2">
+			<html><![CDATA[
+				26.X.2002
+				<ul>
+					<li>new implementation of tokenizer</li>
+					<li>sun code style</li>
+				</ul>
+			]]></html>
+		</release>
+		<release tag="PRERELEASE-1" filebase="xmlbs-0.0.1">
+			<html><![CDATA[
+				25.VI.2002
+				<ul>
+					<li>initial release</li>
+				</ul>
+			]]></html>
+		</release>
+	</section>
 
-    <section>
-	<title>Development</title>
-	<html><![CDATA[
-	    <p>
-		Source snapshots (@today@) available for downloading:
-	    </p>
-            <ul>
-                <li>
-                    <a href="@snapshot.zip@">@snapshot.zip@</a>
-                </li>
-            </ul>
-	]]></html>
-    </section>
+	<section>
+		<title>Development</title>
+		<html><![CDATA[
+			<p>
+				Source snapshots (@today@) available for downloading:
+			</p>
+			<ul>
+				<li>
+					<a href="@snapshot.zip@">@snapshot.zip@</a>
+				</li>
+			</ul>
+		]]></html>
+	</section>
 
-    <section>
-	<title>Documentation</title>
-	<html><![CDATA[
-	    <a href="projects/xmlbs/INSTALL.html">Installation instructions</a>
-	    are included in the source downloads.  The source code is documented
-	    using <a href="projects/xmlbs/doc/index.html">javadoc</a>..
-	]]></html>
-    </section>
+	<section>
+		<title>Documentation</title>
+		<html><![CDATA[
+			<a href="projects/xmlbs/INSTALL.html">Installation instructions</a>
+			are included in the source downloads.  The source code is documented
+			using <a href="projects/xmlbs/doc/index.html">javadoc</a>..
+		]]></html>
+	</section>
 
-    <section>
-        <title>Bug reports etc.</title>
-	<html><![CDATA[
-	    Please send an email to rwvtveer <em>at</em> xs4all.nl
-	    if you find a problem not mentioned in
-            <a href="projects/xmlbs/TODO">TODO</a>.    Please include
-            information about the version you are using.
-	]]></html>
-    </section>
+	<section>
+		<title>Bug reports etc.</title>
+		<html><![CDATA[
+			Please send an email to rwvtveer <em>at</em> xs4all.nl
+			if you find a problem not mentioned in
+			<a href="projects/xmlbs/TODO">TODO</a>.	Please include
+			information about the version you are using.
+		]]></html>
+	</section>
 </homepage>

@@ -1,64 +1,64 @@
 <project name="XMLBS Homepage" default="dist" basedir=".">
 
-  <property name="build.dir" value="build"/>
-  <property name="web.dir" value="web"/>
+	<property name="build.dir" value="build"/>
+	<property name="web.dir" value="web"/>
 
-  <property name="cvsroot" value="/home/remco/cvsroot"/>
-  <property name="cvsprefix" value="projects"/>
-  <property name="xmlbs.project" value="projects/xmlbs"/>
-  <property name="tar.file" value="xmlbs-homepage.tar"/>
+	<property name="cvsroot" value="/home/remco/cvsroot"/>
+	<property name="cvsprefix" value="projects"/>
+	<property name="xmlbs.project" value="projects/xmlbs"/>
+	<property name="tar.file" value="xmlbs-homepage.tar"/>
 
-  <property name="homepage.build" value="homepage-build.xml"/>
+	<property name="homepage.build" value="homepage-build.xml"/>
 
-  <target name="dist" depends="prepare,homepage-html,homepage-build,changelog,snapshot,apidoc">
-    <replace file="${build.dir}/index.html" token="@today@" value="${TODAY}"/>
-    <replace file="${build.dir}/index.html" token="@snapshot.zip@" value="${snapshot.zip}"/>
-    <tar tarfile="${tar.file}" basedir="${build.dir}" excludes="**/CVS"/>
-  </target>
+	<target name="dist" depends="prepare,homepage-html,homepage-build,changelog,snapshot,apidoc">
+		<replace file="${build.dir}/index.html" token="@today@" value="${TODAY}"/>
+		<replace file="${build.dir}/index.html" token="@snapshot.zip@" value="${snapshot.zip}"/>
+		<tar tarfile="${tar.file}" basedir="${build.dir}" excludes="**/CVS"/>
+	</target>
 
-  <target name="homepage-html" depends="prepare,changelog">
-    <style style="src/homepage-html.xsl" in="src/homepage.xml" out="${build.dir}/index.html"/>
-  </target>
+	<target name="homepage-html" depends="prepare,changelog">
+		<style style="src/homepage-html.xsl" in="src/homepage.xml" out="${build.dir}/index.html"/>
+	</target>
 
-  <target name="homepage-build">
-    <style style="src/homepage-build.xsl" in="src/homepage.xml" out="${homepage.build}"/>
-    <ant antfile="${homepage.build}"/>
-  </target>
+	<target name="homepage-build">
+		<style style="src/homepage-build.xsl" in="src/homepage.xml" out="${homepage.build}"/>
+		<ant antfile="${homepage.build}"/>
+	</target>
 
-  <target name="prepare">
-    <mkdir dir="${build.dir}"/>
-    <copy todir="${build.dir}">
-      <fileset dir="${web.dir}"/>
-    </copy>
-  </target>
+	<target name="prepare">
+		<mkdir dir="${build.dir}"/>
+		<copy todir="${build.dir}">
+			<fileset dir="${web.dir}"/>
+		</copy>
+	</target>
 
-  <target name="clean">
-    <delete dir="${build.dir}"/>
-    <delete file="${homepage.build}"/>
-    <delete file="${tar.file}"/>
-  </target>
+	<target name="clean">
+		<delete dir="${build.dir}"/>
+		<delete file="${homepage.build}"/>
+		<delete file="${tar.file}"/>
+	</target>
 
-  <target name="timestamp">
-    <tstamp/>
-    <property name="snapshot.zip" value="xmlbs-${DSTAMP}.zip"/>
-  </target>
+	<target name="timestamp">
+		<tstamp/>
+		<property name="snapshot.zip" value="xmlbs-${DSTAMP}.zip"/>
+	</target>
 
-  <target name="checkout" depends="prepare">
-    <cvs cvsRoot="${cvsroot}" dest="${build.dir}" package="${xmlbs.project}"/>
-  </target>
+	<target name="checkout" depends="prepare">
+		<cvs cvsRoot="${cvsroot}" dest="${build.dir}" package="${xmlbs.project}"/>
+	</target>
 
-  <target name="snapshot" depends="checkout,timestamp">
-    <zip zipfile="${build.dir}/${snapshot.zip}"
-        basedir="${build.dir}/${cvsprefix}" excludes="**/CVS"/>
-  </target>
+	<target name="snapshot" depends="checkout,timestamp">
+		<zip zipfile="${build.dir}/${snapshot.zip}"
+				basedir="${build.dir}/${cvsprefix}" excludes="**/CVS"/>
+	</target>
 
-  <target name="apidoc" depends="checkout">
-    <ant dir="${build.dir}/${xmlbs.project}" target="apidoc"/>
-  </target>
+	<target name="apidoc" depends="checkout">
+		<ant dir="${build.dir}/${xmlbs.project}" target="apidoc"/>
+	</target>
 
 
-  <target name="changelog" depends="checkout">
-    <ant dir="${build.dir}/${xmlbs.project}" target="changelog"/>
-  </target>
+	<target name="changelog" depends="checkout">
+		<ant dir="${build.dir}/${xmlbs.project}" target="changelog"/>
+	</target>
 
 </project>
