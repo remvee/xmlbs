@@ -36,6 +36,16 @@
 	<html>
 	    The following releases are considered to be stable.
 	</html>
+	<release tag="PRERELEASE-4" filebase="xmlbs-0.0.4">
+	    <html><![CDATA[
+		8.IV.2003
+		<ul>
+		    <li>fix adjoined whitespace handling</li>
+		    <li>avoid exception when ignore-case encounters unknown attribute</li>
+		    <li>fix build process</li>
+		</ul>
+	    ]]></html>
+	</release>
 	<release tag="PRERELEASE-3" filebase="xmlbs-0.0.3">
 	    <html><![CDATA[
 		29.XII.2002
