@@ -26,7 +26,7 @@ import java.util.*;
  *
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  */
 public class XMLBS
 {
@@ -136,7 +136,6 @@ public class XMLBS
     throws Exception
     {
 	XMLBS bs = new XMLBS(new DTD(DTD.HTML), new File(args[0]));
-	ByteArrayOutputStream out = new ByteArrayOutputStream();
 	bs.write(System.out);
     }
 }
