@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import junit.framework.*;
 
@@ -35,7 +36,7 @@ import xmlbs.*;
  *
  * @see xmlbs.Tokenizer
  * @author R.W. van ' t Veer
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class TokenizerTests extends TestCase {
     /**
@@ -321,6 +322,64 @@ public class TokenizerTests extends TestCase {
 		    "didn't get '" + out + "' from '" + d + "' but '" + tok + "'",
                        tok.toString().equals(out));
         }
+	// normal entity stuff
+	{
+	    Properties prop = new Properties();
+	    prop.setProperty("tag", "$attr");
+	    prop.setProperty("&", "foo bar");
+	    DocumentStructure ds0 = new PropertiesDocumentStructure(prop);
+	    String d[][] = {
+		{ "&foo;&bar;&fam;", "&foo;&bar;&amp;fam;" },
+		{ "&foo ;&bar;&fam;", "&amp;foo ;&bar;&amp;fam;" },
+		{ "<tag attr='&foo ;&bar;&fam;'>", "<tag attr=\"&amp;foo ;&bar;&amp;fam;\">" },
+	    };
+	    for (int i = 0; i < d.length; i++) {
+		String in = d[i][0];
+		String out = d[i][1];
+
+		Tokenizer tokenizer = new Tokenizer(in, ds0);
+		List tokens = tokenizer.readAllTokens();
+
+		assertTrue(
+			"didn't read 1 token from '" + in + "' but " + tokens.size(),
+			tokens.size() == 1);
+
+		Token tok = (Token) tokens.get(0);
+		assertTrue(
+			"didn't get '" + out + "' from '" + in + "' but '" + tok + "'",
+			tok.toString().equals(out));
+	    }
+	}
+	// ignore case entity stuff
+	{
+	    Properties prop = new Properties();
+	    prop.setProperty("tag", "$attr");
+	    prop.setProperty("&", "foo bar baR");
+	    DocumentStructure ds0 = new PropertiesDocumentStructure(prop);
+	    ds0.setIgnoreCase(true);
+	    String d[][] = {
+		{ "&foo;&bar;&fam;", "&foo;&bar;&amp;fam;" },
+		{ "&foo ;&baR;&FAM;", "&amp;foo ;&baR;&amp;FAM;" },
+		{ "&FOO;&bar;&FAM;", "&foo;&bar;&amp;FAM;" },
+		{ "<tag attr=&FOO;&bar;&FAM;>", "<tag attr=\"&foo;&bar;&amp;FAM;\">" },
+	    };
+	    for (int i = 0; i < d.length; i++) {
+		String in = d[i][0];
+		String out = d[i][1];
+
+		Tokenizer tokenizer = new Tokenizer(in, ds0);
+		List tokens = tokenizer.readAllTokens();
+
+		assertTrue(
+			"didn't read 1 token from '" + in + "' but " + tokens.size(),
+			tokens.size() == 1);
+
+		Token tok = (Token) tokens.get(0);
+		assertTrue(
+			"didn't get '" + out + "' from '" + in + "' but '" + tok + "'",
+			tok.toString().equals(out));
+	    }
+	}
     }
 
     /**

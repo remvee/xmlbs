@@ -25,7 +25,7 @@ package xmlbs;
  * Interface for writing document structure descriptions.
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public interface DocumentStructure {
     /**
@@ -57,6 +57,15 @@ public interface DocumentStructure {
      * @return attribute name in proper case
      */
     String getTagAttribute (String name, String attr);
+
+    /**
+     * Get entity reference.
+     * Ignoring character case if needed.
+     * @param name entity reference name
+     * @return entity reference name in proper case or
+     * <tt>null</tt> if no such entity exists
+     */
+    String getEntityRef (String name);
 
     /**
      * Determine if tag is known.

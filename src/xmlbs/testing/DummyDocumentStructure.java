@@ -25,7 +25,7 @@ import xmlbs.*;
 
 /**
  * @author R.W. van 't Veer
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class DummyDocumentStructure implements DocumentStructure {
     /**
@@ -60,6 +60,15 @@ public class DummyDocumentStructure implements DocumentStructure {
      */
     public String getTagAttribute (String name, String attr) {
 	return attr;
+    }
+
+    /**
+     * Do nothing..
+     * @param name ignored parameter
+     * @return given name
+     */
+    public String getEntityRef (String name) {
+	return name;
     }
 
     /**

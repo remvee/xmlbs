@@ -32,20 +32,23 @@ import org.apache.regexp.RESyntaxException;
  *
  * @see <A href="http://www.w3.org/TR/REC-xml#syntax">XML: Character Data and Markup</A>
  * @author R.W. van 't Veer
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class TextToken implements Token {
     /** processed text */
     private String txt;
     /** unprocessed text */
     private String data;
+    /** document structure this token lives in */
+    private DocumentStructure ds = null;
 
     /**
      * @param data create text block token from given text
      */
-    public TextToken (String data) {
+    public TextToken (String data, DocumentStructure ds) {
         this.data = data;
-        this.txt = fixText(data);
+	this.ds = ds;
+        this.txt = fixText(data, ds);
     }
 
     /**
@@ -60,7 +63,7 @@ public class TextToken implements Token {
      */
     public void setData (String data) {
 	this.data = data;
-	this.txt = fixText(data);
+	this.txt = fixText(data, ds);
     }
 
     /**
@@ -84,7 +87,7 @@ public class TextToken implements Token {
 
     static {
         try {
-            entityRefRe = new RE("^&[a-zA-Z_:][a-zA-Z0-9._:-]*;");
+            entityRefRe = new RE("^&([a-zA-Z_:][a-zA-Z0-9._:-]*);");
             charRefRe = new RE("^&#([0-9]+;)|(x[0-9a-fA-F]+);");
         } catch (RESyntaxException ex) {
             throw new RuntimeException(ex.toString());
@@ -96,7 +99,7 @@ public class TextToken implements Token {
      * @param in text to process
      * @return processing result
      */
-    public static final String fixText (String in) {
+    public static final String fixText (String in, DocumentStructure ds) {
         StringBuffer out = new StringBuffer();
         // TODO speedup by using char array insteadof string
         for (int i = 0, l = in.length(); i < l; i++) {
@@ -119,13 +122,21 @@ public class TextToken implements Token {
                 if (j != -1) {
                     String s = in.substring(i);
                     if (entityRefRe.match(s) || charRefRe.match(s)) {
-                        // TODO test if known entity
-                        out.append(in.substring(i, j + 1));
-                        i = j;
+			String ent = ds.getEntityRef(entityRefRe.getParen(1));
+			if (ent != null) {
+			    //out.append(in.substring(i, j + 1));
+			    out.append('&');
+			    out.append(ent);
+			    out.append(';');
+			    i = j;
+			} else {
+			    out.append("&amp;");
+			}
                     } else {
                         out.append("&amp;");
                     }
                 } else {
+		    // TODO try to match entity ref with missing semi-colon
                     out.append("&amp;");
                 }
                 break;

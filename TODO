@@ -12,8 +12,6 @@
 	- create unit tests for parser
 	- treat cdata as text (cdata should extend text?)
     - document structure:
-	- add isKnownEntity to doc structure interface and use it
-	  for text tokens
 	- smarter container rules for |, + and ?
 	- handle #implied, #required and cdata, nmtoken and id
 	  attributes
@@ -24,7 +22,7 @@
 	    - read and fix tag attributes
 		- optional case insensitive tag matching
 	    - record line number in tokens for reporting !!TODO!!
-	    - keep known entities if text tokens !!TODO!!
+	    - keep known entities if text tokens
 	    - handle empty tags
 	- hierarchy
 	    - add missing close tags

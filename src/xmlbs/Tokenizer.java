@@ -35,7 +35,7 @@ import java.util.Vector;
  *
  * @see xmlbs.Token
  * @author R.W. van ' t Veer
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class Tokenizer {
     /** token we bumbed into before returning a text token */
@@ -101,7 +101,7 @@ public class Tokenizer {
                     if (t.length() > 0) {
                         // hold back token and return text token first
                         holdBack = tok;
-                        return new TextToken(t);
+                        return new TextToken(t, ds);
                     }
                     return tok;
                 }
@@ -115,7 +115,7 @@ public class Tokenizer {
         }
 
         String t = sb.toString();
-        return (t.length() > 0) ? new TextToken(t) : null;
+        return (t.length() > 0) ? new TextToken(t, ds) : null;
     }
 
     /**

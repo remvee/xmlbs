@@ -27,11 +27,12 @@ import java.util.*;
 /**
  * Document structure configurable using a property file.  A
  * property key is a tag name, when it starts with a <tt>_</tt>
- * character a includable set or <tt>&#64;ROOT</tt> when it
- * denotes the document root.  Property values give a list of
- * tags which can be parents of the given key, when a value
- * starts with <tt>$</tt> it denotes a attribute name and a value
- * starting with <tt>_</tt> references an other property.
+ * character a includable set, <tt>&#64;ROOT</tt> when it
+ * denotes the document root and <tt>&amp;</tt> for a list of all
+ * known entities.  Property values give a list of tags which can
+ * be parents of the given key, when a value starts with
+ * <tt>$</tt> it denotes a attribute name and a value starting
+ * with <tt>_</tt> references an other property.
  * <p>
  * The following example has a <tt>table</tt> element as possible
  * root tag and a structure similar to tables in html:
@@ -42,14 +43,17 @@ import java.util.*;
  * td: _cell
  * th: _cell
  * _cell: #TEXT table $colspan $rowspan 
+ * &amp;: nbsp
  * </pre>
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class PropertiesDocumentStructure implements DocumentStructure {
     /** set to keep tag names */
     private Set tagNames = new HashSet();
+    /** set to keep entity names */
+    private Set entityNames = new HashSet();
     /** map to keep tag attributes */
     private Map tagAttributes = new HashMap();
     /** map to keep lists of possible tag parents */
@@ -99,6 +103,22 @@ public class PropertiesDocumentStructure implements DocumentStructure {
 	for (Iterator it = tagNames.iterator(); it.hasNext();) {
 	    String key = (String) it.next();
 	    master.put(key, include(prop, key));
+	}
+
+	// collect entity names
+	{
+	    entityNames.add("amp");
+	    entityNames.add("gt");
+	    entityNames.add("lt");
+	    entityNames.add("quot");
+	    entityNames.add("apos");
+
+	    List l = (List) master.get("&");
+	    if (l != null) {
+		entityNames.addAll(l);
+		master.remove("&");
+		tagNames.remove("&");
+	    }
 	}
 
 	// create hierarchy map from master
@@ -170,6 +190,7 @@ public class PropertiesDocumentStructure implements DocumentStructure {
     /**
      * Get tag name.
      * Ignoring character case if needed.
+     * Add icase-tag-name-set for speed.
      * @param name tag name to lookup
      * @return tag name in proper case
      */
@@ -189,8 +210,37 @@ public class PropertiesDocumentStructure implements DocumentStructure {
     }
 
     /**
+     * Get entity reference.
+     * Ignoring character case if needed.
+     * @param name entity reference name
+     * @return entity reference name in proper case or
+     * <tt>null</tt> if no such entity exists
+     */
+    public String getEntityRef (String name) {
+	if (!icase) {
+	    return entityNames.contains(name) ? name : null;
+	}
+
+	// try exact match first
+	if (entityNames.contains(name)) {
+	    return name;
+	}
+
+	// find a lower case match
+	String in = name.toLowerCase();
+	for (Iterator it = entityNames.iterator(); it.hasNext();) {
+	    String n = (String) it.next();
+	    if (n.toLowerCase().equals(in)) {
+		return n;
+	    }
+	}
+	return null;
+    }
+
+    /**
      * Get attribute name.
      * Ignoring character case if needed.
+     * Add icase-attribute-name-set for speed.
      * @param name tag name to lookup
      * @param attr attribute name to lookup
      * @return attribute name in proper case
