@@ -32,6 +32,15 @@
 	<para>
 	    The following releases are considered to be stable.
 	</para>
+	<release tag="PRERELEASE-3" filebase="xmlbs-0.0.3"><![CDATA[
+	    29.XII.2002
+	    <ul>
+		<li>entity reference handling</li>
+		<li>ignore case option</li>
+		<li>improved build dependency handling</li>
+		<li>XHTMLizer commandline utility</li>
+	    </ul>
+	]]></release>
 	<release tag="PRERELEASE-2" filebase="xmlbs-0.0.2"><![CDATA[
 	    26.X.2002
 	    <ul>
