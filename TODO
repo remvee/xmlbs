@@ -11,8 +11,8 @@
     - ignore case tag/attribute names
 - core:
     - annotation/ reporting
-	- multilingual annotation
-	- configurable (all, hier, hier-del, hier-ins..?)
+		- multilingual annotation
+		- configurable (all, hier, hier-del, hier-ins..?)
     - move parsing stuff to a parser class
     	a treebuilder and a treebalancer
 	- create unit tests for parser
