@@ -4,3 +4,10 @@
     3. remove unknown tags
     4. verify tag attributes
     5. reconstruct hierarchy
+- frontends:
+    - commandline:
+	--comment-illegal-code
+	--discard-comments
+	--transform-cdata
+    - web xhtmlizer:
+	validate, report and deliver bodyshopped version
