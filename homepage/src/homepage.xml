@@ -67,7 +67,7 @@
     </section>
 
     <section>
-	<title>Developement</title>
+	<title>Development</title>
 	<html><![CDATA[
 	    <p>
 		Source snapshots (@today@) available for downloading:
@@ -83,11 +83,9 @@
     <section>
 	<title>Documentation</title>
 	<html><![CDATA[
-	    Installation instructions are
-	    <a href="projects/xmlbs/INSTALL.html">included</a> in
-	    de source downloads.
-            The source code is documented using
-            <a href="projects/xmlbs/doc/index.html">javadoc</a>..
+	    <a href="projects/xmlbs/INSTALL.html">Installation instructions</a>
+	    are included in the source downloads.  The source code is documented
+	    using <a href="projects/xmlbs/doc/index.html">javadoc</a>..
 	]]></html>
     </section>
 
