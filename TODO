@@ -2,6 +2,8 @@
     - XMLBS.cleanEmptyTags()
 	kills script and style tags for XHTML because these
 	contain whitespace only..
+- tests:
+    - ignore case tests
 - core:
     - annotation
 	- multilingual
