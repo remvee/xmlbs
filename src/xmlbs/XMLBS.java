@@ -35,7 +35,7 @@ import java.util.*;
  * </UL>
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.31 $
+ * @version $Revision: 1.32 $
  */
 public class XMLBS {
     /** input */
@@ -171,11 +171,24 @@ public class XMLBS {
 	    if (tok instanceof TextToken) {
 		TextToken txt = (TextToken) tok;
 		if (!txt.isWhiteSpace() && !ds.canContain(top, txt)) {
-		    // remove stray text??
-		    if (annotate) {
-			tokens.set(i, comment("stray text", txt));
+		    // handle stray text
+		    if (!trail.hasContainerFor(txt)) {
+			// misplaced text
+			if (annotate) {
+			    tokens.set(i, comment("misplaced text", txt));
+			} else {
+			    tokens.remove(i--);
+			}
 		    } else {
-			tokens.remove(i--);
+			// add close tags till top will have us
+			do {
+			    if (annotate) {
+				tokens.add(i++, comment("close first", top));
+			    }
+			    tokens.add(i++, top.closeTag());
+			    trail.pop();
+			    top = trail.getTop();
+			} while (!ds.canContain(top, txt) && trail.getDepth() > 0);
 		    }
 		}
 	    } else if (tok instanceof TagToken) {
@@ -369,12 +382,12 @@ public class XMLBS {
 
 	/**
 	 * @param tag tag
-	 * @return true if any parent can contain given tag
+	 * @return true if any parent can contain given token
 	 */
-	public boolean hasContainerFor (TagToken tag) {
+	public boolean hasContainerFor (Token tok) {
 	    for (Iterator it = trail.iterator(); it.hasNext();) {
 		TagToken t = (TagToken) it.next();
-		if (ds.canContain(t, tag)) {
+		if (ds.canContain(t, tok)) {
 		    return true;
 		}
 	    }
