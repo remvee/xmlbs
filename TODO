@@ -1,0 +1,6 @@
+- pass:
+    1. tokenize
+    2. remove stray close tags
+    3. remove unknown tags
+    4. verify tag attributes
+    5. reconstruct hierarchy
