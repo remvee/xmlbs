@@ -27,7 +27,7 @@ import org.apache.regexp.*;
  * Useful when, for example, converting HTML to XHTML.
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class XMLBS
 {
@@ -103,29 +103,92 @@ public class XMLBS
 		    Tag closeTag = new Tag(tag.getName(), null, Tag.CLOSE);
 		    List l = tokens.subList(i+1, tokens.size());
 		    // locate close tag
-		    int close = l.indexOf(closeTag);
-		    // locate next open
-		    int open = l.indexOf(openTag);
-
-		    if (close == -1) // tag not closed
+		    int close = findCloseTag(openTag, l);
+		    if (close == -1)
 		    {
-			if (open != -1)
+			close = l.indexOf(closeTag);
+			// locate next open
+			int open = l.indexOf(openTag);
+
+			if (close == -1) // tag not closed
 			{
+			    if (open != -1)
+			    {
+				tokens.add(open+i+1, closeTag);
+			    }
+			    else
+			    {
+				tokens.add(closeTag);
+			    }
+			}
+			else if (open != -1 && open < close) // nesting detected
+			{
+			    // TODO allow nesting for certain tags
 			    tokens.add(open+i+1, closeTag);
 			}
-			else
-			{
-			    tokens.add(closeTag);
-			}
-		    }
-		    else if (open != -1 && open < close) // nesting detected
-		    {
-			// TODO allow nesting for certain tags
-			tokens.add(open+i+1, closeTag);
 		    }
 		}
 	    }
 	}
+    }
+    private final static int findCloseTag (Tag tag, List tokens)
+    {
+	int depth = 0, i = 0;
+	Tag openTag = tag;
+	Tag closeTag = new Tag(tag.getName(), null, Tag.CLOSE);
+	for (; i < tokens.size(); i++)
+	{
+	    Object o = tokens.get(i);
+	    if (o instanceof Tag)
+	    {
+		if (o.equals(openTag))
+		{
+		    depth++;
+		}
+		else if (o.equals(closeTag))
+		{
+		    depth--;
+		    if (depth < 0) break;
+		}
+	    }
+	}
+	
+	return i < tokens.size() ? i : -1;
+    }
+
+    /**
+     * Try to parse document and fix overlaps.  Tags in the list
+     * will be replaced by {@link Block} objects.
+     * @param tokens list of tokens
+     */
+    void fixOverlap (List tokens)
+    {
+	Vector result = new Vector();
+	ListIterator it = tokens.listIterator();
+	while (it.hasNext())
+	{
+	    Object o = it.next();
+	    if (o instanceof Tag)
+	    {
+		Tag t = (Tag) o;
+		if (t.isOpenTag() || t.isEmptyTag())
+		{
+		    result.add(new Block(t, it));
+		}
+		else
+		{
+		    // discard close/other tag
+		}
+	    }
+	    else
+	    {
+		result.add(o);
+	    }
+	}
+
+	// replace tokens by result
+	tokens.clear();
+	tokens.addAll(result);
     }
 
     public static void main (String[] args)
@@ -133,53 +196,20 @@ public class XMLBS
     {
 	XMLBS bs = new XMLBS(new File(args[0]));
 	List tokens = bs.tokenize();
+System.err.println("after tokenze: "+tokens);
 
 	// fix tags not closed
 	bs.fixUnclosedTags(tokens);
-	System.out.println("after fixUnclosedTags: "+tokens);
+System.err.println("after fixUnclosedTags: "+tokens);
 
 	// fix overlap
-	{
-	    Vector result = new Vector();
-	    ListIterator it = tokens.listIterator();
-	    while (it.hasNext())
-	    {
-		Object o = it.next();
-		if (o instanceof Tag)
-		{
-		    Tag t = (Tag) o;
-		    if (t.isOpenTag() || t.isEmptyTag())
-		    {
-			result.add(new Block(t, it));
-		    }
-		    else
-		    {
-			// discard close/other tag
-		    }
-		}
-		else
-		{
-		    result.add(o);
-		}
-	    }
-System.err.println("after fixOverlap: "+result);
-	}
+	bs.fixOverlap(tokens);
+System.err.println("after fixOverlap: "+tokens);
 
 	// dump result
 	{
 	    Iterator it = tokens.iterator();
-	    int indent = 0;
-	    while (it.hasNext())
-	    {
-		Object o = it.next();
-
-		if (o instanceof Tag && ((Tag)o).isCloseTag()) indent -= 4;
-
-		for (int i = 0; i < indent; i++) System.out.print(" ");
-		System.out.println((""+o).trim());
-
-		if (o instanceof Tag && ((Tag)o).isOpenTag()) indent += 4;
-	    }
+	    while (it.hasNext()) System.out.println(""+it.next());
 	}
     }
 
@@ -325,6 +355,13 @@ class Block
 
     public String toString ()
     {
-	return result.toString();
+	StringBuffer sb = new StringBuffer();
+	Iterator it = result.iterator();
+	while (it.hasNext())
+	{
+	    Object o = it.next();
+	    sb.append(o.toString());
+	}
+	return sb.toString();
     }
 }
