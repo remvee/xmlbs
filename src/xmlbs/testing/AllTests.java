@@ -42,6 +42,7 @@ public class AllTests extends TestCase {
         suite.addTestSuite(TokenizerTest.class);
         suite.addTestSuite(TreeNodeTest.class);
         suite.addTestSuite(TreeBuilderTest.class);
+        suite.addTestSuite(TreeBalancerTest.class);
         return suite;
     }
 }
