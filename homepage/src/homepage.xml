@@ -2,24 +2,28 @@
     <title>XMLBS - XML body shop</title>
     <location>http://www.xs4all.nl/~rwvtveer/xmlbs</location>
     <description>
-	XMLBS transforms data to XML parsable state.  Useful for
-	tidying, parsing or even transferring HTML to XHTML.
+	<html><![CDATA[
+	    <p>
+		XMLBS transforms data to XML parsable state.  Useful for
+		tidying, parsing or even transferring HTML to XHTML.
+	    </p>
+	]]></html>
     </description>
 
     <section>
 	<title>Features</title>
-	<para><![CDATA[
+	<html><![CDATA[
 	    <ul>
-	      <li>unquoted tag attributes</li>
-	      <li>stray illegal characters like &lt; and &gt;</li>
-	      <li>close unclosed tags trying to obey structure rules</li>
-	      <li>fix tag overlap like <tt>&lt;i&gt; foo &lt;b&gt; bar &lt;/i&gt; boo &lt;/b&gt;</tt></li>
+		<li>unquoted tag attributes</li>
+		<li>stray illegal characters like &lt; and &gt;</li>
+		<li>close unclosed tags trying to obey structure rules</li>
+		<li>fix tag overlap like <tt>&lt;i&gt; foo &lt;b&gt; bar &lt;/i&gt; boo &lt;/b&gt;</tt></li>
 	    </ul>
-	]]></para>
-	<para><![CDATA[
-	    Please see the <A href="projects/xmlbs/TODO">TODO</A>
-	    file for bugs and future enhancements.
-	]]></para>
+	    <p>
+		Please see the <a href="projects/xmlbs/TODO">TODO</a>
+		file for bugs and future enhancements.
+	    </p>
+	]]></html>
     </section>
 
     <section>
@@ -29,63 +33,71 @@
 
     <section>
 	<title>Downloads</title>
-	<para>
+	<html>
 	    The following releases are considered to be stable.
-	</para>
-	<release tag="PRERELEASE-3" filebase="xmlbs-0.0.3"><![CDATA[
-	    29.XII.2002
-	    <ul>
-		<li>entity reference handling</li>
-		<li>ignore case option</li>
-		<li>improved build dependency handling</li>
-		<li>XHTMLizer commandline utility</li>
-	    </ul>
-	]]></release>
-	<release tag="PRERELEASE-2" filebase="xmlbs-0.0.2"><![CDATA[
-	    26.X.2002
-	    <ul>
-		<li>new implementation of tokenizer</li>
-		<li>sun code style</li>
-	    </ul>
-	]]></release>
-	<release tag="PRERELEASE-1" filebase="xmlbs-0.0.1"><![CDATA[
-	    25.VI.2002
-	    <ul>
-		<li>initial release</li>
-	    </ul>
-	]]></release>
+	</html>
+	<release tag="PRERELEASE-3" filebase="xmlbs-0.0.3">
+	    <html><![CDATA[
+		29.XII.2002
+		<ul>
+		    <li>entity reference handling</li>
+		    <li>ignore case option</li>
+		    <li>improved build dependency handling</li>
+		    <li>XHTMLizer commandline utility</li>
+		</ul>
+	    ]]></html>
+	</release>
+	<release tag="PRERELEASE-2" filebase="xmlbs-0.0.2">
+	    <html><![CDATA[
+		26.X.2002
+		<ul>
+		    <li>new implementation of tokenizer</li>
+		    <li>sun code style</li>
+		</ul>
+	    ]]></html>
+	</release>
+	<release tag="PRERELEASE-1" filebase="xmlbs-0.0.1">
+	    <html><![CDATA[
+		25.VI.2002
+		<ul>
+		    <li>initial release</li>
+		</ul>
+	    ]]></html>
+	</release>
     </section>
 
     <section>
 	<title>Developement</title>
-	<para><![CDATA[
-	    Source snapshots (@today@) available for downloading:
+	<html><![CDATA[
+	    <p>
+		Source snapshots (@today@) available for downloading:
+	    </p>
             <ul>
                 <li>
                     <a href="@snapshot.zip@">@snapshot.zip@</a>
                 </li>
             </ul>
-	]]></para>
+	]]></html>
     </section>
 
     <section>
 	<title>Documentation</title>
-	<para><![CDATA[
+	<html><![CDATA[
 	    Installation instructions are
 	    <a href="projects/xmlbs/INSTALL.html">included</a> in
 	    de source downloads.
             The source code is documented using
             <a href="projects/xmlbs/doc/index.html">javadoc</a>..
-	]]></para>
+	]]></html>
     </section>
 
     <section>
         <title>Bug reports etc.</title>
-	<para><![CDATA[
+	<html><![CDATA[
 	    Please send an email to rwvtveer <em>at</em> xs4all.nl
 	    if you find a problem not mentioned in
             <a href="projects/xmlbs/TODO">TODO</a>.    Please include
             information about the version you are using.
-	]]></para>
+	]]></html>
     </section>
 </homepage>

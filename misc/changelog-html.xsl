@@ -1,48 +1,44 @@
 <?xml version="1.0"?>
 
-<xsl:transform xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
-    <xsl:output method="html"/>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:output method="xml" indent="yes" 
+	    doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+	    doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" />
 
     <xsl:template match="entry">
-	<LI>
-	    <xsl:value-of select="date"/>
-	    <xsl:text> </xsl:text>
-	    <xsl:value-of select="time"/>
+	<li class="logitem">
+	    <xsl:value-of select="date"/> <xsl:text> </xsl:text> <xsl:value-of select="time"/>
 	    by <xsl:value-of select="author"/>
-
-	    <P>
-		<PRE><xsl:for-each select="./msg"><xsl:value-of select="."/></xsl:for-each></PRE>
-
-		<UL>
-		    <xsl:for-each select="./file/name">
-			<xsl:variable name="file" select="."/>
-			<LI>
-			    <A href="{$file}">
-				<xsl:value-of select="."/>
-			    </A>
-			</LI>
-		    </xsl:for-each>
-		</UL>
-	    </P>
-	</LI>
+	    <div class="logmessage">
+		<xsl:for-each select="./msg"><xsl:value-of select="."/></xsl:for-each>
+	    </div>
+	    <ul class="logfiles">
+		<xsl:for-each select="./file/name">
+		    <xsl:variable name="file" select="."/>
+		    <li class="logfile"><a href="{$file}"><xsl:value-of select="."/></a></li>
+		</xsl:for-each>
+	    </ul>
+	</li>
     </xsl:template>
 
     <xsl:template match="/">
-	<HTML>
-	  <HEAD><TITLE>XMLBS changelog</TITLE></HEAD>
-	  <BODY>
+	<html>
+	    <head>
+		<title>XMLBS Changelog</title>
+		<link type="text/css" rel="stylesheet" href="homepage/web/css/style.css"/>
+	    </head>
+	    <body>
 
-	    <H2>XMLBS changelog</H2>
-	    <HR/>
-	    <UL>
-		<xsl:for-each select="/changelog/entry">
+		<h2>XMLBS Changelog</h2>
+		<hr/>
+		<ul>
+		    <xsl:for-each select="/changelog/entry">
 		    <xsl:apply-templates select="."/>
-		</xsl:for-each>
-	    </UL>
-	    <HR/>
+		    </xsl:for-each>
+		</ul>
 
-	  </BODY>
-	</HTML>
+	    </body>
+	</html>
     </xsl:template>
 
-</xsl:transform>
+</xsl:stylesheet>
