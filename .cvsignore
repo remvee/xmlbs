@@ -1,5 +1,6 @@
-doc
+.project
 build
 depend
-.project
 depend-build.xml
+doc
+lib
