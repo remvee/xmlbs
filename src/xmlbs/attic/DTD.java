@@ -24,6 +24,9 @@ package xmlbs;
 import java.util.*;
 import java.io.*;
 
+/**
+ * Simple document definition object.
+ */
 public class DTD
 {
     Map elementMap = new HashMap();
@@ -124,17 +127,33 @@ public class DTD
 	return out;
     }
 
+    /**
+     * Determine of given parent may include given child.
+     * @param parent tag
+     * @param child tag
+     * @return true if child may be a child of parent
+     */
     public boolean canInclude (Tag parent, Tag child)
     {
 	Set set = (Set) elementMap.get(parent.getName().toLowerCase());
 	return set.contains(child.getName().toLowerCase());
     }
 
+    /**
+     * Determine tag is known.
+     * @param tag
+     * @return true if tag is included in definition
+     */
     public boolean isKnownTag (Tag tag)
     {
 	return elementMap.containsKey(tag.getName().toLowerCase());
     }
 
+    /**
+     * Determine tag doesn't allow nested text or tags
+     * @param tag
+     * @return true if tag may not have offspring
+     */
     public boolean isEmptyTag (Tag tag)
     {
 	return emptySet.contains(tag.getName().toLowerCase());

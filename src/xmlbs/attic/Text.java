@@ -23,6 +23,10 @@ package xmlbs;
 
 import org.apache.regexp.*;
 
+/**
+ * Class to wrap blocks of text.  Entity refs are preserved when
+ * possible and new are introduced for &lt;, &gt; and &amp;.
+ */
 class Text
 {
     String txt;
@@ -53,9 +57,13 @@ class Text
 	}
     }
 
+    /**
+     * Xml escape text while preserving existing entities.
+     */
     public final static String fixText (String in)
     {
 	StringBuffer out = new StringBuffer();
+	// TODO speedup by using char array insteadof string
 	for (int i = 0, l = in.length(); i < l; i++)
 	{
 	    char c = in.charAt(i);
@@ -68,10 +76,10 @@ class Text
 		    out.append("&gt;");
 		    break;
 		case '"':
-		    out.append("&quot;");
+		    out.append("&quot;"); // TODO is this a global entity?
 		    break;
 		case '\'':
-		    out.append("&apos;");
+		    out.append("&apos;"); // TODO is this a global entity?
 		    break;
 		case '&':
 		    int j = in.indexOf(';', i);
@@ -101,5 +109,4 @@ class Text
 
 	return out.toString();
     }
-
 }

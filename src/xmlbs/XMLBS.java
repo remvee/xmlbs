@@ -47,7 +47,7 @@ import java.util.*;
  *
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.22 $
+ * @version $Revision: 1.23 $
  */
 public class XMLBS
 {
@@ -69,6 +69,9 @@ public class XMLBS
 	this(dtd, new FileInputStream(f));
     }
 
+    /**
+     * Create a list of tags and text from input.
+     */
     private List tokenize ()
     throws IOException
     {
@@ -116,6 +119,12 @@ public class XMLBS
 	return v;
     }
 
+    /**
+     * Make a hierarcy of nodes from the given list.
+     * @param dtd simple document definition
+     * @param tokens list of tags and text
+     * @return list of nodes and text
+     */
     private List createTree (DTD dtd, List tokens)
     {
 	List children = new Vector();
@@ -151,6 +160,10 @@ public class XMLBS
 	return children;
     }
 
+    /**
+     * Write end result to stream.
+     * @param out stream to write to
+     */
     public void write (OutputStream out)
     {
 	PrintWriter pw = new PrintWriter(out);
@@ -161,6 +174,9 @@ public class XMLBS
 	pw.close();
     }
 
+    /**
+     * Debug..
+     */
     public static void main (String[] args)
     throws Exception
     {

@@ -23,6 +23,9 @@ package xmlbs;
 
 import java.util.*;
 
+/**
+ * This class represents a tag-element in a hierarical structure.
+ */
 class Node
 {
     DTD dtd;
@@ -34,6 +37,13 @@ class Node
     List children = new Vector();
     Tag closedBy = null;
 
+    /**
+     * Create node from tag in list of tag/ text tokens.
+     * @param dtd document definition manager
+     * @param openTag of this node
+     * @param tokens list of tag/text tokens
+     * @param startPos position of openTag in list
+     */
     public Node (DTD dtd, Tag openTag, List tokens, int startPos)
     {
 	this.dtd = dtd;
@@ -104,7 +114,13 @@ class Node
 	if (endPos == -1) endPos = i;
     }
 
-    public boolean closedByTag (Tag t)
+    /**
+     * Determine if this node or child node was terminated by
+     * encountering a given close tag.  The recorded close tag is
+     * nullified after a positive hit.
+     * @return true if close by given tag
+     */
+    boolean closedByTag (Tag t)
     {
 	if (closedBy != null && closedBy.equals(t))
 	{
@@ -124,6 +140,9 @@ class Node
 	return false;
     }
 
+    /**
+     * @return end of scope position in token list
+     */
     public int getEndPosition () { return endPos; }
 
     public String toString ()

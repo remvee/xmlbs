@@ -26,6 +26,9 @@ import java.util.*;
 
 import org.apache.regexp.*;
 
+/**
+ * A tag object.
+ */
 class Tag
 {
     String raw;
@@ -76,7 +79,11 @@ class Tag
     }
 
     /**
-     * The &lt; character was already read.
+     * Try to read a tag from a stream.  The '&lt;' character was
+     * already read.
+     * @param in stream to read from
+     * @throws Exception when tag could not be read, this
+     * possibly a stray '&lt;' character.
      */
     public Tag (InputStream in)
     throws IOException, Exception
@@ -90,6 +97,7 @@ class Tag
 	    if (c == '<') // illegal in attribute value TODO allow it?
 	    {
 		in.reset();
+		// TODO signalling stray < is expensive!
 		throw new Exception();
 	    }
 	    // TODO allow > to be in attribute value
@@ -116,7 +124,6 @@ class Tag
 
 	// collect attributes
 	{
-
 	    int pos = 0;
 	    while (attRe.match(raw, pos))
 	    {
@@ -138,6 +145,13 @@ class Tag
 	}
     }
 
+    /**
+     * Create a new tag from given data.
+     * @param tagName name of tag
+     * @param attrs map of attributes
+     * @param type one of <TT>CLOSE</TT>, <TT>EMPTY</TT>,
+     * <TT>SPECIAL</TT>, <TT>DECLARATION</TT>.
+     */
     public Tag (String tagName, Map attrs, int type)
     {
 	this.tagName = tagName;
@@ -145,14 +159,35 @@ class Tag
 	this.type = type;
     }
 
+    /**
+     * @return tag name
+     */
     public String getName () { return tagName; }
+    /**
+     * @return true if this is a open tag
+     */
     public boolean isOpenTag () { return type == OPEN; }
+    /**
+     * @return true if this is a close tag
+     */
     public boolean isCloseTag () { return type == CLOSE; }
+    /**
+     * @return true if this is a empty tag
+     */
     public boolean isEmptyTag () { return type == EMPTY; }
 
+    /**
+     * Get close version for this tag.
+     */
     public Tag closeTag () { return new Tag(getName(), null, Tag.CLOSE); }
+    /**
+     * Get empty version of this tag.
+     */
     public Tag emptyTag () { return new Tag(getName(), attrs, Tag.EMPTY); }
 
+    /**
+     * @return proper string representation of this tag
+     */
     public String toString ()
     {
 	StringBuffer sb = new StringBuffer();
@@ -202,6 +237,9 @@ class Tag
 	return sb.toString();
     }
 
+    /**
+     * TODO this violates java rules!
+     */
     public boolean equals (Object that)
     {
 	if (that instanceof Tag)
@@ -215,6 +253,9 @@ class Tag
 	return false;
     }
 
+    /**
+     * TODO this violates java rules!
+     */
     public int hashCode ()
     {
 	if (tagName != null) return tagName.hashCode();
