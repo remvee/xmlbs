@@ -32,7 +32,7 @@ import org.apache.regexp.RESyntaxException;
  *
  * @see <A href="http://www.w3.org/TR/REC-xml#syntax">XML: Character Data and Markup</A>
  * @author R.W. van 't Veer
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class TextToken implements Token {
     /** processed text */
@@ -112,10 +112,10 @@ public class TextToken implements Token {
                 out.append("&gt;");
                 break;
             case '"':
-                out.append("&quot;"); // TODO is this a global entity?
+                out.append("&#034;");
                 break;
             case '\'':
-                out.append("&apos;"); // TODO is this a global entity?
+                out.append("&#039;");
                 break;
             case '&':
                 int j = in.indexOf(';', i);

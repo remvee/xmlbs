@@ -36,7 +36,7 @@ import xmlbs.*;
  *
  * @see xmlbs.Tokenizer
  * @author R.W. van ' t Veer
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class TokenizerTests extends TestCase {
     /**
@@ -190,8 +190,8 @@ public class TokenizerTests extends TestCase {
             final String d[][] =
                 {
                     { "<foo foo=bar=foo>", "<foo foo=\"bar=foo\">" },
-                    { "<foo foo='\"bar=foo\"'>", "<foo foo=\"&quot;bar=foo&quot;\">" },
-                    { "<foo foo=\"'bar=foo'\">", "<foo foo=\"&apos;bar=foo&apos;\">" },
+                    { "<foo foo='\"bar=foo\"'>", "<foo foo=\"&#034;bar=foo&#034;\">" },
+                    { "<foo foo=\"'bar=foo'\">", "<foo foo=\"&#039;bar=foo&#039;\">" },
                 };
             for (int i = 0; i < d.length; i++) {
 		String in = d[i][0];
@@ -313,7 +313,7 @@ public class TokenizerTests extends TestCase {
 
             TextToken tok = (TextToken) tokens.get(0);
             String data = tok.getData();
-	    String out = "&gt;&apos;foobar&quot;&lt;";
+	    String out = "&gt;&#039;foobar&#034;&lt;";
 
             assertTrue(
 		    "didn't read '>'foobar\"<' from '" + d + "' but '" + data + "'",

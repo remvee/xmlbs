@@ -47,7 +47,7 @@ import java.util.*;
  * </pre>
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class PropertiesDocumentStructure implements DocumentStructure {
     /** set to keep tag names */
@@ -110,8 +110,6 @@ public class PropertiesDocumentStructure implements DocumentStructure {
 	    entityNames.add("amp");
 	    entityNames.add("gt");
 	    entityNames.add("lt");
-	    entityNames.add("quot");
-	    entityNames.add("apos");
 
 	    List l = (List) master.get("&");
 	    if (l != null) {
