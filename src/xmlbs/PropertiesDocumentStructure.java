@@ -25,16 +25,40 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Document structure configurable using property files.
+ * Document structure configurable using a property file.  A
+ * property key is a tag name, when it starts with a <tt>_</tt>
+ * character a includable set or <tt>&#64;ROOT</tt> when it
+ * denotes the document root.  Property values give a list of
+ * tags which can be parents of the given key, when a value
+ * starts with <tt>$</tt> it denotes a attribute name and a value
+ * starting with <tt>_</tt> references an other property.
+ * <p>
+ * The following example has a <tt>table</tt> element as possible
+ * root tag and a structure similar to tables in html:
+ * <pre>
+ * &#64;ROOT: table
+ * table: tr $width $height
+ * tr: td th
+ * td: _cell
+ * th: _cell
+ * _cell: #TEXT table $colspan $rowspan 
+ * </pre>
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class PropertiesDocumentStructure implements DocumentStructure {
+    /** set to keep tag names */
     private Set tagNames = new HashSet();
+    /** map to keep tag attributes */
     private Map tagAttributes = new HashMap();
+    /** map to keep lists of possible tag parents */
     private Map tagHierarchy = new HashMap();
 
+    /**
+     * @param prop properties map describing possible parent tags
+     * and attributes
+     */
     public PropertiesDocumentStructure (Properties prop) {
 	// collect tag names
 	{
@@ -83,7 +107,12 @@ public class PropertiesDocumentStructure implements DocumentStructure {
 	    tagAttributes.put(key, l);
 	}
     }
-    
+
+    /**
+     * @param prop properties to read from
+     * @param key to read
+     * @return fully dereferenced list
+     */
     private List include(Properties prop, String key) {
 	List l = new Vector();
 	StringTokenizer st = new StringTokenizer(prop.getProperty(key));
@@ -98,10 +127,17 @@ public class PropertiesDocumentStructure implements DocumentStructure {
 	return l;
     }
 
+    /**
+     * @param tag a tag token
+     * @return true if tag is known
+     */
     public boolean isKnownTag (TagToken tag) {
 	return tagNames.contains(tag.getName());
     }
 
+    /**
+     * @param tag retain known attributes in this tag
+     */
     public void retainKnownAttributes (TagToken tag) {
 	List names = (List) tagAttributes.get(tag.getName());
 	Iterator it = tag.getAttributes().entrySet().iterator();
@@ -113,6 +149,11 @@ public class PropertiesDocumentStructure implements DocumentStructure {
 	}
     }
 
+    /**
+     * @param parent top tag
+     * @param child possible child token
+     * @return true if parent can contain child
+     */
     public boolean canContain (TagToken parent, Token child) {
 	String parentName = parent == null ? "@ROOT" : parent.getName();
 
@@ -126,10 +167,12 @@ public class PropertiesDocumentStructure implements DocumentStructure {
 	return false;
     }
 
+    /**
+     * @return debug info
+     */
     public String toString () {
-	return
-	    "tagNames="+tagNames+"\n"+
-	    "tagAttributes="+tagAttributes+"\n"+
-	    "tagHierarchy="+tagHierarchy;
+	return "names=" + tagNames + "\n"
+		+ "attributes=" + tagAttributes + "\n"
+		+ "hierarchy=" + tagHierarchy;
     }
 }

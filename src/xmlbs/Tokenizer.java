@@ -35,7 +35,7 @@ import java.util.Vector;
  *
  * @see xmlbs.Token
  * @author R.W. van ' t Veer
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class Tokenizer {
     /** token we bumbed into before returning a text token */
@@ -44,7 +44,7 @@ public class Tokenizer {
     private InputStream in = null;
 
     /** buffer size for stream rewind */
-    static final int BUFFER_SIZE = 64*1024;
+    static final int BUFFER_SIZE = 64 * 1024;
 
     /**
      * Construct tokenizer reading from stream.
@@ -63,7 +63,7 @@ public class Tokenizer {
     }
 
     /**
-     * Read next token from stram.
+     * Read next token from stream.
      * @return next token
      * @throws IOException we reading fails
      */

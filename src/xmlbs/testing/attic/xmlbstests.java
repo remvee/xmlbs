@@ -33,7 +33,7 @@ import xmlbs.*;
  *
  * @see xmlbs.Tokenizer
  * @author R.W. van ' t Veer
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class XMLBSTests extends TestCase {
     /**
@@ -92,7 +92,7 @@ public class XMLBSTests extends TestCase {
 	    bout.flush();
 	    String result = bout.toString();
 
-	    assertTrue("from '"+in+"' got '"+result+"' expected '"+out+"'",
+	    assertTrue("from '" + in + "' got '" + result + "' expected '" + out + "'",
 		    result.equals(out));
 	}
     }

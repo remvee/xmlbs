@@ -35,7 +35,7 @@ import java.util.*;
  * </UL>
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.35 $
+ * @version $Revision: 1.36 $
  */
 public class XMLBS {
     /** input */
@@ -97,7 +97,8 @@ public class XMLBS {
      * Write result data to stream.
      * @param out output stream
      * @throws IOException when writing to stream fails
-     * @throws IllegalStateException when data not processed
+     * @throws IllegalStateException when data not yet
+     * <a href="#process()">processed</a>.
      */
     public void write (OutputStream out)
     throws IOException, IllegalStateException {
@@ -298,13 +299,13 @@ public class XMLBS {
 			&& last != null && tag.isSameTag(last)) {
 		    // see if what's between last and this is whitespace
 		    boolean allWhite = true;
-		    List l = tokens.subList(lastPos+1, i);
+		    List l = tokens.subList(lastPos + 1, i);
 		    for (Iterator it = l.iterator(); it.hasNext();) {
 			Token t = (Token) it.next();
 			if (t instanceof CommentToken) {
 			    continue;
 			}
-			if (t instanceof TextToken && ((TextToken)t).isWhiteSpace()) {
+			if (t instanceof TextToken && ((TextToken) t).isWhiteSpace()) {
 			    continue;
 			}
 			allWhite = false;
@@ -396,7 +397,7 @@ public class XMLBS {
 	}
 
 	/**
-	 * @param tag tag
+	 * @param tok token to find container for
 	 * @return true if any parent can contain given token
 	 */
 	public boolean hasContainerFor (Token tok) {
