@@ -57,6 +57,7 @@
 
   <target name="clean">
     <delete dir="${build.dir}"/>
+    <delete dir="${apidoc.dir}"/>
     <delete file="${jar.file}"/>
     <delete file="tags"/>
   </target>
