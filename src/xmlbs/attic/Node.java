@@ -40,7 +40,7 @@ class Node
 		{
 		    if (! dtd.isKnownTag(t.getName().toLowerCase())) continue;
 
-		    Set types = (Set) dtd.decendantSet(openTag.getName());
+		    Set types = (Set) dtd.decendantSet(openTag.getName().toLowerCase());
 		    if (types != null && ! types.contains(t.getName().toLowerCase()))
 		    {
 			endPos = (i > startPos + 1) ? i-1 : i;

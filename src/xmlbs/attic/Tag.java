@@ -130,7 +130,7 @@ class Tag
     public boolean isEmptyTag () { return type == EMPTY; }
 
     public Tag closeTag () { return new Tag(getName(), null, Tag.CLOSE); }
-    public Tag emptyTag () { return new Tag(getName(), null, Tag.EMPTY); }
+    public Tag emptyTag () { return new Tag(getName(), attrs, Tag.EMPTY); }
 
     public String toString ()
     {
