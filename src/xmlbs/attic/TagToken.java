@@ -33,8 +33,10 @@ import org.apache.regexp.RESyntaxException;
 
 /**
  * Tag token.  Represents an XML element.
+ *
+ * @see <A href="http://www.w3.org/TR/REC-xml#sec-logical-struct">XML: Logical Structures</A>
  * @author R.W. van 't Veer
- * @version $Id: TagToken.java,v 1.3 2002/10/11 12:41:36 remco Exp $
+ * @version $Revision: 1.4 $
  */
 public class TagToken implements Token {
     /** tag name */
@@ -45,11 +47,11 @@ public class TagToken implements Token {
     /** type of tag */
     private int type;
     /** open tag type constant */
-    private static final int OPEN = 0;
+    public static final int OPEN = 0;
     /** close tag type constant */
-    private static final int CLOSE = 1;
+    public static final int CLOSE = 1;
     /** empty tag type constant */
-    private static final int EMPTY = 2;
+    public static final int EMPTY = 2;
 
     /** regular expression to match close tags */
     private static RE closeRe;

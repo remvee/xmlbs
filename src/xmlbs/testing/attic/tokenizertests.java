@@ -32,9 +32,10 @@ import xmlbs.*;
 
 /**
  * Unit tests for tokenizer.
+ *
  * @see xmlbs.Tokenizer
- * @version $Id: tokenizertests.java,v 1.5 2002/10/11 12:41:38 remco Exp $
  * @author R.W. van ' t Veer
+ * @version $Revision: 1.6 $
  */
 public class TokenizerTests extends TestCase {
     /**

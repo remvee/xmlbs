@@ -34,8 +34,8 @@ import java.util.Vector;
  * of characters.
  *
  * @see xmlbs.Token
- * @version $Id: Tokenizer.java,v 1.4 2002/10/11 12:41:36 remco Exp $
  * @author R.W. van ' t Veer
+ * @version $Revision: 1.5 $
  */
 public class Tokenizer {
     /** token we bumbed into before returning a text token */

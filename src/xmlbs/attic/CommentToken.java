@@ -23,8 +23,14 @@ package xmlbs;
 
 /**
  * Token to represent and hold comment blocks.
+ * <P><EM>TODO <TT>For compatibility, the string "--"
+ * (double-hyphen) must not occur within comments.</TT></EM></P>
+ * <P><EM>TODO ensure <TT>--&gt;</TT> not part of
+ * comment</EM></P>
+ *
+ * @see <A href="http://www.w3.org/TR/REC-xml#sec-comments">XML: Comments</A>
  * @author R.W. van 't Veer
- * @version $Id: CommentToken.java,v 1.3 2002/10/11 12:41:36 remco Exp $
+ * @version $Revision: 1.4 $
  */
 public class CommentToken implements Token {
     /** comment data */

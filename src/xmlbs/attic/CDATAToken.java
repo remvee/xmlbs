@@ -23,8 +23,10 @@ package xmlbs;
 
 /**
  * Token to represent and hold CDATA blocks.
+ *
+ * @see <A href="http://www.w3.org/TR/REC-xml#sec-cdata-sect">XML: CDATA Sections</A>
  * @author R.W. van 't Veer
- * @version $Id: CDATAToken.java,v 1.3 2002/10/11 12:41:36 remco Exp $
+ * @version $Revision: 1.4 $
  */
 public class CDATAToken implements Token {
     /** character data */

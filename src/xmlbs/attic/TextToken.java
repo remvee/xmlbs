@@ -28,8 +28,11 @@ import org.apache.regexp.RESyntaxException;
  * Token to represent and hold text blocks.  Entity refs are
  * preserved when possible and new are introduced for &lt;, &gt;
  * and &amp;.
+ * <P><EM>TODO handle known entities only</EM></P>
+ *
+ * @see <A href="http://www.w3.org/TR/REC-xml#syntax">XML: Character Data and Markup</A>
  * @author R.W. van 't Veer
- * @version $Id: TextToken.java,v 1.5 2002/10/13 13:55:47 remco Exp $
+ * @version $Revision: 1.6 $
  */
 public class TextToken implements Token {
     /** processed text */

@@ -23,9 +23,10 @@ package xmlbs;
 
 /**
  * Interface for tokens created by tokenizer.
- * @see Tokenizer
+ *
+ * @see xmlbs.Tokenizer
  * @author R.W. van 't Veer
- * @version $Id: Token.java,v 1.2 2002/10/11 12:41:36 remco Exp $
+ * @version $Revision: 1.3 $
  */
 public interface Token {
     /**

@@ -9,10 +9,15 @@
   <property name="src.dir" value="src"/>
   <property name="build.dir" value="build"/>
   <property name="jar.file" value="${project.name}.jar"/>
+  <property name="apidoc.dir" value="doc"/>
+  <property name="apidoc.title" value="XMLBS apidoc"/>
+  <property name="apidoc.pkgnames" value="xmlbs.*"/>
+  <property name="apidoc.jdkurl" value="http://java.sun.com/products/jdk/1.3/docs/api/"/>
 
 <!-- targets -->
   <target name="prepare">
     <mkdir dir="${build.dir}"/>
+    <mkdir dir="${apidoc.dir}"/>
   </target>
 
   <target name="compile" depends="prepare">
@@ -27,6 +32,13 @@
 
   <target name="jar" depends="compile">
     <jar jarfile="${jar.file}" basedir="${build.dir}"/>
+  </target>
+
+  <target name="apidoc" depends="prepare">
+    <javadoc sourcepath="${src.dir}" destdir="${apidoc.dir}"
+	windowtitle="${apidoc.title}" packagenames="${apidoc.pkgnames}">
+      <link href="${apidoc.jdkurl}"/>
+    </javadoc>
   </target>
 
   <target name="ctags">
