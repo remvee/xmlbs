@@ -33,9 +33,14 @@ import xmlbs.tokens.Token;
  * and unmatched close tags retained.
  *  
  * @author R.W. van 't Veer
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class TreeBuilder {
+    /**
+     * Ensure non-instantiability.
+     */
+    private TreeBuilder () {}
+    
     /**
      * Construct a tree for a list of tokens
      * @param tokens list to read from
