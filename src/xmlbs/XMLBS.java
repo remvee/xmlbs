@@ -35,7 +35,7 @@ import java.util.*;
  * </UL>
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.34 $
+ * @version $Revision: 1.35 $
  */
 public class XMLBS {
     /** input */
@@ -287,7 +287,7 @@ public class XMLBS {
     private void cleanEmptyTags () {
 	TagToken last = null;
 	int lastPos = -1;
-	for (int i = 2; i < tokens.size(); i++) {
+	for (int i = 0; i < tokens.size(); i++) {
 	    Token tok = (Token) tokens.get(i);
 	    if (tok instanceof TagToken) {
 		TagToken tag = (TagToken) tok;
@@ -301,17 +301,22 @@ public class XMLBS {
 		    List l = tokens.subList(lastPos+1, i);
 		    for (Iterator it = l.iterator(); it.hasNext();) {
 			Token t = (Token) it.next();
-			if (!(t instanceof CommentToken || t instanceof TextToken
-				    && ((TextToken)t).isWhiteSpace())) {
-			    allWhite = false;
-			    break;
+			if (t instanceof CommentToken) {
+			    continue;
 			}
+			if (t instanceof TextToken && ((TextToken)t).isWhiteSpace()) {
+			    continue;
+			}
+			allWhite = false;
+			break;
 		    }
 		    if (allWhite) {
 			// remove close tag
 			tokens.remove(i);
 			// replace open by empty
 			tokens.set(lastPos, last.emptyTag());
+			// move current position
+			i = lastPos;
 			// forget open tag
 			lastPos = -1;
 			last = null;
