@@ -27,7 +27,7 @@ import org.apache.regexp.*;
  * Useful when, for example, converting HTML to XHTML.
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class XMLBS
 {
@@ -84,33 +84,88 @@ public class XMLBS
 	return v;
     }
 
-    public static void main (String[] args)
-    throws Exception
+    /**
+     * Close unclosed tags in the given tokenlist.
+     * TODO allow nested tags
+     * @param tokens list of tokens
+     */
+    void fixUnclosedTags (List tokens)
     {
-	// fix unclosed tags
-	/*
-	    in:  <A> bla <A> die <A> bla
-	    out: <A> bla </A><A> die </A><A> bla </A>
-
-	    in:  <A> bla <B> die <A> bla
-	    out: <A> bla <B> die </A><A> bla </A></B>
-	*/
-
-	// fix overlap
-	/*
-	    in:  <A> bla <B> die </A> bla </B>
-	    out: <A> bla <B> die </B></A><B> bla </B>
-	*/
-
-	XMLBS bs = new XMLBS(new File(args[0]));
-	List tokens = bs.tokenize();
-
-	// count open and close tags
-	Map openMap = new HashMap();
-	Map closeMap = new HashMap();
 	for (int i = 0; i < tokens.size(); i++)
 	{
 	    Object o = tokens.get(i);
+	    if (o instanceof Tag)
+	    {
+		Tag tag = (Tag) o;
+		if (tag.isOpenTag())
+		{
+		    Tag openTag = tag;
+		    Tag closeTag = new Tag(tag.getName(), null, Tag.CLOSE);
+		    List l = tokens.subList(i+1, tokens.size());
+		    // locate close tag
+		    int close = l.indexOf(closeTag);
+		    // locate next open
+		    int open = l.indexOf(openTag);
+
+		    if (close == -1) // tag not closed
+		    {
+			if (open != -1)
+			{
+			    tokens.add(open+i+1, closeTag);
+			}
+			else
+			{
+			    tokens.add(closeTag);
+			}
+		    }
+		    else if (open != -1 && open < close) // nesting detected
+		    {
+			// TODO allow nesting for certain tags
+			tokens.add(open+i+1, closeTag);
+		    }
+		}
+	    }
+	}
+    }
+
+    public static void main (String[] args)
+    throws Exception
+    {
+	XMLBS bs = new XMLBS(new File(args[0]));
+	List tokens = bs.tokenize();
+	bs.fixUnclosedTags(tokens);
+
+	// TODO: remove redundant close tags
+	bs.openCloseStats(tokens);
+
+	// TODO: fix overlap
+
+	// dump result
+	{
+	    Iterator it = tokens.iterator();
+	    int indent = 0;
+	    while (it.hasNext())
+	    {
+		Object o = it.next();
+
+		if (o instanceof Tag && ((Tag)o).isCloseTag()) indent -= 4;
+
+		for (int i = 0; i < indent; i++) System.out.print(" ");
+		System.out.println((""+o).trim());
+
+		if (o instanceof Tag && ((Tag)o).isOpenTag()) indent += 4;
+	    }
+	}
+    }
+
+    void openCloseStats (List list)
+    {
+	// count open and close tags
+	Map openMap = new HashMap();
+	Map closeMap = new HashMap();
+	for (int i = 0; i < list.size(); i++)
+	{
+	    Object o = list.get(i);
 	    if (o instanceof Tag)
 	    {
 		Tag t = (Tag) o;
@@ -135,63 +190,39 @@ public class XMLBS
 	    }
 	}
 
-	// fix unclosed tags
+	// open/close statistics
+	System.out.println("open/close statistics");
+	Set unclosedSet = new HashSet();
 	{
-	    for (int i = 0; i < tokens.size(); i++)
-	    {
-		Object o = tokens.get(i);
-		if (o instanceof Tag)
-		{
-		    Tag tag = (Tag) o;
-		    if (tag.isOpenTag())
-		    {
-			Tag openTag = tag;
-			Tag closeTag = new Tag(tag.getName(), null, Tag.CLOSE);
-			List l = tokens.subList(i+1, tokens.size());
-			// locate close tag
-			int close = l.indexOf(closeTag);
-			// locate next open
-			int open = l.indexOf(openTag);
-
-			if (close == -1) // tag not closed
-			{
-			    if (open != -1)
-			    {
-				tokens.add(open+i+1, closeTag);
-			    }
-			    else
-			    {
-				tokens.add(closeTag);
-			    }
-			}
-			else if (open != -1 && open < close) // nesting detected
-			{
-			    // TODO allow nesting for certain tags
-			    tokens.add(open+i+1, closeTag);
-			}
-		    }
-		}
-	    }
-	}
-
-	// remove redundant close tags
-
-	// fix overlap
-
-	// dump result
-	{
-	    Iterator it = tokens.iterator();
-	    int indent = 0;
+	    Set tags = new HashSet();
+	    tags.addAll(openMap.keySet());
+	    tags.addAll(closeMap.keySet());
+	    Vector v = new Vector(tags);
+	    Collections.sort(v);
+	    Iterator it = v.iterator();
 	    while (it.hasNext())
 	    {
-		Object o = it.next();
+		String tn = (String) it.next();
+		int open, close;
+		Integer o;
 
-		if (o instanceof Tag && ((Tag)o).isCloseTag()) indent -= 4;
+		o = (Integer) openMap.get(tn);
+		if (o == null) open = 0;
+		else open = o.intValue();
 
-		for (int i = 0; i < indent; i++) System.out.print(" ");
-		System.out.println((""+o).trim());
+		o = (Integer) closeMap.get(tn);
+		if (o == null) close = 0;
+		else close = o.intValue();
 
-		if (o instanceof Tag && ((Tag)o).isOpenTag()) indent += 4;
+		if (open > close)
+		{
+		    System.out.println("  "+tn+": not closed: "+(open-close));
+		    unclosedSet.add(tn);
+		}
+		else if (open < close)
+		{
+		    System.out.println("  "+tn+": over closed: "+(close-open));
+		}
 	    }
 	}
     }
