@@ -160,6 +160,34 @@ public class Tokenizer
 	}
 	else if (c == '[') // cdata section?
 	{
+	    // match CDATA[
+	    StringBuffer sb = new StringBuffer();
+	    for (int i = "CDATA[".length(); i > 0 && (c = in.read()) != -1; i--)
+	    {
+		sb.append((char) c);
+		if (! "CDATA[".startsWith(sb.toString()))
+		{
+		    return null;
+		}
+	    }
+	    
+	    // read data until ]]>
+	    sb = new StringBuffer();
+	    while ((c = in.read()) != -1)
+	    {
+		sb.append((char) c);
+		
+		if (c == '>' && sb.toString().endsWith("]]>"))
+		{
+		    break;
+		}
+	    }
+	    
+	    // unterminated cdata section != cdata section
+	    if (c == -1) return null;
+	    
+	    String t = sb.toString();
+	    return new CDATAToken(t.substring(0, t.length()-3));
 	}
 
 	return null;
