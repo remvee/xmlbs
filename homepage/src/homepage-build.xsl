@@ -7,7 +7,7 @@
 	<project default="go" basedir=".">
 	    <property name="cvsroot" value="/home/remco/cvsroot"/>
 	    <property name="cvsprefix" value="projects"/>
-	    <property name="scilla.project" value="projects/scilla"/>
+	    <property name="xmlbs.project" value="projects/xmlbs"/>
 	    <property name="build.dir" value="build"/>
 	    <target name="go">
 		<mkdir dir="${{build.dir}}"/>
@@ -16,7 +16,7 @@
 		    <xsl:variable name="filebase" select="@filebase"/>
 		    <mkdir dir="${{build.dir}}/{$tag}"/>
 		    <cvs cvsRoot="${{cvsroot}}" dest="${{build.dir}}/{$tag}"
-			    tag="{$tag}" package="${{scilla.project}}"/>
+			    tag="{$tag}" package="${{xmlbs.project}}"/>
 		    <zip zipfile="${{build.dir}}/{$filebase}.zip"
 			    basedir="${{build.dir}}/{$tag}/${{cvsprefix}}" excludes="**/CVS"/>
 		    <delete dir="${{build.dir}}/{$tag}"/>
