@@ -43,7 +43,7 @@ class Node
 		    endPos = i;
 		    break;
 		}
-		else if (t.isOpenTag())
+		else if (t.isOpenTag() || t.isEmptyTag())
 		{
 		    if (! dtd.isKnownTag(t))
 		    {
@@ -56,7 +56,7 @@ class Node
 			break;
 		    }
 
-		    if (dtd.isEmptyTag(t))
+		    if (dtd.isEmptyTag(t) || t.isEmptyTag())
 		    {
 			children.add(t.emptyTag());
 		    }
@@ -72,10 +72,6 @@ class Node
 			    break;
 			}
 		    }
-		}
-		else if (t.isEmptyTag())
-		{
-		    children.add(t.emptyTag());
 		}
 	    }
 	    else if (o instanceof Text)
