@@ -79,6 +79,8 @@ class Node
 		children.add(o);
 	    }
 	}
+	
+	if (endPos == -1) endPos = i;
     }
 
     public boolean closedByTag (Tag t)

@@ -26,7 +26,7 @@ import java.util.*;
  *
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  */
 public class XMLBS
 {
@@ -86,6 +86,12 @@ public class XMLBS
 		    b.append((char) c);
 	    }
 	}
+
+	String s = b.toString();
+	if (s.length() > 0)
+	{
+	    v.add(new Text(s));
+	}
 	return v;
     }
 
@@ -109,8 +115,10 @@ public class XMLBS
 		    else
 		    {
 			Node n = new Node(dtd, t, tokens, i);
-			i = n.getEndPosition();
 			children.add(n);
+
+			int j = n.getEndPosition();
+			if (j != -1) i = j;
 		    }
 		}
 	    }
