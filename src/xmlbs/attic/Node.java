@@ -73,6 +73,10 @@ class Node
 			}
 		    }
 		}
+		else if (t.isEmptyTag())
+		{
+		    children.add(t.emptyTag());
+		}
 	    }
 	    else if (o instanceof Text)
 	    {

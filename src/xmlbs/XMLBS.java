@@ -26,7 +26,7 @@ import java.util.*;
  *
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  */
 public class XMLBS
 {
@@ -98,11 +98,11 @@ public class XMLBS
 	    if (o instanceof Tag)
 	    {
 		Tag t = (Tag) o;
-		if (t.isOpenTag())
+		if (t.isOpenTag() || t.isEmptyTag())
 		{
 		    if (! dtd.isKnownTag(t)) continue;
 
-		    if (dtd.isEmptyTag(t))
+		    if (dtd.isEmptyTag(t) || t.isEmptyTag())
 		    {
 			children.add(t.emptyTag());
 		    }
