@@ -24,22 +24,92 @@ public class TokenizerTests extends TestCase
     {
         return new TestSuite(TokenizerTests.class);
     }
-/*
+
     public void testTag ()
+    throws IOException
     {
 	assertTrue("assert doesn't work", true);
     }
 
     public void testText ()
+    throws IOException
     {
 	assertTrue("assert doesn't work", true);
     }
 
     public void testComment ()
+    throws IOException
     {
-	assertTrue("assert doesn't work", true);
+	{
+	    String d = "<!---->";
+	    Tokenizer tokenizer = new Tokenizer(d);
+	    List tokens = tokenizer.readAllTokens();
+
+	    assertTrue("didn't read 1 token from '"+d+"' but "+tokens.size(),
+		    tokens.size() == 1);
+	    assertTrue("didn't read a comment token from '"+d+"'",
+		    tokens.get(0) instanceof CommentToken);
+
+	    CommentToken tok = (CommentToken) tokens.get(0);
+	    String data = tok.getData();
+
+	    assertTrue("didn't read an empty comment from '"+d+"' but '"+data+"'",
+		    data.length() == 0);
+	}
+	{
+	    String d = " <!----> ";
+	    Tokenizer tokenizer = new Tokenizer(d);
+	    List tokens = tokenizer.readAllTokens();
+
+	    assertTrue("didn't read 3 token from '"+d+"' but "+tokens.size(),
+		    tokens.size() == 3);
+	}
+	{
+	    String d = "<!-- -->";
+	    Tokenizer tokenizer = new Tokenizer(d);
+	    List tokens = tokenizer.readAllTokens();
+
+	    assertTrue("didn't read 1 token from '"+d+"' but "+tokens.size(),
+		    tokens.size() == 1);
+
+	    CommentToken tok = (CommentToken) tokens.get(0);
+	    String data = tok.getData();
+
+	    assertTrue("didn't read ' ' from '"+d+"' but '"+data+"'",
+		    data.equals(" "));
+	}
+	{
+	    String d = "<!-<!--<!---->-->";
+	    Tokenizer tokenizer = new Tokenizer(d);
+	    List tokens = tokenizer.readAllTokens();
+
+	    assertTrue("didn't read 3 token from '"+d+"' but "+tokens.size(),
+		    tokens.size() == 3);
+
+	    TextToken tok0 = (TextToken) tokens.get(0);
+	    CommentToken tok1 = (CommentToken) tokens.get(1);
+	    String data = tok1.getData();
+	    TextToken tok2 = (TextToken) tokens.get(2);
+
+	    assertTrue("didn't read '<!--' from '"+d+"' but '"+data+"'",
+		    data.equals("<!--"));
+	}
+	{
+	    String d = "<!--->-->";
+	    Tokenizer tokenizer = new Tokenizer(d);
+	    List tokens = tokenizer.readAllTokens();
+
+	    assertTrue("didn't read 1 token from '"+d+"' but "+tokens.size(),
+		    tokens.size() == 1);
+
+	    CommentToken tok = (CommentToken) tokens.get(0);
+	    String data = tok.getData();
+
+	    assertTrue("didn't read '->' from '"+d+"' but '"+data+"'",
+		    data.equals("->"));
+	}
     }
-*/
+
     public void testCDATA ()
     throws IOException
     {
@@ -90,7 +160,8 @@ public class TokenizerTests extends TestCase
 
 	    assertTrue("didn't read '<![CDATA[' from '"+d+"' but '"+data+"'",
 		    data.equals("<![CDATA["));
-	}{
+	}
+	{
 	    String d = "<![CDATA[]>]]>";
 	    Tokenizer tokenizer = new Tokenizer(d);
 	    List tokens = tokenizer.readAllTokens();
