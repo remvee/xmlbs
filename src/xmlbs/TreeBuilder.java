@@ -33,7 +33,7 @@ import xmlbs.tokens.Token;
  * and unmatched close tags retained.
  *  
  * @author R.W. van 't Veer
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class TreeBuilder {
     /**
@@ -80,9 +80,16 @@ public class TreeBuilder {
      */
     private static class OpenFinder implements TreeNode.Finder {
         private String tagName;
+        /**
+         * @param tag tag to find open tag for
+         */
         public OpenFinder (TagToken tag) {
             tagName = tag.getName();
         }
+        /**
+         * @param node treenode to test payload
+         * @return <tt>true</tt> when payload contains desired open tag
+         */
         public boolean isFound (TreeNode node) {
             Object p = node.getPayload();
             if (p instanceof TagToken) {

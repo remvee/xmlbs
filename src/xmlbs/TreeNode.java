@@ -29,7 +29,7 @@ import java.util.List;
  * A tree node.
  * 
  * @author R.W. van 't Veer
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class TreeNode {
     /** parent node */
@@ -86,7 +86,7 @@ public class TreeNode {
     /**
      * Add a child to this node
      * @param payload the data to be held by the new node
-     * @return
+     * @return new treenode for given payload
      */
     public TreeNode addChild (Object payload) {
         TreeNode node = new TreeNode(this, payload);
@@ -124,7 +124,7 @@ public class TreeNode {
     }
     
     /**
-     * Remove node from tree.
+     * Remove this node from tree.
      */
     public void remove () {
         getParent().getChildren().remove(this);
@@ -141,9 +141,17 @@ public class TreeNode {
     
 
 // debug stuff
+    /**
+     * @return textual representation for debugging.
+     */
     public String toString () {
         return toString(new StringBuffer(), 0).toString();
     }
+    /**
+     * @param out buffer to write to
+     * @param depth current depth for indentation
+     * @return same as <tt>out</tt>
+     */
     private StringBuffer toString (StringBuffer out, int depth) {
         for (int i = 0; i < depth; i++) {
             out.append(' ');
