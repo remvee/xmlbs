@@ -62,6 +62,9 @@
     <section>
 	<title>Documentation</title>
 	<para><![CDATA[
+	    Installation instructions are
+	    <a href="projects/xmlbs/INSTALL.html">included</a> in
+	    de source downloads.
             The source code is documented using
             <a href="projects/xmlbs/doc/index.html">javadoc</a>..
 	]]></para>
