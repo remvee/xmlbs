@@ -26,7 +26,7 @@ import java.util.*;
  *
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public class XMLBS
 {
@@ -122,12 +122,14 @@ public class XMLBS
 	return children;
     }
 
-    public void write (PrintWriter out)
+    public void write (OutputStream out)
     {
+	PrintWriter pw = new PrintWriter(out);
 	Iterator it = nodes.iterator();
-	while (it.hasNext()) out.print(""+it.next());
-	out.println();
-	out.flush();
+	while (it.hasNext()) pw.print(""+it.next());
+	pw.println();
+	pw.flush();
+	pw.close();
     }
 
     public static void main (String[] args)
@@ -135,6 +137,6 @@ public class XMLBS
     {
 	XMLBS bs = new XMLBS(new DTD(DTD.HTML), new File(args[0]));
 	ByteArrayOutputStream out = new ByteArrayOutputStream();
-	bs.write(new PrintWriter(System.out));
+	bs.write(System.out);
     }
 }
