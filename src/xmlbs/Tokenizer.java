@@ -22,9 +22,8 @@
 package xmlbs;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
+import java.io.Reader;
+import java.io.StringReader;
 
 import java.util.List;
 import java.util.Vector;
@@ -35,13 +34,13 @@ import java.util.Vector;
  *
  * @see xmlbs.Token
  * @author R.W. van ' t Veer
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class Tokenizer {
     /** token we bumbed into before returning a text token */
     private Token holdBack = null;
     /** stream we are reading from */
-    private InputStream in = null;
+    private Reader in = null;
     /** document structure */
     private DocumentStructure ds = null;
 
@@ -53,8 +52,8 @@ public class Tokenizer {
      * @param in input stream
      * @param ds document structure
      */
-    public Tokenizer (InputStream in, DocumentStructure ds) {
-        this.in = new BufferedInputStream(in);
+    public Tokenizer (Reader in, DocumentStructure ds) {
+        this.in = in;
 	this.ds = ds;
     }
 
@@ -63,7 +62,7 @@ public class Tokenizer {
      * @param data string to read
      */
     public Tokenizer (String data, DocumentStructure ds) {
-        this.in = new ByteArrayInputStream(data.getBytes());
+        this.in = new StringReader(data);
 	this.ds = ds;
     }
 

@@ -35,18 +35,23 @@ import java.util.*;
  * </UL>
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.38 $
+ * @version $Revision: 1.39 $
  */
 public class XMLBS {
     /** input */
     private InputStream in = null;
+    /** input */
+    private String inStr = null;
     /** document structure */
     private DocumentStructure ds = null;
+    /** annotate flag */
+    private boolean annotate = false;
+    /** Charset encoding of InputStream */
+    private String encoding = null;
+
     /** token list */
     private List tokens = null;
 
-    /** annotate flag */
-    private boolean annotate = false;
     /** marker used for annotation */
     private static final String WARNING_MARKER = "XMLBS!";
 
@@ -54,7 +59,7 @@ public class XMLBS {
     private boolean processed = false;
 
     /**
-     * Construct a body shop instances for stream with struction
+     * Construct a body shop instances for stream with structure
      * descriptor.
      * @param in input stream
      * @param ds document structure descriptor
@@ -62,7 +67,34 @@ public class XMLBS {
      */
     public XMLBS (InputStream in, DocumentStructure ds)
     throws IOException {
+	this(in, ds, null);
+    }
+
+    /**
+     * Construct a body shop instances for stream with structure
+     * descriptor.
+     * @param in input stream
+     * @param ds document structure descriptor
+     * @param encoding Charset encoding
+     * @throws IOException when reading from stream failed
+     */
+    public XMLBS (InputStream in, DocumentStructure ds, String encoding)
+    throws IOException {
 	this.in = in;
+	this.ds = ds;
+	this.encoding = encoding;
+    }
+
+    /**
+     * Construct a body shop instances for stream with structure
+     * descriptor.
+     * @param in input stream
+     * @param ds document structure descriptor
+     * @throws IOException when reading from stream failed
+     */
+    public XMLBS (String in, DocumentStructure ds)
+    throws IOException {
+	this.inStr = in;
 	this.ds = ds;
     }
 
@@ -128,14 +160,40 @@ public class XMLBS {
 	annotate = flag;
     }
 
+    /**
+     * @return String
+     */
+    public String getEncoding() {
+	return encoding;
+    }
+
+    /**
+     * Sets the Charset encoding.
+     * @param encoding The encoding to set
+     */
+    public void setEncoding(String encoding) {
+	this.encoding = encoding;
+    }
+
 // private stuff
     /**
      * Tokenize input stream.
      * @throws IOException when reading from stream failed
      */
-    private void tokenize ()
-    throws IOException {
-	Tokenizer tok = new Tokenizer(in, ds);
+    private void tokenize () throws IOException {
+	Tokenizer tok = null;        
+	
+	if (in != null) {
+	    Reader reader = null;
+	    if (encoding != null) {
+		reader = new BufferedReader(new InputStreamReader(in, encoding));
+	    } else {
+		reader = new BufferedReader(new InputStreamReader(in));
+	    }
+	    tok = new Tokenizer(reader, ds);
+	} else {
+	    tok = new Tokenizer(inStr, ds);
+	}
 	tokens = tok.readAllTokens();
     }
 
@@ -296,8 +354,7 @@ public class XMLBS {
 		if (tag.isOpenTag()) {
 		    last = tag;
 		    lastPos = i;
-		} else if (tag.isCloseTag()
-			&& last != null && tag.isSameTag(last)) {
+		} else if (tag.isCloseTag() && last != null && tag.isSameTag(last)) {
 		    // see if what's between last and this is whitespace
 		    boolean allWhite = true;
 		    List l = tokens.subList(lastPos + 1, i);
