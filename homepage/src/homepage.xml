@@ -24,10 +24,7 @@
 
     <section>
 	<title>News</title>
-	<para><![CDATA[
-	    Last 15 items from the <a href="projects/xmlbs/ChangeLog.html">changelog</a>.
-	]]></para>
-	<changelog file="../build/projects/xmlbs/ChangeLog.xml" max="15"/>
+	<changelog file="../build/projects/xmlbs/ChangeLog.xml" max="15" dist="projects/xmlbs/ChangeLog.html"/>
     </section>
 
     <!-- section>

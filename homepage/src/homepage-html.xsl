@@ -23,8 +23,18 @@
     <xsl:template match="changelog">
 	<xsl:variable name="file" select="@file"/>
 	<xsl:variable name="max" select="@max"/>
+	<xsl:variable name="dist" select="@dist"/>
 	<P>
-	    Last <xsl:value-of select="@max"/> changelog messages.
+	    <xsl:choose>
+		<xsl:when test="$dist != ''">
+		    Last <xsl:value-of select="@max"/>
+		    <xsl:text> </xsl:text>
+		    <a href="{$dist}">changelog</a> messages.
+		</xsl:when>
+		<xsl:otherwise>
+		    Last <xsl:value-of select="@max"/> changelog messages.
+		</xsl:otherwise>
+	    </xsl:choose>
 	    <UL>
 		<xsl:for-each select="document($file)/changelog/entry">
 		    <xsl:if test="position() &lt;= $max">
@@ -87,7 +97,7 @@
 		<HR/>
 
 		<DIV align="right">
-		    $Date: 2002/10/26 21:49:22 $
+		    $Date: 2002/10/26 22:06:07 $
 		</DIV>
 	    </BODY>
 	</HTML>
