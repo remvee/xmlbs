@@ -36,15 +36,24 @@
 		<html>
 			The following releases are considered to be stable.
 		</html>
-		<release tag="PRERELEASE-6" filebase="xmlbs-0.0.6">
+		<release tag="PRERELEASE-7" filebase="xmlbs-0.0.7">
+			<html><![CDATA[
+				16.IV.2004
+				<ul>
+					<li>port from <tt>org.apache.regexp</tt> to <tt>java.util.regex</tt></li>
+					<li>distributable jar-file</li>
+				</ul>
+			]]></html>
+		</release>
+		<oldrelease tag="PRERELEASE-6" filebase="xmlbs-0.0.6">
 			<html><![CDATA[
 				9.II.2004
 				<ul>
 					<li>handle character encodings</li>
 				</ul>
 			]]></html>
-		</release>
-		<release tag="PRERELEASE-5" filebase="xmlbs-0.0.5">
+		</oldrelease>
+		<oldrelease tag="PRERELEASE-5" filebase="xmlbs-0.0.5">
 			<html><![CDATA[
 				16.IV.2003
 				<ul>
@@ -53,8 +62,8 @@
 					<li>quot and apos an not "universal" entities</li>
 				</ul>
 			]]></html>
-		</release>
-		<release tag="PRERELEASE-4" filebase="xmlbs-0.0.4">
+		</oldrelease>
+		<oldrelease tag="PRERELEASE-4" filebase="xmlbs-0.0.4">
 			<html><![CDATA[
 				8.IV.2003
 				<ul>
@@ -63,8 +72,8 @@
 					<li>fix build process</li>
 				</ul>
 			]]></html>
-		</release>
-		<release tag="PRERELEASE-3" filebase="xmlbs-0.0.3">
+		</oldrelease>
+		<oldrelease tag="PRERELEASE-3" filebase="xmlbs-0.0.3">
 			<html><![CDATA[
 				29.XII.2002
 				<ul>
@@ -74,8 +83,8 @@
 					<li>XHTMLizer commandline utility</li>
 				</ul>
 			]]></html>
-		</release>
-		<release tag="PRERELEASE-2" filebase="xmlbs-0.0.2">
+		</oldrelease>
+		<oldrelease tag="PRERELEASE-2" filebase="xmlbs-0.0.2">
 			<html><![CDATA[
 				26.X.2002
 				<ul>
@@ -83,15 +92,15 @@
 					<li>sun code style</li>
 				</ul>
 			]]></html>
-		</release>
-		<release tag="PRERELEASE-1" filebase="xmlbs-0.0.1">
+		</oldrelease>
+		<oldrelease tag="PRERELEASE-1" filebase="xmlbs-0.0.1">
 			<html><![CDATA[
 				25.VI.2002
 				<ul>
 					<li>initial release</li>
 				</ul>
 			]]></html>
-		</release>
+		</oldrelease>
 	</section>
 
 	<section>

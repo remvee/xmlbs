@@ -17,6 +17,17 @@
 	<xsl:template match="release">
 		<div class="release">
 			<xsl:variable name="filebase" select="@filebase"/>
+			<a href="{$filebase}.jar"><xsl:value-of select="@filebase"/>.jar</a>
+			<div class="releasemessage">
+				<xsl:value-of select="html" disable-output-escaping="yes"/>
+			</div>
+		</div>
+	</xsl:template>
+	
+	<!-- a downloadable release from a cvs tag old style -->
+	<xsl:template match="oldrelease">
+		<div class="release">
+			<xsl:variable name="filebase" select="@filebase"/>
 			<a href="{$filebase}.zip"><xsl:value-of select="@filebase"/>.zip</a>
 			<div class="releasemessage">
 				<xsl:value-of select="html" disable-output-escaping="yes"/>
