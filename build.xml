@@ -33,15 +33,13 @@
 
 	<target name="compile" depends="prepare,depend"
 			description="compile source files">
+		<copy todir="${build.dir}" preserveLastModified="true">
+			<fileset dir="${src.dir}"/>
+		</copy>
+		<copy file="COPYING" todir="${build.dir}" preserveLastModified="true"/>
 		<javac srcdir="${src.dir}" destdir="${build.dir}">
 			<classpath refid="build.classpath"/>
 		</javac>
-		<copy todir="${build.dir}">
-			<fileset dir="${src.dir}">
-	<include name="**/*.properties"/>
-	<include name="**/*.xml"/>
-			</fileset>
-		</copy>
 	</target>
 
 	<target name="depend">
