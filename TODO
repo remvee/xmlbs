@@ -10,6 +10,7 @@
 	  attributes
 	- add isEmptyTag
     - include xhtml-1.0 document structure object
+	http://www.w3.org/TR/xhtml1/
     - passes:
 	- tokenize
 	    - read and fix tag attributes
