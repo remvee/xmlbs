@@ -27,7 +27,7 @@ import org.apache.regexp.*;
  * Useful when, for example, converting HTML to XHTML.
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class XMLBS
 {
@@ -236,6 +236,7 @@ String zz = "Node"+openTag+startPos;
 		Tag t = (Tag) o;
 		if (t.isCloseTag())
 		{
+		    if (! t.equals(closeTag)) closedBy = t;
 		    endPos = i;
 		    break;
 		}
@@ -252,6 +253,11 @@ String zz = "Node"+openTag+startPos;
 		    children.add(n);
 		    int j = n.getEndPosition();
 		    if (j != -1) i = j;
+		    if (n.closedByTag(closeTag))
+		    {
+			endPos = i;
+			break;
+		    }
 		}
 	    }
 	    else if (o instanceof Text)
@@ -261,26 +267,56 @@ String zz = "Node"+openTag+startPos;
 	}
     }
 
+    public boolean closedByTag (Tag t)
+    {
+	if (closedBy != null && closedBy.equals(t))
+	{
+	    closedBy = null;
+	    return true;
+	}
+	Iterator it = children.iterator();
+	while (it.hasNext())
+	{
+	    Object o = it.next();
+	    if (o instanceof Node)
+	    {
+		Node n = (Node) o;
+		if (n.closedByTag(t)) return true;
+	    }
+	}
+	return false;
+    }
+
     public int getEndPosition () { return endPos; }
 
     public String toString ()
     {
 	StringBuffer sb = new StringBuffer();
-	sb.append(""+openTag+"@"+startPos);
-	if (endPos != -1)
+	if (false)
 	{
-	    sb.append("(");
-	    Iterator it = children.iterator();
-	    while (it.hasNext())
+	    sb.append(""+openTag+"@"+startPos);
+	    if (endPos != -1)
 	    {
-		sb.append(""+it.next());
-		if (it.hasNext()) sb.append(", ");
+		sb.append("(");
+		Iterator it = children.iterator();
+		while (it.hasNext())
+		{
+		    sb.append(""+it.next());
+		    if (it.hasNext()) sb.append(", ");
+		}
+		sb.append(")");
 	    }
-	    sb.append(")");
+	    else
+	    {
+		sb.append("..");
+	    }
 	}
 	else
 	{
-	    sb.append("..");
+	    sb.append(openTag);
+	    Iterator it = children.iterator();
+	    while (it.hasNext()) sb.append(it.next().toString());
+	    sb.append(openTag.closeTag());
 	}
 	return sb.toString();
     }
