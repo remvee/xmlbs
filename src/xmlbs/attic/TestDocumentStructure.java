@@ -28,7 +28,7 @@ import java.util.*;
  * Document structure object for testing.
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 class TestDocumentStructure implements DocumentStructure {
     static List tagNames = new Vector();
@@ -39,6 +39,7 @@ class TestDocumentStructure implements DocumentStructure {
 	tagNames.add("th");
 	tagNames.add("i");
 	tagNames.add("b");
+	tagNames.add("hr");
     }
     static Map tagAttributes = new HashMap();
     static {
@@ -68,6 +69,7 @@ class TestDocumentStructure implements DocumentStructure {
 	l = new Vector();
 	tagAttributes.put("i", l);
 	tagAttributes.put("b", l);
+	tagAttributes.put("hr", l);
     }
     static Map tagHierarchy = new HashMap();
     static {
@@ -90,24 +92,31 @@ class TestDocumentStructure implements DocumentStructure {
 	l.add("table");
 	l.add("i");
 	l.add("b");
+	l.add("hr");
 	l.add("#TEXT");
 	tagHierarchy.put("td", l);
 
 	l = new Vector();
-	l.add("#TEXT");
 	l.add("i");
 	l.add("b");
+	l.add("hr");
+	l.add("#TEXT");
 	tagHierarchy.put("th", l);
 
 	l = new Vector();
-	l.add("#TEXT");
 	l.add("b");
+	l.add("hr");
+	l.add("#TEXT");
 	tagHierarchy.put("i", l);
 
 	l = new Vector();
-	l.add("#TEXT");
 	l.add("i");
+	l.add("hr");
+	l.add("#TEXT");
 	tagHierarchy.put("b", l);
+
+	l = new Vector();
+	tagHierarchy.put("hr", l);
     }
 
     public boolean isKnownTag (TagToken tag) {
@@ -136,5 +145,9 @@ class TestDocumentStructure implements DocumentStructure {
 	    return hier.contains(childtag.getName());
 	}
 	return false;
+    }
+
+    public boolean isEndpoint (TagToken tag) {
+	return ((List)tagHierarchy.get(tag.getName())).size() == 0;
     }
 }

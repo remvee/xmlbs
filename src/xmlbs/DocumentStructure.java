@@ -25,7 +25,7 @@ package xmlbs;
  * Interface for writing document structure descriptions.
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public interface DocumentStructure {
     /**
@@ -34,12 +34,14 @@ public interface DocumentStructure {
      * @return true if tag is known
      */
     boolean isKnownTag (TagToken tag);
+
     /**
      * Retain only known attributes.
      * <P><EM>TODO return number of modifications?</EM></P>
      * @param tag tag token to handle
      */
     void retainKnownAttributes (TagToken tag);
+
     /**
      * Determine if tag can be placed into other tag.
      * @param parent top tag
@@ -47,4 +49,11 @@ public interface DocumentStructure {
      * @return true when allowed
      */
     boolean canContain (TagToken parent, Token child);
+
+    /**
+     * Determine if tag can have children
+     * @param tag tag to lookup
+     * @return true when tag can no thave children
+     */
+    boolean isEndpoint (TagToken tag);
 }

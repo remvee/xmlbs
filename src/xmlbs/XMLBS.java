@@ -35,7 +35,7 @@ import java.util.*;
  * </UL>
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.28 $
+ * @version $Revision: 1.29 $
  */
 public class XMLBS {
     /** input */
@@ -178,7 +178,13 @@ public class XMLBS {
 	    } else if (tok instanceof TagToken) {
 		TagToken tag = (TagToken) tok;
 		if (tag.isOpenTag()) {
-		    if (!ds.canContain(top, tag)) {
+		    if (ds.isEndpoint(tag)) {
+			// close it
+			if (annotate) {
+			    tokens.add(i++, comment("empty tag", tag));
+			}
+			tokens.set(i, tag.emptyTag());
+		    } else if (!ds.canContain(top, tag)) {
 			if (!trail.hasContainerFor(tag)) {
 			    // misplaced tag
 			    if (annotate) {
