@@ -32,7 +32,7 @@ import org.apache.regexp.RESyntaxException;
  *
  * @see <A href="http://www.w3.org/TR/REC-xml#syntax">XML: Character Data and Markup</A>
  * @author R.W. van 't Veer
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class TextToken implements Token {
     /** processed text */
@@ -88,7 +88,7 @@ public class TextToken implements Token {
     static {
         try {
             entityRefRe = new RE("^&([a-zA-Z_:][a-zA-Z0-9._:-]*);");
-            charRefRe = new RE("^&#([0-9]+;)|(x[0-9a-fA-F]+);");
+            charRefRe = new RE("^&#([0-9]+)|(x[0-9a-fA-F]+);");
         } catch (RESyntaxException ex) {
             throw new RuntimeException(ex.toString());
         }
@@ -121,12 +121,27 @@ public class TextToken implements Token {
                 int j = in.indexOf(';', i);
                 if (j != -1) {
                     String s = in.substring(i);
-                    if (entityRefRe.match(s) || charRefRe.match(s)) {
-			String ent = ds.getEntityRef(entityRefRe.getParen(1));
+                    if (entityRefRe.match(s)) {
+			String ent = entityRefRe.getParen(1);
 			if (ent != null) {
-			    //out.append(in.substring(i, j + 1));
-			    out.append('&');
-			    out.append(ent);
+			    ent = ds.getEntityRef(ent);
+			    if (ent != null) {
+				out.append('&');
+				out.append(ds.getEntityRef(ent));
+				out.append(';');
+				i = j;
+			    } else {
+				out.append("&amp;");
+			    }
+			} else {
+			    out.append("&amp;");
+			}
+		    } else if (charRefRe.match(s)) {
+			String ent1 = charRefRe.getParen(1);
+			String ent2 = charRefRe.getParen(2);
+			if (ent1 != null || ent2 != null) {
+			    out.append("&#");
+			    out.append(ent1 != null ? ent1 : ent2);
 			    out.append(';');
 			    i = j;
 			} else {

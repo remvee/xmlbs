@@ -36,7 +36,7 @@ import xmlbs.*;
  *
  * @see xmlbs.Tokenizer
  * @author R.W. van ' t Veer
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class TokenizerTests extends TestCase {
     /**
@@ -329,6 +329,7 @@ public class TokenizerTests extends TestCase {
 	    prop.setProperty("&", "foo bar");
 	    DocumentStructure ds0 = new PropertiesDocumentStructure(prop);
 	    String d[][] = {
+		{ "&#0;&#xff;&#11;&#xFF;", "&#0;&#xff;&#11;&#xFF;" },
 		{ "&foo;&bar;&fam;", "&foo;&bar;&amp;fam;" },
 		{ "&foo ;&bar;&fam;", "&amp;foo ;&bar;&amp;fam;" },
 		{ "<tag attr='&foo ;&bar;&fam;'>", "<tag attr=\"&amp;foo ;&bar;&amp;fam;\">" },
