@@ -1,13 +1,19 @@
-- bugs:
+- problems:
     - XMLBS.cleanEmptyTags()
 	kills script and style tags for XHTML because these
 	contain whitespace only..
+    - undefined behaviour mixed case entities, tag and attribute
+      names; impossible to know which will match with ignore case
+      option
+    - design flaw; tag and attribute names matches twices from
+      document structure due to ignore case option
 - tests:
-    - ignore case tests
+    - ignore case tag/attribute names
 - core:
-    - annotation
+    - annotation/ reporting
 	- multilingual
 	- configurable (all, hier, hier-del, hier-ins..?)
+	- entity matching stuff
     - move parsing stuff to a parser class
 	- create unit tests for parser
 	- treat cdata as text (cdata should extend text?)
