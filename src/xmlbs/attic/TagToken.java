@@ -21,22 +21,22 @@
 
 package xmlbs;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
-
-import org.apache.regexp.RE;
-import org.apache.regexp.RESyntaxException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Tag token.  Represents an XML element.
  *
  * @see <A href="http://www.w3.org/TR/REC-xml#sec-logical-struct">XML: Logical Structures</A>
  * @author R.W. van 't Veer
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class TagToken implements Token {
     /** tag name */
@@ -56,31 +56,31 @@ public class TagToken implements Token {
     public static final int EMPTY = 2;
 
     /** regular expression to match close tags */
-    private static RE closeRe;
+    private static final Pattern closePat;
     /** regular expression to match empty tags */
-    private static RE emptyRe;
+    private static final Pattern emptyPat;
     /** regular expression to match tag name */
-    private static RE nameRe;
+    private static final Pattern namePat;
     /** regular expression to match attribute name */
-    private static RE attRe;
+    private static final Pattern attPat;
     /** regular expression to match single-quoted attribute value */
-    private static RE valRe1;
+    private static final Pattern valPat1;
     /** regular expression to match double-quoted attribute value */
-    private static RE valRe2;
+    private static final Pattern valPat2;
     /** regular expression to match unquoted attribute value */
-    private static RE valRe3;
+    private static final Pattern valPat3;
 
     static {
         try {
-            closeRe = new RE("^\\s*/");
-            emptyRe = new RE("/\\s*$");
-            nameRe = new RE("([a-zA-Z_:][a-zA-Z0-9._:-]*)\\s*");
-            attRe = new RE("\\s([a-zA-Z_:][a-zA-Z0-9]*)\\s*=");
-            valRe1 = new RE("^\\s*=\\s*'([^']*)'");
-            valRe2 = new RE("^\\s*=\\s*\"([^\"]*)\"");
-            valRe3 = new RE("^\\s*=\\s*([^\\s]*)");
-        } catch (RESyntaxException ex) {
-            throw new RuntimeException(ex.toString());
+            closePat = Pattern.compile("^\\s*/");
+            emptyPat = Pattern.compile("/\\s*$");
+            namePat = Pattern.compile("([a-zA-Z_:][a-zA-Z0-9._:-]*)\\s*");
+            attPat = Pattern.compile("\\s([a-zA-Z_:][a-zA-Z0-9]*)\\s*=");
+            valPat1 = Pattern.compile("^\\s*=\\s*'([^']*)'");
+            valPat2 = Pattern.compile("^\\s*=\\s*\"([^\"]*)\"");
+            valPat3 = Pattern.compile("^\\s*=\\s*([^\\s]*)");
+        } catch (PatternSyntaxException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
@@ -92,9 +92,9 @@ public class TagToken implements Token {
 
         // determine tag type
         {
-            if (closeRe.match(raw)) {
+            if (closePat.matcher(raw).find()) {
                 type = CLOSE;
-            } else if (emptyRe.match(raw)) {
+            } else if (emptyPat.matcher(raw).find()) {
                 type = EMPTY;
             } else {
                 type = OPEN;
@@ -103,8 +103,9 @@ public class TagToken implements Token {
 
         // determine tag name
         {
-            nameRe.match(raw);
-            tagName = nameRe.getParen(1);
+            Matcher ma = namePat.matcher(raw);
+            ma.find(); // TODO assert a match is found
+            tagName = ma.group(1);
 
 	    if (ds.getIgnoreCase()) {
 		String t = ds.getTagName(tagName);
@@ -115,24 +116,27 @@ public class TagToken implements Token {
         // collect attributes
         {
             int pos = 0;
-            while (attRe.match(raw, pos)) {
-                String attr = attRe.getParen(1);
-                pos = attRe.getParenEnd(1);
+            for (Matcher ma = attPat.matcher(raw); ma.find(pos);) {
+                String attr = ma.group(1);
+                pos = ma.end(1);
                 String valStr = raw.substring(pos);
 
                 String val = null;
-                RE valRe = null;
-                if (valRe1.match(valStr)) {
-                    valRe = valRe1;
-                } else if (valRe2.match(valStr)) {
-                    valRe = valRe2;
-                } else if (valRe3.match(valStr)) {
-                    valRe = valRe3;
+                Matcher valMa = null;
+                Matcher valMa1 = valPat1.matcher(valStr);
+                Matcher valMa2 = valPat2.matcher(valStr);
+                Matcher valMa3 = valPat3.matcher(valStr);
+                if (valMa1.find()) {
+                    valMa = valMa1;
+                } else if (valMa2.find()) {
+                    valMa = valMa2;
+                } else if (valMa3.find()) {
+                    valMa = valMa3;
                 } else {
                     break;
 		}
-                val = valRe.getParen(1); // TODO handle entity and char refs
-                pos += valRe.getParenEnd(1);
+                val = valMa.group(1); // TODO handle entity and char refs
+                pos += valMa.end(1);
 
 		if (ds.getIgnoreCase()) {
 		    String t = ds.getTagAttribute(tagName, attr);
@@ -239,7 +243,7 @@ public class TagToken implements Token {
         sb.append(tagName);
 
         if (attrs != null) {
-            List l = new Vector(attrs.keySet());
+            List l = new ArrayList(attrs.keySet());
             Collections.sort(l);
             Iterator it = l.iterator();
             while (it.hasNext()) {

@@ -1,10 +1,4 @@
 <dependencies>
-	<package name="regex" packaged="true">
-		<class>org.apache.regexp.RE</class>
-		<baseurl>http://jakarta.apache.org/builds/jakarta-regexp/release/v1.2</baseurl>
-		<zip>jakarta-regexp-1.2.zip</zip>
-		<jar>jakarta-regexp-1.2.jar</jar>
-	</package>
 	<package name="junit" packaged="true">
 		<class>junit.framework.TestCase</class>
 		<baseurl>http://dl.sourceforge.net/sourceforge/junit</baseurl>

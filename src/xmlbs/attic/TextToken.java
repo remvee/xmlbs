@@ -21,8 +21,7 @@
 
 package xmlbs;
 
-import org.apache.regexp.RE;
-import org.apache.regexp.RESyntaxException;
+import java.util.regex.*;
 
 /**
  * Token to represent and hold text blocks.  Entity refs are
@@ -32,7 +31,7 @@ import org.apache.regexp.RESyntaxException;
  *
  * @see <A href="http://www.w3.org/TR/REC-xml#syntax">XML: Character Data and Markup</A>
  * @author R.W. van 't Veer
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class TextToken implements Token {
     /** processed text */
@@ -81,16 +80,16 @@ public class TextToken implements Token {
     }
 
     /** regular expression to recognize entity references */
-    private static RE entityRefRe;
+    private static final Pattern entityRefPat;
     /** regular expression to recognize character references */
-    private static RE charRefRe;
+    private static final Pattern charRefPat;
 
     static {
         try {
-            entityRefRe = new RE("^&([a-zA-Z_:][a-zA-Z0-9._:-]*);");
-            charRefRe = new RE("^&#([0-9]+)|(x[0-9a-fA-F]+);");
-        } catch (RESyntaxException ex) {
-            throw new RuntimeException(ex.toString());
+            entityRefPat = Pattern.compile("^&([a-zA-Z_:][a-zA-Z0-9._:-]*);");
+            charRefPat = Pattern.compile("^&#([0-9]+)|(x[0-9a-fA-F]+);");
+        } catch (PatternSyntaxException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
@@ -121,8 +120,10 @@ public class TextToken implements Token {
                 int j = in.indexOf(';', i);
                 if (j != -1) {
                     String s = in.substring(i);
-                    if (entityRefRe.match(s)) {
-			String ent = entityRefRe.getParen(1);
+                    Matcher entityRefMa = entityRefPat.matcher(s);
+                    Matcher charRefMa = charRefPat.matcher(s);
+                    if (entityRefMa.find()) {
+			String ent = entityRefMa.group(1);
 			if (ent != null) {
 			    ent = ds.getEntityRef(ent);
 			    if (ent != null) {
@@ -136,9 +137,9 @@ public class TextToken implements Token {
 			} else {
 			    out.append("&amp;");
 			}
-		    } else if (charRefRe.match(s)) {
-			String ent1 = charRefRe.getParen(1);
-			String ent2 = charRefRe.getParen(2);
+		    } else if (charRefMa.find()) {
+			String ent1 = charRefMa.group(1);
+			String ent2 = charRefMa.group(2);
 			if (ent1 != null || ent2 != null) {
 			    out.append("&#");
 			    out.append(ent1 != null ? ent1 : ent2);
