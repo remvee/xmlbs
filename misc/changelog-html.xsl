@@ -29,10 +29,10 @@
 
     <xsl:template match="/">
 	<HTML>
-	  <HEAD><TITLE>scilla changelog</TITLE></HEAD>
+	  <HEAD><TITLE>XMLBS changelog</TITLE></HEAD>
 	  <BODY>
 
-	    <H2>scilla changelog</H2>
+	    <H2>XMLBS changelog</H2>
 	    <HR/>
 	    <UL>
 		<xsl:for-each select="/changelog/entry">
