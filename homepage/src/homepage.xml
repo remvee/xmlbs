@@ -1,0 +1,75 @@
+<homepage>
+    <title>XMLBS - XML body shop</title>
+    <location>http://www.xs4all.nl/~rwvtveer/xmlbs</location>
+    <description>
+	XMLBS transforms data to XML parsable state.  Useful for
+	tidying, parsing or even transferring HTML to XHTML.
+    </description>
+
+    <section>
+	<title>Features</title>
+	<para><![CDATA[
+	    <ul>
+	      <li>unquoted tag attributes</li>
+	      <li>stray illegal characters like &lt; and &gt;</li>
+	      <li>close unclosed tags trying to obey structure rules</li>
+	      <li>fix tag overlap like <tt>&lt;i&gt; foo &lt;b&gt; bar &lt;/i&gt; boo &lt;/b&gt;</tt></li>
+	    </ul>
+	]]></para>
+	<para><![CDATA[
+	    Please see the <A href="projects/xmlbs/TODO">TODO</A>
+	    file for bugs and future enhancements.
+	]]></para>
+    </section>
+
+    <section>
+	<title>News</title>
+	<para><![CDATA[
+	    Last 15 items from the <a href="projects/xmlbs/ChangeLog.html">changelog</a>.
+	]]></para>
+	<changelog file="../build/projects/xmlbs/ChangeLog.xml" max="15"/>
+    </section>
+
+    <!-- section>
+	<title>Downloads</title>
+	<para>
+	    The following releases are considered to be stable.
+	</para>
+	<release tag="RELEASE_0" filebase="xmlbs-0"><![CDATA[
+	    26.X.2002
+	    <ul>
+		<li>initial release</li>
+	    </ul>
+	]]></release>
+    </section -->
+
+    <section>
+	<title>Developement</title>
+	<para><![CDATA[
+	    Source snapshots (@today@) available for downloading:
+            <ul>
+                <li>
+                    <a href="@snapshot.zip@">@snapshot.zip@</a>
+                </li>
+            </ul>
+	]]></para>
+    </section>
+
+    <section>
+	<title>Documentation</title>
+	<para><![CDATA[
+            The source code is documented using
+            <a href="projects/xmlbs/doc/index.html">javadoc</a>..
+	]]></para>
+    </section>
+
+    <section>
+        <title>Bug reports etc.</title>
+	<para><![CDATA[
+	    Please send an email to rwvtveer <em>at</em> xs4all.nl
+	    if you find a problem not mentioned in
+            <a href="projects/xmlbs/TODO">TODO</a>.    Please include
+            information about the version you are using.
+	]]></para>
+    </section>
+</homepage>
