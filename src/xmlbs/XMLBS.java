@@ -28,7 +28,7 @@ import org.apache.regexp.*;
  *
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class XMLBS
 {
@@ -114,7 +114,7 @@ public class XMLBS
 			children.add(n);
 
 			int j = n.getEndPosition();
-			if (j != -1) i = j-1;
+			if (j != -1) i = j;
 		    }
 		}
 	    }
