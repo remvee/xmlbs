@@ -26,7 +26,7 @@ import java.util.*;
 
 /**
  * @author R.W. van 't Veer
- * @version $Revision: 1.25 $
+ * @version $Revision: 1.26 $
  */
 public class XMLBS {
     private InputStream in = null;
@@ -34,8 +34,6 @@ public class XMLBS {
     private List tokens = null;
 
     private boolean debug = false;
-    private boolean commentIllegalCode = false;
-    private String WARNING_MARKER = "XMLBS!";
 
     public XMLBS (InputStream in, DocumentStructure ds)
     throws IOException {
@@ -49,38 +47,15 @@ public class XMLBS {
 
 	// remove unknown tags and unknown tag attributes
 	cleanupTags();
-	if (debug) {
-	    System.err.println("after 'cleanupTags': " + tokens);
-	}
-
-	// remove unknown entities
-	// TODO
-
-	// remove stay close tags
-	removeStrayCloseTags();
-	if (debug) {
-	    System.err.println("after 'removeStayCloseTags': " + tokens);
-	}
 
 	// reconstruct hierarchy
-	reconstHierarchy();
-	if (debug) {
-	    System.err.println("after 'reconstHierarchy': " + tokens);
-	}
+	hierarchy();
 
 	// merge adjoined text tokens
 	mergeAdjoinedText();
-	if (debug) {
-	    System.err.println("after 'mergeAdjoinedText': " + tokens);
-	}
-    }
 
-    public void setCommentIllegalCode (boolean flag) {
-	commentIllegalCode = flag;
-    }
-
-    public boolean getCommentIllegalCode () {
-	return commentIllegalCode;
+	// remove unknown entities
+	// TODO
     }
 
 // private stuff
@@ -96,11 +71,8 @@ public class XMLBS {
 	    if (tok instanceof TagToken) {
 		TagToken tag = (TagToken) tok;
 		if (! ds.isKnownTag(tag)) {
-		    if (commentIllegalCode) {
-			it.set(new CommentToken(WARNING_MARKER + ": UNKNOWN TAG: " + tag));
-		    } else {
-			it.remove();
-		    }
+		    log("remove unknow tag", tag);
+		    it.remove();
 		} else {
 		    ds.retainKnownAttributes(tag);
 		}
@@ -108,121 +80,72 @@ public class XMLBS {
 	}
     }
 
-    private void removeStrayCloseTags () {
-	Map m = new HashMap();
-	for (ListIterator it = tokens.listIterator(); it.hasNext();) {
-	    Token tok = (Token) it.next();
-	    if (tok instanceof TagToken) {
-		TagToken tag = (TagToken) tok;
-		if (tag.isOpenTag()) {
-		    // increment map entry
-		    Integer i = (Integer) m.get(tag.getName());
-		    if (i == null) {
-			i = new Integer(0);
-		    }
-		    i = new Integer(i.intValue() + 1);
-		    m.put(tag.getName(), i);
-		} else if (tag.isCloseTag()) {
-		    // decrement map entry
-		    Integer i = (Integer) m.get(tag.getName());
-		    if (i == null) {
-			i = new Integer(0);
-		    }
-		    i = new Integer(i.intValue() - 1);
-		    // remove tag if entry sub zeros
-		    if (i.intValue() < 0) {
-			if (commentIllegalCode) {
-			    it.set(new CommentToken(WARNING_MARKER + ": STRAY CLOSE TAG: " + tag));
-			} else {
-			    it.remove();
-			}
-		    } else {
-			m.put(tag.getName(), i);
-		    }
-		}
-	    }
-	}
-    }
-
-    private void reconstHierarchy() {
-	Stack stack = new Stack();
+    private void hierarchy () {
+	CrumbTrail trail = new CrumbTrail(ds);
 	for (int i = 0; i < tokens.size(); i++) {
 	    Token tok = (Token) tokens.get(i);
-	    TagToken top = stack.empty() ? null : (TagToken) stack.peek();
+	    TagToken top = trail.getTop();
 
 	    if (tok instanceof TextToken) {
 		TextToken txt = (TextToken) tok;
 		if (!txt.isWhiteSpace() && !ds.canContain(top, txt)) {
-System.err.println("  text in: "+top);
 		    // remove stray text??
+		    log("remove text", txt);
 		    tokens.remove(i--);
 		}
 	    } else if (tok instanceof TagToken) {
-System.err.println("  for: "+tok);
 		TagToken tag = (TagToken) tok;
 		if (tag.isOpenTag()) {
 		    if (!ds.canContain(top, tag)) {
-			if (stack.empty()) {
-			    // illegal tag in root
-System.err.println("  illegal in root: "+tok);
+			if (!trail.hasContainerFor(tag)) {
+			    // misplaced tag
+			    log("misplaced tag", tag);
 			    tokens.remove(i--);
-			    continue;
 			} else {
 			    // add close tags till top will have us
 			    do {
+				log("close first", top);
 				tokens.add(i++, top.closeTag());
-System.err.println("  close first: "+top.closeTag());
-				stack.pop();
-				if (!stack.empty()) {
-				    top = (TagToken) stack.peek();
-				}
-			    } while (!ds.canContain(top, tag) && !stack.empty());
+				trail.pop();
+				top = trail.getTop();
+			    } while (!ds.canContain(top, tag) && trail.getDepth() > 0);
+			    // new top
+			    trail.push(tag);
 			}
+		    } else {
+			// new top
+			trail.push(tag);
 		    }
-		    // new top
-		    stack.push(tag);
 		} else if (tag.isCloseTag()) {
-		    if (! stackContainsOpenTag(stack, tag)) {
+		    if (!trail.hasOpenFor(tag)) {
 			// remove stray close tag in root
-System.err.println("  remove stray close: "+tag);
+			log("remove close", tag);
 			tokens.remove(i--);
 		    } else if (!tag.isSameTag(top)) {
-			if (!stack.empty()) {
+			if (trail.getDepth() > 0) {
 			    // add close tags till top same tag
 			    do {
-				tokens.add(i++, top.closeTag());
-System.err.println("  close also: "+top.closeTag());
-				stack.pop();
-				if (!stack.empty()) {
-				    top = (TagToken) stack.peek();
-				}
-			    } while (!tag.isSameTag(top) && !stack.empty());
+				TagToken ctag = top.closeTag();
+				log("close also", top);
+				tokens.add(i++, ctag);
+				trail.pop();
+				top = trail.getTop();
+			    } while (!tag.isSameTag(top) && trail.getDepth() > 0);
 
 			    // keep close tag and remove top
-			    if (!stack.empty()) {
-				stack.pop();
-			    }
+			    trail.pop();
 			} else {
-			    // illegal tag in root
-System.err.println("  illegal in root: "+tok);
+			    // stray close
+			    log("stray close", top);
 			    tokens.remove(i--);
 			}
 		    } else {
-			stack.pop();
+			// keep close tag and remove top
+			trail.pop();
 		    }
 		}
 	    }
 	}
-    }
-
-    private static boolean stackContainsOpenTag(Stack stack, TagToken tag) {
-	for (Iterator it = stack.iterator(); it.hasNext();) {
-	    TagToken t = (TagToken) it.next();
-	    if (t.isSameTag(tag)) {
-		return true;
-	    }
-	}
-	return false;
     }
 
     private void mergeAdjoinedText () {
@@ -236,6 +159,57 @@ System.err.println("  illegal in root: "+tok);
 		ltxt.setData(ltxt.getData() + " " + txt.getData());
 	    }
 	    last = tok;
+	}
+    }
+
+    private void log (String msg, Token loc) {
+	if (debug) {
+	    System.err.println(msg+": "+loc);
+	}
+    }
+
+    class CrumbTrail {
+	private List trail = new Vector();
+	private DocumentStructure ds = null;
+
+	public CrumbTrail (DocumentStructure ds) {
+	    this.ds = ds;
+	}
+
+	public TagToken getTop () {
+	    return (TagToken) (trail.size() == 0 ? null : trail.get(0));
+	}
+
+	public void push (TagToken tok) {
+	    trail.add(0, tok);
+	}
+
+	public TagToken pop () {
+	    return (TagToken) (trail.size() == 0 ? null : trail.remove(0));
+	}
+
+	public int getDepth () {
+	    return trail.size();
+	}
+
+	public boolean hasOpenFor (TagToken tag) {
+	    for (Iterator it = trail.iterator(); it.hasNext();) {
+		TagToken t = (TagToken) it.next();
+		if (t.isSameTag(tag)) {
+		    return true;
+		}
+	    }
+	    return false;
+	}
+
+	public boolean hasContainerFor (TagToken tag) {
+	    for (Iterator it = trail.iterator(); it.hasNext();) {
+		TagToken t = (TagToken) it.next();
+		if (ds.canContain(t, tag)) {
+		    return true;
+		}
+	    }
+	    return false;
 	}
     }
 
