@@ -21,98 +21,101 @@
 
 package xmlbs;
 
-import org.apache.regexp.*;
+import org.apache.regexp.RE;
+import org.apache.regexp.RESyntaxException;
 
 /**
- * Class to wrap blocks of text.  Entity refs are preserved when
- * possible and new are introduced for &lt;, &gt; and &amp;.
+ * Token to represent and hold text blocks.  Entity refs are
+ * preserved when possible and new are introduced for &lt;, &gt;
+ * and &amp;.
+ * @author R.W. van 't Veer
+ * @version $Id: TextToken.java,v 1.4 2002/10/11 12:41:36 remco Exp $
  */
-public class TextToken implements Token
-{
-    String txt, data;
+public class TextToken implements Token {
+    /** processed text */
+    private String txt;
+    /** unprocessed text */
+    private String data;
 
-    public TextToken (String data)
-    {
-	this.data = data;
-	this.txt = fixText(data);
+    /**
+     * @param data create text block token from given text
+     */
+    public TextToken (String data) {
+        this.data = data;
+        this.txt = fixText(data);
     }
 
-    public String getData ()
-    {
-	return data;
+    /**
+     * @return unprocessed text data
+     */
+    public String getData () {
+        return data;
     }
 
-    public String toString ()
-    {
-	return txt;
+    /**
+     * @return processed text data
+     */
+    public String toString () {
+        return txt;
     }
 
-    static RE entityRefRe;
-    static RE charRefRe;
+    /** regular expression to recognize entity references */
+    private static RE entityRefRe;
+    /** regular expression to recognize character references */
+    private static RE charRefRe;
 
-    static
-    {
-	try
-	{
-	    entityRefRe = new RE("^&[a-zA-Z_:][a-zA-Z0-9._:-]*;");
-	    charRefRe = new RE("^&#([0-9]+;)|(x[0-9a-fA-F]+);");
-	}
-	catch (RESyntaxException ex)
-	{
-	    throw new RuntimeException(ex.toString());
-	}
+    static {
+        try {
+            entityRefRe = new RE("^&[a-zA-Z_:][a-zA-Z0-9._:-]*;");
+            charRefRe = new RE("^&#([0-9]+;)|(x[0-9a-fA-F]+);");
+        } catch (RESyntaxException ex) {
+            throw new RuntimeException(ex.toString());
+        }
     }
 
     /**
      * Xml escape text while preserving existing entities.
+     * @param in text to process
+     * @return processing result
      */
-    public final static String fixText (String in)
-    {
-	StringBuffer out = new StringBuffer();
-	// TODO speedup by using char array insteadof string
-	for (int i = 0, l = in.length(); i < l; i++)
-	{
-	    char c = in.charAt(i);
-	    switch (c)
-	    {
-		case '<':
-		    out.append("&lt;");
-		    break;
-		case '>':
-		    out.append("&gt;");
-		    break;
-		case '"':
-		    out.append("&quot;"); // TODO is this a global entity?
-		    break;
-		case '\'':
-		    out.append("&apos;"); // TODO is this a global entity?
-		    break;
-		case '&':
-		    int j = in.indexOf(';', i);
-		    if (j != -1)
-		    {
-			String s = in.substring(i);
-			if (entityRefRe.match(s) || charRefRe.match(s))
-			{
-			    // TODO test if known entity
-			    out.append(in.substring(i, j+1));
-			    i = j;
-			}
-			else
-			{
-			    out.append("&amp;");
-			}
-		    }
-		    else
-		    {
-			out.append("&amp;");
-		    }
-		    break;
-		default:
-		    out.append(c);
-	    }
-	}
+    public static final String fixText (String in) {
+        StringBuffer out = new StringBuffer();
+        // TODO speedup by using char array insteadof string
+        for (int i = 0, l = in.length(); i < l; i++) {
+            char c = in.charAt(i);
+            switch (c) {
+            case '<':
+                out.append("&lt;");
+                break;
+            case '>':
+                out.append("&gt;");
+                break;
+            case '"':
+                out.append("&quot;"); // TODO is this a global entity?
+                break;
+            case '\'':
+                out.append("&apos;"); // TODO is this a global entity?
+                break;
+            case '&':
+                int j = in.indexOf(';', i);
+                if (j != -1) {
+                    String s = in.substring(i);
+                    if (entityRefRe.match(s) || charRefRe.match(s)) {
+                        // TODO test if known entity
+                        out.append(in.substring(i, j + 1));
+                        i = j;
+                    } else {
+                        out.append("&amp;");
+                    }
+                } else {
+                    out.append("&amp;");
+                }
+                break;
+            default:
+                out.append(c);
+            }
+        }
 
-	return out.toString();
+        return out.toString();
     }
 }

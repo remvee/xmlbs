@@ -21,22 +21,33 @@
 
 package xmlbs;
 
-public class CDATAToken implements Token
-{
-    String data;
+/**
+ * Token to represent and hold CDATA blocks.
+ * @author R.W. van 't Veer
+ * @version $Id: CDATAToken.java,v 1.3 2002/10/11 12:41:36 remco Exp $
+ */
+public class CDATAToken implements Token {
+    /** character data */
+    private String data;
 
-    public CDATAToken (String data)
-    {
-	this.data = data;
+    /**
+     * @param data CDATA content without &lt;![CDATA[ and ]]&gt;
+     */
+    public CDATAToken (String data) {
+        this.data = data;
     }
 
-    public String getData ()
-    {
-	return data;
+    /**
+     * @return CDATA content
+     */
+    public String getData () {
+        return data;
     }
 
-    public String toString ()
-    {
-	return "<![CDATA["+getData()+"]]>";
+    /**
+     * @return wellformed CDATA block
+     */
+    public String toString () {
+        return "<![CDATA[" + getData() + "]]>";
     }
 }

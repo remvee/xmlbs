@@ -21,22 +21,33 @@
 
 package xmlbs;
 
-public class CommentToken implements Token
-{
-    String data;
+/**
+ * Token to represent and hold comment blocks.
+ * @author R.W. van 't Veer
+ * @version $Id: CommentToken.java,v 1.3 2002/10/11 12:41:36 remco Exp $
+ */
+public class CommentToken implements Token {
+    /** comment data */
+    private String data;
 
-    public CommentToken (String data)
-    {
-	this.data = data;
+    /**
+     * @param data comment data without &lt;!-- and --&gt;
+     */
+    public CommentToken (String data) {
+        this.data = data;
     }
 
-    public String getData ()
-    {
-	return data;
+    /**
+     * @return comment data
+     */
+    public String getData () {
+        return data;
     }
 
-    public String toString ()
-    {
-	return "<!--"+getData()+"-->";
+    /**
+     * @return wellformed comment
+     */
+    public String toString () {
+        return "<!--" + getData() + "-->";
     }
 }

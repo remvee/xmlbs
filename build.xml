@@ -36,6 +36,13 @@
     </exec>
   </target>
 
+  <target name="style">
+    <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask"/>
+    <checkstyle properties="checkstyle.properties">
+      <fileset dir="src" includes="**/*.java"/>
+    </checkstyle>
+  </target>
+
   <target name="clean">
     <delete dir="${build.dir}"/>
     <delete file="${jar.file}"/>
