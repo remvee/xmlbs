@@ -1,3 +1,7 @@
+- bugs:
+    - XMLBS.cleanEmptyTags()
+	kills script and style tags for XHTML because these
+	contain whitespace only..
 - core:
     - annotation
 	- multilingual
