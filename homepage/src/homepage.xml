@@ -36,6 +36,16 @@
 	<html>
 	    The following releases are considered to be stable.
 	</html>
+	<release tag="PRERELEASE-5" filebase="xmlbs-0.0.5">
+	    <html><![CDATA[
+		16.IV.2003
+		<ul>
+		    <li>fix null pointer exception in entity ref handling</li>
+		    <li>properly handle character refs</li>
+		    <li>quot and apos an not "universal" entities</li>
+		</ul>
+	    ]]></html>
+	</release>
 	<release tag="PRERELEASE-4" filebase="xmlbs-0.0.4">
 	    <html><![CDATA[
 		8.IV.2003
