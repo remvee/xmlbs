@@ -27,7 +27,7 @@ import org.apache.regexp.*;
  * Useful when, for example, converting HTML to XHTML.
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class XMLBS
 {
@@ -201,6 +201,22 @@ class Node
     int endPos = -1; // exclusive
     List children = new Vector();
     Node parent = null;
+    Tag closedBy = null;
+
+    static Map dtdMap = new HashMap();
+    static
+    {
+	Set v = new HashSet(); v.add("TR");
+	dtdMap.put("TABLE", v);
+	v = new HashSet(); v.add("TD");
+	dtdMap.put("TR", v);
+	v = new HashSet(); v.add(null); v.add("A"); v.add("TABLE");
+	dtdMap.put("TD", v);
+	v = new HashSet(); v.add(null); v.add("LI");
+	dtdMap.put("UL", v);
+	v = new HashSet(); v.add(null); v.add("UL");
+	dtdMap.put("LI", v);
+    }
 
     public Node (Node parent, Tag openTag, List tokens, int startPos)
     {
@@ -209,7 +225,6 @@ class Node
 	this.tokens = tokens;
 	this.startPos = startPos;
 String zz = "Node"+openTag+startPos;
-System.out.println(zz);
 
 	Tag closeTag = openTag.closeTag();
 	int i = startPos + 1;
@@ -219,27 +234,24 @@ System.out.println(zz);
 	    if (o instanceof Tag)
 	    {
 		Tag t = (Tag) o;
-		if (t.equals(openTag))
-		{
-		    // TODO allow nested
-		    endPos = i;
-		    break;
-		}
-		else if (t.isCloseTag())
+		if (t.isCloseTag())
 		{
 		    endPos = i;
 		    break;
 		}
 		else if (t.isOpenTag())
 		{
+		    Set types = (Set) dtdMap.get(openTag.getName());
+		    if (types == null || ! types.contains(t.getName()))
+		    {
+			endPos = i-1;
+			break;
+		    }
+
 		    Node n = new Node(this, t, tokens, i);
 		    children.add(n);
-
 		    int j = n.getEndPosition();
-		    if (j != -1)
-		    {
-			i = j;
-		    }
+		    if (j != -1) i = j;
 		}
 	    }
 	    else if (o instanceof Text)
@@ -247,13 +259,6 @@ System.out.println(zz);
 		children.add(o);
 	    }
 	}
-    }
-
-    public boolean inherits (Tag tag)
-    {
-	if (parent == null) return false;
-	if (parent.openTag.equals(tag)) return true;
-	return parent.inherits(tag);
     }
 
     public int getEndPosition () { return endPos; }
