@@ -29,7 +29,7 @@ import java.util.List;
  * A tree node.
  * 
  * @author R.W. van 't Veer
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class TreeNode {
     /** parent node */
@@ -68,7 +68,7 @@ public class TreeNode {
      * @return a node approved by the finder or <tt>null</tt>
      */
     public TreeNode findParent (Finder finder) {
-        for (TreeNode node = this; node != null; node = node.getParent()) {
+        for (TreeNode node = getParent(); node != null; node = node.getParent()) {
             if (finder.isFound(node)) {
                 return node;
             }
@@ -121,6 +121,22 @@ public class TreeNode {
      */
     public static interface Finder {
         boolean isFound (TreeNode node);
+    }
+    
+    /**
+     * Remove node from tree.
+     */
+    public void remove () {
+        getParent().getChildren().remove(this);
+    }
+    
+    /**
+     * Remove node from parent and add as last child to adopter.
+     * @param adopter new parent
+     */
+    public void move (TreeNode adopter) {
+        getParent().getChildren().remove(this);
+        adopter.getChildren().add(this);
     }
     
 

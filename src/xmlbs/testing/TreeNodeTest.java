@@ -27,7 +27,7 @@ import xmlbs.TreeNode;
 /**
  * Tests for the TreeNode class.
  * @author R.W. van 't Veer
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class TreeNodeTest extends TestCase {
 
@@ -66,7 +66,7 @@ public class TreeNodeTest extends TestCase {
         };
         assertTrue(null == root.findParent(barFinder));
         assertTrue(null == node1.findParent(barFinder));
-        assertTrue(null != node2.findParent(barFinder));
+        assertTrue(null == node2.findParent(barFinder));
         assertTrue(null == node3.findParent(barFinder));
         
         TreeNode.Finder fooFinder = new TreeNode.Finder () {
@@ -75,7 +75,7 @@ public class TreeNodeTest extends TestCase {
             }
         };
         assertTrue(null == root.findParent(fooFinder));
-        assertTrue(null != node1.findParent(fooFinder));
+        assertTrue(null == node1.findParent(fooFinder));
         assertTrue(null != node2.findParent(fooFinder));
         assertTrue(null != node3.findParent(fooFinder));
     }

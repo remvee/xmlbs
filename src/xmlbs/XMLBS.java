@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -48,7 +49,7 @@ import xmlbs.tokens.Token;
  * </UL>
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.42 $
+ * @version $Revision: 1.43 $
  */
 public class XMLBS {
     /** input */
@@ -236,111 +237,111 @@ public class XMLBS {
      * Verify and restructure tag hierarchy.
      */
     private void hierarchy () {
-        /* TODO implement!
-            TreeNode root = TreeBuilder.construct(tokens);
-            tokens = new ArrayList();
-            TreeSerializer.flatten(root, tokens);
-        */
+        if (false) {
+            TreeNode root = TreeBuilder.build(tokens);
+            TreeBalancer.balance(root, ds);
+            tokens = TreeBuilder.flatten(root, new ArrayList());
+        } else {
+        	CrumbTrail trail = new CrumbTrail(ds);
+        	for (int i = 0; i < tokens.size(); i++) {
+        	    Token tok = (Token) tokens.get(i);
+        	    TagToken top = trail.getTop();
         
-	CrumbTrail trail = new CrumbTrail(ds);
-	for (int i = 0; i < tokens.size(); i++) {
-	    Token tok = (Token) tokens.get(i);
-	    TagToken top = trail.getTop();
-
-	    if (tok instanceof TextToken) {
-		TextToken txt = (TextToken) tok;
-		if (!txt.isWhiteSpace() && !ds.canContain(top, txt)) {
-		    // handle stray text
-		    if (!trail.hasContainerFor(txt)) {
-			// misplaced text
-			if (annotate) {
-			    tokens.set(i, comment("misplaced text", txt));
-			} else {
-			    tokens.remove(i--);
-			}
-		    } else {
-			// add close tags till top will have us
-			do {
-			    if (annotate) {
-				tokens.add(i++, comment("close first", top));
-			    }
-			    tokens.add(i++, top.closeTag());
-			    trail.pop();
-			    top = trail.getTop();
-			} while (!ds.canContain(top, txt) && trail.getDepth() > 0);
-		    }
-		}
-	    } else if (tok instanceof TagToken) {
-		TagToken tag = (TagToken) tok;
-		if (tag.isOpenTag()) {
-		    if (!ds.canContain(top, tag)) {
-			if (!trail.hasContainerFor(tag)) {
-			    // misplaced tag
-			    if (annotate) {
-				tokens.set(i, comment("misplaced tag", tag));
-			    } else {
-				tokens.remove(i--);
-			    }
-			} else {
-			    // add close tags till top will have us
-			    do {
-				if (annotate) {
-				    tokens.add(i++, comment("close first", top));
-				}
-				tokens.add(i++, top.closeTag());
-				trail.pop();
-				top = trail.getTop();
-			    } while (!ds.canContain(top, tag) && trail.getDepth() > 0);
-
-			    // new top
-			    trail.push(tag);
-			}
-		    } else {
-			// new top
-			trail.push(tag);
-		    }
-		} else if (tag.isCloseTag()) {
-		    if (!trail.hasOpenFor(tag)) {
-			// remove stray close tag in root
-			if (annotate) {
-			    tokens.set(i, comment("remove close", tag));
-			} else {
-			    tokens.remove(i--);
-			}
-		    } else if (!tag.isSameTag(top)) {
-			if (trail.getDepth() > 0) {
-			    // add close tags till top same tag
-			    do {
-				if (annotate) {
-				    tokens.add(i++, comment("close also", top));
-				}
-				tokens.add(i++, top.closeTag());
-				trail.pop();
-				top = trail.getTop();
-			    } while (!tag.isSameTag(top) && trail.getDepth() > 0);
-
-			    // keep close tag and remove top
-			    trail.pop();
-			} else {
-			    // stray close
-			    if (annotate) {
-				tokens.set(i, comment("stray close", tag));
-			    } else {
-				tokens.remove(i--);
-			    }
-			}
-		    } else {
-			// keep close tag and remove top
-			trail.pop();
-		    }
-		}
-	    }
-	}
-
-	// close tags left on trail
-	for (TagToken tag = trail.pop(); tag != null; tag = trail.pop()) {
-	    tokens.add(tag.closeTag());
-	}
+        	    if (tok instanceof TextToken) {
+        		TextToken txt = (TextToken) tok;
+        		if (!txt.isWhiteSpace() && !ds.canContain(top, txt)) {
+        		    // handle stray text
+        		    if (!trail.hasContainerFor(txt)) {
+        			// misplaced text
+        			if (annotate) {
+        			    tokens.set(i, comment("misplaced text", txt));
+        			} else {
+        			    tokens.remove(i--);
+        			}
+        		    } else {
+        			// add close tags till top will have us
+        			do {
+        			    if (annotate) {
+        				tokens.add(i++, comment("close first", top));
+        			    }
+        			    tokens.add(i++, top.closeTag());
+        			    trail.pop();
+        			    top = trail.getTop();
+        			} while (!ds.canContain(top, txt) && trail.getDepth() > 0);
+        		    }
+        		}
+        	    } else if (tok instanceof TagToken) {
+        		TagToken tag = (TagToken) tok;
+        		if (tag.isOpenTag()) {
+        		    if (!ds.canContain(top, tag)) {
+        			if (!trail.hasContainerFor(tag)) {
+        			    // misplaced tag
+        			    if (annotate) {
+        				tokens.set(i, comment("misplaced tag", tag));
+        			    } else {
+        				tokens.remove(i--);
+        			    }
+        			} else {
+        			    // add close tags till top will have us
+        			    do {
+        				if (annotate) {
+        				    tokens.add(i++, comment("close first", top));
+        				}
+        				tokens.add(i++, top.closeTag());
+        				trail.pop();
+        				top = trail.getTop();
+        			    } while (!ds.canContain(top, tag) && trail.getDepth() > 0);
+        
+        			    // new top
+        			    trail.push(tag);
+        			}
+        		    } else {
+        			// new top
+        			trail.push(tag);
+        		    }
+        		} else if (tag.isCloseTag()) {
+        		    if (!trail.hasOpenFor(tag)) {
+        			// remove stray close tag in root
+        			if (annotate) {
+        			    tokens.set(i, comment("remove close", tag));
+        			} else {
+        			    tokens.remove(i--);
+        			}
+        		    } else if (!tag.isSameTag(top)) {
+        			if (trail.getDepth() > 0) {
+        			    // add close tags till top same tag
+        			    do {
+        				if (annotate) {
+        				    tokens.add(i++, comment("close also", top));
+        				}
+        				tokens.add(i++, top.closeTag());
+        				trail.pop();
+        				top = trail.getTop();
+        			    } while (!tag.isSameTag(top) && trail.getDepth() > 0);
+        
+        			    // keep close tag and remove top
+        			    trail.pop();
+        			} else {
+        			    // stray close
+        			    if (annotate) {
+        				tokens.set(i, comment("stray close", tag));
+        			    } else {
+        				tokens.remove(i--);
+        			    }
+        			}
+        		    } else {
+        			// keep close tag and remove top
+        			trail.pop();
+        		    }
+        		}
+        	    }
+        	}
+        
+        	// close tags left on trail
+        	for (TagToken tag = trail.pop(); tag != null; tag = trail.pop()) {
+        	    tokens.add(tag.closeTag());
+        	}
+        }
     }
 
     /**

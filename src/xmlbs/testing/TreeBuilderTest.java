@@ -14,7 +14,7 @@ import xmlbs.tokens.Token;
 /**
  * Tests for the TreeBuilder class.
  * @author R.W. van 't Veer
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class TreeBuilderTest extends TestCase {
     private static final DocumentStructure dummyDs = new DummyDocumentStructure();
@@ -67,7 +67,7 @@ public class TreeBuilderTest extends TestCase {
             Token[] tokens = (Token[]) tests[i][0];
             int depth = ((Integer)tests[i][1]).intValue();
             
-            TreeNode root = TreeBuilder.construct(Arrays.asList(tokens));
+            TreeNode root = TreeBuilder.build(Arrays.asList(tokens));
             int result = root.getDepth();
             assertTrue("got " + result + " expected " + depth + " for test #" + i, result == depth);
         }

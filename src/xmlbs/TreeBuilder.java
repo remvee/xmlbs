@@ -33,7 +33,7 @@ import xmlbs.tokens.Token;
  * and unmatched close tags retained.
  *  
  * @author R.W. van 't Veer
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class TreeBuilder {
     /**
@@ -41,7 +41,7 @@ public class TreeBuilder {
      * @param tokens list to read from
      * @return the root node for the result tree
      */
-    public static TreeNode construct (List tokens) {
+    public static TreeNode build (List tokens) {
         TreeNode root = new TreeNode();
         TreeNode current = root;
         for (Iterator it = tokens.iterator(); it.hasNext();) {
@@ -52,7 +52,8 @@ public class TreeBuilder {
                 if (tag.isOpenTag()) {
                     current = current.addChild(tok);
                 } else if (tag.isCloseTag()) {
-                    TreeNode node = current.findParent(new OpenFinder(tag));
+                    OpenFinder finder = new OpenFinder(tag);
+                    TreeNode node = finder.isFound(current) ? current : current.findParent(finder);
                     if (node != null) {
                         current = node.getParent();
                     } else {
@@ -86,5 +87,39 @@ public class TreeBuilder {
             return false;
         }
     }
-
+    
+    /**
+     * Flatten a tree to a list.
+     * @param root root node of tree
+     * @param result list to write result to
+     */
+    public static List flatten (TreeNode root, List result) {
+        for (Iterator it = root.getChildren().iterator(); it.hasNext();) {
+            flatten_((TreeNode) it.next(), result);
+        }
+        return result;
+    }
+    private static void flatten_ (TreeNode root, List result) {
+        Object p = root.getPayload();
+        if (p instanceof TagToken) {
+            TagToken tag = (TagToken) p;
+            if (tag.isOpenTag()) {
+                List children = root.getChildren();
+                if (children.size() == 0) {
+                    result.add(tag.emptyTag());
+                } else {
+                    result.add(tag);
+                    for (Iterator it = root.getChildren().iterator(); it.hasNext();) {
+                        TreeNode node = (TreeNode) it.next();
+                        flatten_(node, result);
+                    }
+                    result.add(tag.closeTag());
+                }
+            } else if (!tag.isCloseTag()) {
+                result.add(tag);
+            }
+        } else if (p != null) {
+            result.add(p);
+        }
+    }
 }
