@@ -16,6 +16,7 @@
   <property name="apidoc.pkgnames" value="xmlbs.*"/>
   <property name="apidoc.jdkurl" value="http://java.sun.com/products/jdk/1.3/docs/api/"/>
   <path id="build.classpath">
+    <pathelement location="${build.dir}"/>
     <pathelement path="${classpath}"/>
     <fileset dir="${lib.dir}">
       <include name="**/*.jar"/>
@@ -53,6 +54,15 @@
   <target name="jar" depends="compile"
       description="roll a jar file">
     <jar jarfile="${jar.file}" basedir="${build.dir}"/>
+  </target>
+
+  <target name="test" depends="compile"
+      description="run unit tests">
+    <junit>
+      <formatter type="brief" usefile="no"/>
+      <test name="xmlbs.testing.AllTests"/>
+      <classpath refid="build.classpath"/>
+    </junit>
   </target>
 
   <target name="apidoc" depends="prepare"
