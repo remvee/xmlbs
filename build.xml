@@ -26,6 +26,7 @@
 <!-- targets -->
   <target name="prepare">
     <mkdir dir="${build.dir}"/>
+    <mkdir dir="${lib.dir}"/>
     <mkdir dir="${depend.dir}"/>
     <mkdir dir="${apidoc.dir}"/>
   </target>
