@@ -27,7 +27,7 @@ import org.apache.regexp.*;
  * Useful when, for example, converting HTML to XHTML.
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class XMLBS
 {
@@ -84,152 +84,42 @@ public class XMLBS
 	return v;
     }
 
-    /**
-     * Close unclosed tags in the given tokenlist.
-     * TODO allow nested tags
-     * @param tokens list of tokens
-     */
-    void fixUnclosedTags (List tokens)
+    public List createTree (List tokens)
     {
+	List children = new Vector();
 	for (int i = 0; i < tokens.size(); i++)
 	{
 	    Object o = tokens.get(i);
 	    if (o instanceof Tag)
 	    {
-		Tag tag = (Tag) o;
-		if (tag.isOpenTag())
-		{
-		    Tag openTag = tag;
-		    Tag closeTag = tag.closeTag();
-		    List l = tokens.subList(i+1, tokens.size());
-
-		    // locate close tag
-		    int close = findCloseTag(openTag, l);
-		    if (close == -1)
-		    {
-			close = l.indexOf(closeTag);
-			// locate next open
-			int open = l.indexOf(openTag);
-
-			if (close == -1) // tag not closed
-			{
-			    if (open != -1)
-			    {
-				// TODO allow nesting for certain tags
-				tokens.add(open+i+1, closeTag);
-			    }
-			    else
-			    {
-				tokens.add(closeTag);
-			    }
-			}
-			else if (open != -1 && open < close) // nesting detected
-			{
-			    // TODO allow nesting for certain tags
-			    tokens.add(open+i+1, closeTag);
-			}
-		    }
-		}
-	    }
-	}
-    }
-
-    static int fct_ = 0;
-    private final static int findCloseTag (Tag tag, List tokens)
-    {
-	int fct = fct_++;
-	String thiz = "findCloseTag"+fct+"("+tag+","+tokens+")";
-System.out.println(thiz);
-	int depth = 0, i = 0;
-	Tag openTag = tag;
-	Tag closeTag = tag.closeTag();
-	for (; i < tokens.size(); i++)
-	{
-	    Object o = tokens.get(i);
-	    if (o instanceof Tag)
-	    {
 		Tag t = (Tag) o;
-		if (t.equals(closeTag))
+		if (t.isOpenTag())
 		{
-System.out.println(thiz+t+"@"+i+".depth="+depth);
-		    if (depth == 0) break;
-		    depth--;
-		}
-		else if (t.equals(openTag))
-		{
-System.out.println(thiz+t+"@"+i+".depth="+depth);
-		    depth++;
-		}
-		else if (t.isOpenTag())
-		{
-System.out.println(thiz+t+"@"+i);
-		    List list = tokens.subList(i+1, tokens.size());
-		    int j = findCloseTag(t, list);
-		    if (j != -1) i += j + 1;
+		    Node n = new Node(null, t, tokens, i);
+		    children.add(n);
+
+		    int j = n.getEndPosition();
+		    if (j != -1) i = j-1;
 		}
 	    }
-	}
-
-	int r = i < tokens.size() ? i : -1;
-System.out.println(thiz+"="+r);
-	return r;
-    }
-
-    /**
-     * Try to parse document and fix overlaps.  Tags in the list
-     * will be replaced by {@link Block} objects.
-     * @param tokens list of tokens
-     */
-    void fixOverlap (List tokens)
-    {
-        Vector result = new Vector();
-        ListIterator it = tokens.listIterator();
-        while (it.hasNext())
-        {
-            Object o = it.next();
-            if (o instanceof Tag)
-            {
-                Tag t = (Tag) o;
-                if (t.isOpenTag() || t.isEmptyTag())
-                {
-                    result.add(new Block(t, it));
-                }
-                else
-                {
-		    // discard close/other tag
-		}
-	    }
-	    else
+	    else if (o instanceof Text)
 	    {
-		result.add(o);
+		children.add(o);
 	    }
 	}
-
-	// replace tokens by result
-	tokens.clear();
-	tokens.addAll(result);
+	return children;
     }
+
 
     public static void main (String[] args)
     throws Exception
     {
 	XMLBS bs = new XMLBS(new File(args[0]));
 	List tokens = bs.tokenize();
-System.err.println("after tokenze: "+tokens);
+System.err.println("tokens: "+tokens);
 
-	// fix tags not closed
-	bs.fixUnclosedTags(tokens);
-System.err.println("after fixUnclosedTags: "+tokens);
-
-	// fix overlap
-	bs.fixOverlap(tokens);
-System.err.println("after fixOverlap: "+tokens);
-
-	// dump result
-	{
-	    Iterator it = tokens.iterator();
-	    while (it.hasNext()) System.out.println(""+it.next());
-	}
+	List nodes = bs.createTree(tokens);
+System.err.println("nodes: "+nodes);
     }
 
     void openCloseStats (List list)
@@ -302,84 +192,90 @@ System.err.println("after fixOverlap: "+tokens);
     }
 }
 
-class Block
+class Node
 {
-    List result = new Vector();
-    Set overlap = new HashSet();
+    Tag openTag;
+    List tokens;
+    int startPos;
 
-    Block (Tag openTag, ListIterator it)
+    int endPos = -1; // exclusive
+    List children = new Vector();
+    Node parent = null;
+
+    public Node (Node parent, Tag openTag, List tokens, int startPos)
     {
-	result.add(openTag);
-	if (openTag.isEmptyTag()) return;
+	this.parent = parent;
+	this.openTag = openTag;
+	this.tokens = tokens;
+	this.startPos = startPos;
+String zz = "Node"+openTag+startPos;
+System.out.println(zz);
 
 	Tag closeTag = openTag.closeTag();
-	while (it.hasNext())
+	int i = startPos + 1;
+	for (; i < tokens.size(); i++)
 	{
-	    Object o = it.next();
+	    Object o = tokens.get(i);
 	    if (o instanceof Tag)
 	    {
 		Tag t = (Tag) o;
-		if (t.isOpenTag()) // TODO handle empty tags
+		if (t.equals(openTag))
 		{
-		    int pos = it.nextIndex() - 1;
-		    Block child = new Block(t, it);
-		    if (child.getOverlap().contains(closeTag))
-		    {
-			result.add(closeTag);
-			// rewind iterator to beginning of child block
-			while (pos < it.nextIndex()) it.previous();
-			return;
-		    }
-		    result.add(child);
-		}
-		else if (t.equals(closeTag))
-		{
-		    result.add(t);
-		    return;
+		    // TODO allow nested
+		    endPos = i;
+		    break;
 		}
 		else if (t.isCloseTag())
 		{
-		    overlap.add(t);
+		    endPos = i;
+		    break;
 		}
-		else
+		else if (t.isOpenTag())
 		{
-		    result.add(t);
+		    Node n = new Node(this, t, tokens, i);
+		    children.add(n);
+
+		    int j = n.getEndPosition();
+		    if (j != -1)
+		    {
+			i = j;
+		    }
 		}
 	    }
-	    else
+	    else if (o instanceof Text)
 	    {
-		result.add(o);
+		children.add(o);
 	    }
 	}
-
-	// missing close tag??
-	result.add(closeTag);
     }
 
-    public Set getOverlap ()
+    public boolean inherits (Tag tag)
     {
-	Set overlap = new HashSet();
-	overlap.addAll(this.overlap);
-	Iterator it = result.iterator();
-	while (it.hasNext())
-	{
-	    Object o = it.next();
-	    if (o instanceof Block)
-	    {
-		overlap.addAll(((Block)o).getOverlap());
-	    }
-	}
-	return overlap;
+	if (parent == null) return false;
+	if (parent.openTag.equals(tag)) return true;
+	return parent.inherits(tag);
     }
+
+    public int getEndPosition () { return endPos; }
 
     public String toString ()
     {
 	StringBuffer sb = new StringBuffer();
-	Iterator it = result.iterator();
-	while (it.hasNext())
+	sb.append(""+openTag+"@"+startPos);
+	if (endPos != -1)
 	{
-	    Object o = it.next();
-	    sb.append(o.toString());
+	    sb.append("(");
+	    Iterator it = children.iterator();
+	    while (it.hasNext())
+	    {
+		sb.append(""+it.next());
+		if (it.hasNext()) sb.append(", ");
+	    }
+	    sb.append(")");
+	}
+	else
+	{
+	    sb.append("..");
 	}
 	return sb.toString();
     }
