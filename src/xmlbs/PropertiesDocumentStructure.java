@@ -45,7 +45,7 @@ import java.util.*;
  * </pre>
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class PropertiesDocumentStructure implements DocumentStructure {
     /** set to keep tag names */
@@ -60,6 +60,27 @@ public class PropertiesDocumentStructure implements DocumentStructure {
      * and attributes
      */
     public PropertiesDocumentStructure (Properties prop) {
+	setup(prop);
+    }
+
+    /**
+     * @param resource location of the properties file loadable
+     * as resource
+     * @throws IOException when resource loading fails
+     * @throws NullPointerException when resource does not exist
+     */
+    public PropertiesDocumentStructure (String resource)
+    throws IOException {
+	Properties prop = new Properties();
+	prop.load(ClassLoader.getSystemResourceAsStream(resource));
+	setup(prop);
+    }
+
+    /**
+     * Initialize syntax maps from properties.
+     * @param prop properties to initialize from
+     */
+    private void setup (Properties prop) {
 	// collect tag names
 	{
 	    tagNames.addAll(prop.keySet());
