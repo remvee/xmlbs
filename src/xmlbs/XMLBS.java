@@ -35,7 +35,7 @@ import java.util.*;
  * </UL>
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.37 $
+ * @version $Revision: 1.38 $
  */
 public class XMLBS {
     /** input */
@@ -277,8 +277,9 @@ public class XMLBS {
 		TextToken txt = (TextToken) tok;
 		TextToken ltxt = (TextToken) last;
 		ltxt.setData(ltxt.getData() + " " + txt.getData());
+	    } else {
+		last = tok;
 	    }
-	    last = tok;
 	}
     }
 
