@@ -6,22 +6,41 @@
 	<xsl:variable name="name" select="@name"/>
 	<xsl:variable name="class" select="class"/>
 	<xsl:variable name="baseurl" select="baseurl"/>
-	<xsl:variable name="zip" select="zip"/>
 	<xsl:variable name="jar" select="jar"/>
-	<target name="{$name}.prepare">
-	    <available property="{$name}.inclasspath" classname="{$class}">
-		<classpath refid="build.classpath"/>
-	    </available>
-	    <available property="{$name}.downloaded" file="${{download.dir}}/{$zip}"/>
-	</target>
-	<target name="{$name}.download" depends="{$name}.prepare" unless="{$name}.downloaded">
-	    <get src="{$baseurl}/{$zip}" dest="${{download.dir}}/{$zip}"/>
-	</target>
-	<target name="{$name}" depends="{$name}.prepare" unless="{$name}.inclasspath">
-	    <antcall target="{$name}.download"/>
-	    <unzip src="${{download.dir}}/{$zip}" dest="${{extract.dir}}/{$name}"/>
-	    <copy file="${{extract.dir}}/{$name}/{$jar}" todir="${{lib.dir}}"/>
-	</target>
+	<xsl:choose>
+	    <xsl:when test="@packaged = 'true'">
+		<xsl:variable name="zip" select="zip"/>
+		<target name="{$name}.prepare">
+		    <available property="{$name}.inclasspath" classname="{$class}">
+			<classpath refid="build.classpath"/>
+		    </available>
+		    <available property="{$name}.downloaded" file="${{download.dir}}/{$zip}"/>
+		</target>
+		<target name="{$name}.download" depends="{$name}.prepare" unless="{$name}.downloaded">
+		    <get src="{$baseurl}/{$zip}" dest="${{download.dir}}/{$zip}"/>
+		</target>
+		<target name="{$name}" depends="{$name}.prepare" unless="{$name}.inclasspath">
+		    <antcall target="{$name}.download"/>
+		    <unzip src="${{download.dir}}/{$zip}" dest="${{extract.dir}}/{$name}"/>
+		    <copy file="${{extract.dir}}/{$name}/{$jar}" todir="${{lib.dir}}"/>
+		</target>
+	    </xsl:when>
+	    <xsl:otherwise>
+		<target name="{$name}.prepare">
+		    <available property="{$name}.inclasspath" classname="{$class}">
+			<classpath refid="build.classpath"/>
+		    </available>
+		    <available property="{$name}.downloaded" file="${{download.dir}}/{$jar}"/>
+		</target>
+		<target name="{$name}.download" depends="{$name}.prepare" unless="{$name}.downloaded">
+		    <get src="{$baseurl}/{$jar}" dest="${{download.dir}}/{$jar}"/>
+		</target>
+		<target name="{$name}" depends="{$name}.prepare" unless="{$name}.inclasspath">
+		    <antcall target="{$name}.download"/>
+		    <copy file="${{download.dir}}/{$jar}" todir="${{lib.dir}}"/>
+		</target>
+	    </xsl:otherwise>
+	</xsl:choose>
     </xsl:template>
 
     <xsl:template match="/">
