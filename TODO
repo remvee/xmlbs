@@ -15,33 +15,34 @@
 	- configurable (all, hier, hier-del, hier-ins..?)
 	- entity matching stuff
     - move parsing stuff to a parser class
+    	a treebuilder and a treebalancer
 	- create unit tests for parser
 	- treat cdata as text (cdata should extend text?)
     - document structure:
-	- smarter container rules for |, + and ?
-	- handle #implied, #required and cdata, nmtoken and id
-	  attributes
-    - include xhtml-1.0 document structure object
-      http://www.w3.org/TR/xhtml1/
+	    - smarter container rules for |, + and ?
+	    - handle #implied, #required and cdata, nmtoken and id
+	      attributes
+        - include xhtml-1.0 document structure object
+          http://www.w3.org/TR/xhtml1/
     - passes:
-	- tokenize
-	    - read and fix tag attributes
-		- optional case insensitive tag matching
-	    - record line number in tokens for reporting !!TODO!!
-	    - keep known entities if text tokens
-	    - handle empty tags
-	- hierarchy
-	    - add missing close tags
-	    - mark lost tags !!TODO!!
-	- tree balansing !!TODO!!
-	    - merge too many tags !!TODO!!
-	    - move lost tags !!TODO!!
+	    - tokenize
+	        - read and fix tag attributes
+		    - optional case insensitive tag matching
+	        - record line number in tokens for reporting !!TODO!!
+	        - keep known entities if text tokens
+	        - handle empty tags
+	    - hierarchy (tree builder)
+	        - add missing close tags
+	        - mark lost tags !!TODO!!
+	    - tree balansing !!TODO!!
+	        - merge too many tags !!TODO!!
+	        - move lost tags !!TODO!!
 - frontends:
     - commandline:
-	--annotate
-	--discard-comments
-	--discard-special
-	--discard-decl
-	--transform-cdata
+	    --annotate
+	    --discard-comments
+	    --discard-special
+	    --discard-decl
+	    --transform-cdata
     - web xhtmlizer:
       validate, report and deliver bodyshopped version
