@@ -27,7 +27,7 @@ import org.apache.regexp.*;
  * Useful when, for example, converting HTML to XHTML.
  *
  * @author R.W. van 't Veer
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class XMLBS
 {
@@ -84,7 +84,7 @@ public class XMLBS
 	return v;
     }
 
-    public List createTree (List tokens)
+    public List createTree (DTD dtd, List tokens)
     {
 	List children = new Vector();
 	for (int i = 0; i < tokens.size(); i++)
@@ -95,7 +95,7 @@ public class XMLBS
 		Tag t = (Tag) o;
 		if (t.isOpenTag())
 		{
-		    Node n = new Node(null, t, tokens, i);
+		    Node n = new Node(dtd, t, tokens, i);
 		    children.add(n);
 
 		    int j = n.getEndPosition();
@@ -118,7 +118,7 @@ public class XMLBS
 	List tokens = bs.tokenize();
 System.err.println("tokens: "+tokens);
 
-	List nodes = bs.createTree(tokens);
+	List nodes = bs.createTree(new DTD(DTD.HTML), tokens);
 System.err.println("nodes: "+nodes);
     }
 
@@ -194,33 +194,18 @@ System.err.println("nodes: "+nodes);
 
 class Node
 {
+    DTD dtd;
     Tag openTag;
     List tokens;
     int startPos;
 
     int endPos = -1; // exclusive
     List children = new Vector();
-    Node parent = null;
     Tag closedBy = null;
 
-    static Map dtdMap = new HashMap();
-    static
+    public Node (DTD dtd, Tag openTag, List tokens, int startPos)
     {
-	Set v = new HashSet(); v.add("TR");
-	dtdMap.put("TABLE", v);
-	v = new HashSet(); v.add("TD");
-	dtdMap.put("TR", v);
-	v = new HashSet(); v.add(null); v.add("A"); v.add("TABLE");
-	dtdMap.put("TD", v);
-	v = new HashSet(); v.add(null); v.add("LI");
-	dtdMap.put("UL", v);
-	v = new HashSet(); v.add(null); v.add("UL");
-	dtdMap.put("LI", v);
-    }
-
-    public Node (Node parent, Tag openTag, List tokens, int startPos)
-    {
-	this.parent = parent;
+	this.dtd = dtd;
 	this.openTag = openTag;
 	this.tokens = tokens;
 	this.startPos = startPos;
@@ -242,14 +227,21 @@ String zz = "Node"+openTag+startPos;
 		}
 		else if (t.isOpenTag())
 		{
-		    Set types = (Set) dtdMap.get(openTag.getName());
-		    if (types == null || ! types.contains(t.getName()))
+System.out.println(zz+">");
+		    Set types = (Set) dtd.decendantSet(openTag.getName());
+System.out.println(zz+"<"+types);
+		    if (types != null && ! types.contains(t.getName()))
 		    {
 			endPos = i-1;
 			break;
 		    }
+		    else if (types == null)
+		    {
+			endPos = i;
+			break;
+		    }
 
-		    Node n = new Node(this, t, tokens, i);
+		    Node n = new Node(dtd, t, tokens, i);
 		    children.add(n);
 		    int j = n.getEndPosition();
 		    if (j != -1) i = j;

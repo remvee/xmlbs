@@ -129,6 +129,8 @@ class Tag
     public boolean isCloseTag () { return type == CLOSE; }
     public boolean isEmptyTag () { return type == EMPTY; }
 
+    public Tag closeTag () { return new Tag(getName(), null, Tag.CLOSE); }
+
     public String toString ()
     {
 	StringBuffer sb = new StringBuffer();
