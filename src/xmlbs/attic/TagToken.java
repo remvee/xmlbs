@@ -29,7 +29,7 @@ import org.apache.regexp.*;
 /**
  * A tag object.
  */
-class TagToken implements Token
+public class TagToken implements Token
 {
     int type;
     String tagName;
@@ -49,9 +49,7 @@ class TagToken implements Token
 	{
 	    closeRe = new RE("^\\s*/");
 	    emptyRe = new RE("/\\s*$");
-
-	    nameRe = new RE("([a-zA-Z0-9:]+)\\s*");
-
+	    nameRe = new RE("([a-zA-Z_:][a-zA-Z0-9._:-]*)\\s*");
 	    attRe = new RE("\\s([a-zA-Z_:][a-zA-Z0-9]*)\\s*=");
 	    valRe1 = new RE("^\\s*=\\s*'([^']*)'");
 	    valRe2 = new RE("^\\s*=\\s*\"([^\"]*)\"");
@@ -124,6 +122,10 @@ class TagToken implements Token
      * @return tag name
      */
     public String getName () { return tagName; }
+    /**
+     * @return map of tag attributes
+     */
+    public Map getAttributes () { return attrs; }
     /**
      * @return true if this is a open tag
      */
