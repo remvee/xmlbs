@@ -1,11 +1,15 @@
 package xmlbs;
 
-import xmlbs.tokens.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import xmlbs.tokens.CommentToken;
+import xmlbs.tokens.TagToken;
+import xmlbs.tokens.Token;
 
 /**
  * @author R.W. van 't Veer
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class TreeBalancer {
     public static void balance (TreeNode root, DocumentStructure ds) {
