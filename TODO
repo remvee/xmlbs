@@ -1,9 +1,9 @@
-- pass:
-    1. tokenize
-    2. remove stray close tags
-    3. remove unknown tags
-    4. verify tag attributes
-    5. reconstruct hierarchy
+- core:
+    - don't let loose tag destroy structure when now parent
+      allows it, actions in this case could be:
+      - remove/comment loose tag with content
+      - find container for a parent
+    - merge tags of which only one is allowed (like head for html)
 - frontends:
     - commandline:
 	--comment-illegal-code
